@@ -1,0 +1,72 @@
+---
+title: Default Harness
+description: How eve manages model context and compaction during an agent turn.
+url: "https://eve.dev/docs/concepts/default-harness"
+docs_index: /llms.txt
+---
+
+> For an index of all documentation, see [/llms.txt](/llms.txt).
+
+The default harness is eve's built-in agent loop. It manages model calls, compaction, and tool execution. Review the model-facing defaults and available opt-ins in [Built-in tools](./built-in-tools). To see how turns checkpoint and resume, read [Execution model and durability](./execution-model-and-durability).
+
+## Compaction
+
+The harness keeps a long session from overflowing the model's context window. Before comparing the conversation with `thresholdPercent` (`0.9` by default), it adds the estimated fixed envelope of the checkpoint prompt used for compaction. It then summarizes the older turns and keeps going. The prompt asks the compaction model to distinguish completed progress and decisions from remaining work and to retain the constraints, preferences, data, and references needed to continue. When eve compacts again, it passes the previous checkpoint separately and without the transcript's per-message truncation, then replaces it with the updated checkpoint. The summary uses the active turn model unless you override it. After compacting, the harness keeps the most recent messages word for word next to the summary, up to 20,000 tokens (or half of the threshold, if that is smaller), with tool results shortened to 2,000 characters. The current user message is always part of that, so when it alone is larger than the budget the harness keeps only its start and its end, with a note where the middle was cut, and summarizes the cut-out middle with the older turns. If a compaction cannot bring the history under the threshold, the session fails with an error instead of compacting again, and the step is not retried: start a new session or send a smaller message. Tune when and how it kicks in under [`compaction`](../agent-config#compaction) in `agent.ts`:
+
+```ts title="agent/agent.ts"
+export default defineAgent({
+  model: "anthropic/claude-opus-5.5",
+  compaction: {
+    thresholdPercent: 0.75,
+  },
+});
+```
+
+Before summarizing, eve tries to shorten oversized tool results in older history.
+It checks whether that reduction is sufficient using the last provider-reported
+input token count plus an estimate of new messages. A smaller character estimate
+alone cannot satisfy compaction triggered by a higher provider count. If trimming
+cannot free enough space, eve summarizes the older history.
+
+The summary call retries transient provider errors like any model call. If it
+still fails for any reason other than staying over the threshold, eve reports it
+as a failed model call: the turn fails with `MODEL_CALL_FAILED` and the history
+stays uncompacted. A transient error such as a 429 leaves the session waiting
+for the next message.
+
+First-class [memory](../memory) stays outside history, so the summarizer never
+sees it. eve asks providers to capture before compaction rewrites history, and
+what earlier turns recalled follows the checkpoint.
+
+Clients and channels can also request compaction between turns. Call
+`ClientSession.compact()`, a channel route's `compact(address)`, or
+`attachSession(sessionId).compact()`. The request does not append a user message;
+if a turn is running, eve queues it until that turn settles. A manual compaction is
+the same context change as automatic compaction: `context.started` and
+`context.settled` with `kind: "compaction"`.
+
+After either kind of compaction, eve moves the idle session to a fresh workflow
+run on the same deployment, so a long session's run history does not keep
+growing. See [Execution model and durability](./execution-model-and-durability#compaction-handoff).
+
+To discard model-message history instead of summarizing it, call the corresponding
+`clear()` method on any of those handles. Clearing preserves the session identity,
+system prompt, configured tools and skills, durable state, limits, and sandbox.
+It removes recalled memory records and framework memory bookkeeping, but it
+does not delete data from a memory provider's external store.
+On the stream it is a context change with `kind: "clear"`: `context.started`, then `context.settled`.
+
+## What to read next
+
+- [Built-in tools](./built-in-tools): review the default and opt-in framework tools and configure the model-facing tool set
+- [Execution model and durability](./execution-model-and-durability): understand how turns checkpoint and resume
+- [Context control](./context-control): choose what the model sees and when
+- [Memory](../memory): connect scoped, cross-session context to the harness lifecycle
+
+---
+
+For a semantic overview of all documentation, see [/sitemap.md](/sitemap.md)
+
+For an index of all available documentation, see [/llms.txt](/llms.txt)
+
+For agent-facing discovery, including API and MCP surfaces, see [/agents.md](/agents.md)

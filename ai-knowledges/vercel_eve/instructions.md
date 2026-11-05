@@ -1,0 +1,112 @@
+---
+title: Instructions
+description: Add system context or durable user context with instructions.md or instructions.ts.
+url: "https://eve.dev/docs/instructions"
+docs_index: /llms.txt
+---
+
+> For an index of all documentation, see [/llms.txt](/llms.txt).
+
+Instructions add context without waiting for a person or channel to send it. Use system-role instructions for the agent's identity and standing rules. Use user-role instructions for application context that should become part of the durable conversation, such as an imported brief or retrieved memory.
+
+## Author instructions
+
+At minimum, instructions are a markdown file at the agent root. Whatever you write is the prompt:
+
+```md title="agent/instructions.md"
+You are a concise assistant. Use tools when they are available.
+```
+
+Keep this file to stable behavior such as identity, tone, and standing rules.
+
+## Markdown vs TypeScript
+
+A static system prompt belongs in markdown (`agent/instructions.md`). Switch to a TypeScript module (`agent/instructions.ts`) when you need typed composition, `lib/` code, build-time values, or a user-role message.
+
+```ts title="agent/instructions.ts"
+import { defineInstructions } from "eve/instructions";
+import { buildInstructionsPrompt } from "./lib/prompts";
+
+export default defineInstructions({
+  content: buildInstructionsPrompt(),
+});
+```
+
+`defineInstructions` takes `content` and an optional `role`:
+
+```ts title="agent/instructions/brief.ts"
+import { defineInstructions } from "eve/instructions";
+import { buildCustomerBrief } from "../lib/customer";
+
+export default defineInstructions({
+  content: buildCustomerBrief(),
+  role: "user",
+});
+```
+
+`role` is either `"system"` or `"user"` and defaults to `"system"`. The retired `{ markdown: string }` form is rejected; use `content`. Blank content contributes no context.
+
+A module-backed definition runs once at build time. eve stores its resolved content and role in the compiled manifest, so the definition is not a runtime entry.
+
+This includes its normal ESM and [asset imports](./reference/typescript-api#asset-imports), such as a top-level prompt imported with `?raw`. See [Authored module lifecycle](./reference/typescript-api#authored-module-lifecycle) for the full compile/runtime contract.
+
+## System and user roles
+
+System-role instructions stay outside conversation history and are included on every model call. Existing sessions pick up the current compiled system instructions when a deployment or local development generation changes.
+
+Static user-role instructions are appended to a new session's history once, in source order. They remain pinned in that durable history: refreshing an existing session does not append them again or replace them with a newer deployment's value.
+
+## Split instructions across a directory
+
+For more than one file, add an `agent/instructions/` directory. eve reads its entries non-recursively and accepts both `.md` files and `.ts` modules (a `.ts` file can wrap `defineInstructions` or `defineDynamic`). Static entries apply in alphabetical order by filename (`localeCompare`): system entries compose in that order, and user entries enter new-session history in that order.
+
+A flat `agent/instructions.md` (or `.ts`) at the agent root and the directory can coexist. The root file's content comes first, then the sorted directory entries. You cannot author both `instructions.md` and `instructions.ts` at the root; that pairing is a build error.
+
+## Instructions vs skills
+
+Instructions and [skills](./skills) both feed text into the model's context. The difference is timing:
+
+|                          | Loaded                                                | Use for                                                  |
+| ------------------------ | ----------------------------------------------------- | -------------------------------------------------------- |
+| System-role instructions | Outside history on every model call                   | Permanent identity and standing rules                    |
+| User-role instructions   | Once at their static or dynamic lifecycle boundary    | Application context that belongs in conversation history |
+| `agent/skills/*`         | On demand, when the model loads one with `eve__skill` | Optional procedures that should not bloat every turn     |
+
+Keep instructions short and stable. Long or situational procedures belong in [skills](./skills), where they only enter context when the request calls for them.
+
+Static instructions never run code at runtime. When you need typed executable behavior, reach for a [tool](./tools).
+
+## Dynamic instructions
+
+To compute instructions from auth, tenant, channel, or external data, use `defineDynamic((ctx) => ...)` and return `defineInstructions(...)` or `null`. The function runs before each ordinary model call. Use `ctx.memo(key, fn)` for JSON observations that should stay fixed for a key.
+
+A dynamic system instruction applies while its function returns it, outside history. A dynamic user instruction joins durable history only when its content changes. Before a turn's first model call it joins ahead of the turn's input; mid-turn changes append at the current position. Returning `null` adds nothing and resets content tracking, so returning the earlier text later adds it again. Existing history is not removed. Content digests survive deployment changes, clear, and compaction.
+
+See [Dynamic capabilities](./guides/dynamic-capabilities) for examples and failure behavior. To give a session that replaced a [stranded session](./concepts/execution-model-and-durability#what-a-replacement-session-receives) the earlier conversation, read its stream with `sessions.attach()` and `transcriptOf()` in a user-role instruction that memoizes it by the predecessor's ID.
+
+## History controls and prompt caching
+
+[Compaction](./concepts/sessions-runs-and-streaming#compact-clear-and-reset) treats user-role instructions like ordinary conversation history, so a summary may replace their original text. Clear removes them with the rest of model-message history and does not rerun static or dynamic instructions. System-role instructions remain because they are outside history.
+
+Keep system-role content stable and place it before frequently changing context when practical. That gives providers the best opportunity to reuse a prompt prefix, but cache behavior and billing remain provider-specific. User-role instructions preserve the normal append-only message prefix. Framework announcements about available skills and parked agents are retained in user-role history: changed snapshots append after earlier steps instead of replacing the context sent with those steps. Unchanged announcements are skipped until history is cleared or compacted. eve does not promise a cache hit.
+
+## Disclaimer
+
+As the deployer, it is your responsibility to ensure your agent complies with applicable laws.
+
+Where an eve agent communicates with people, you may be required to disclose that they are interacting with an automated AI system where law requires it. eve does not add this disclosure automatically; configure it in your instructions and/or channel responses.
+
+## What to read next
+
+- [Tools](./tools): typed actions, the next capability to add
+- [Context control](./concepts/context-control): all the levers for what the model sees
+- [Skills](./skills): on-demand procedures, the counterpart to always-on instructions
+- [Memory](./memory): provider-backed context that outlives a session, recalled before each turn
+
+---
+
+For a semantic overview of all documentation, see [/sitemap.md](/sitemap.md)
+
+For an index of all available documentation, see [/llms.txt](/llms.txt)
+
+For agent-facing discovery, including API and MCP surfaces, see [/agents.md](/agents.md)
