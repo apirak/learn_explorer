@@ -4,11 +4,11 @@
  */
 
 export const controllers = {
-  Account: () => import('#controllers/account_controller'),
   HealthChecks: () => import('#controllers/health_checks_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   Session: () => import('#controllers/session_controller'),
   StudentHome: () => import('#controllers/student_home_controller'),
-  StudentResult: () => import('#controllers/student_result_controller'),
   StudentTest: () => import('#controllers/student_test_controller'),
+  Account: () => import('#controllers/account_controller'),
+  StudentResult: () => import('#controllers/student_result_controller'),
 }
