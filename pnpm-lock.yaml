@@ -38,6 +38,12 @@ importers:
       '@adonisjs/vite':
         specifier: ^6.0.2
         version: 6.0.4(@adonisjs/assembler@8.6.0(typescript@6.0.3))(@adonisjs/core@7.6.0(@adonisjs/assembler@8.6.0(typescript@6.0.3))(@vinejs/vine@4.4.0)(edge.js@6.5.1)(pino-pretty@13.2.0)(supports-color@10.2.2)(youch@4.1.1))(@adonisjs/shield@9.0.0(90f364dfdb88190800a7d4cfd47301de))(edge.js@6.5.1)(vite@8.3.6(@types/node@26.6.6))
+      '@fontsource/ibm-plex-sans-thai-looped':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/mali':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@inertiajs/core':
         specifier: ^3.7.1
         version: 3.11.0
@@ -678,6 +684,12 @@ packages:
   '@faker-js/faker@10.6.0':
     resolution: {integrity: sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
+
+  '@fontsource/ibm-plex-sans-thai-looped@5.3.0':
+    resolution: {integrity: sha512-5NNySQuBNRMk44sUwQypp971+2Fn1LJ9HAEZg9J76+7803j/aCS9HHH7FNvpq6mJDqzTrTrv+VSNsODgCAhxQQ==}
+
+  '@fontsource/mali@5.3.0':
+    resolution: {integrity: sha512-/H7zdnFcBUdLh7mPUCLWfCoQVgtvnVKrlHjknq90kltPvUcu0nC9ybne4z2rzTghV9ez9N7nRDvRZesODB/YbQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -3983,6 +3995,10 @@ snapshots:
       levn: 0.4.1
 
   '@faker-js/faker@10.6.0': {}
+
+  '@fontsource/ibm-plex-sans-thai-looped@5.3.0': {}
+
+  '@fontsource/mali@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

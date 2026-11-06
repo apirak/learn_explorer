@@ -1,7 +1,6 @@
 import Logo from '~/components/logo'
 import { type ReactNode } from 'react'
 import FlashToasts from '~/components/flash_toasts'
-import ThemeToggle from '~/components/theme_toggle'
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -14,10 +13,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
 
         <aside className="auth__aside">
-          <div className="auth__aside-top">
-            <ThemeToggle />
-          </div>
-
           <p className="auth__quote">
             Auth, kept intentionally minimal so you can build it your way.
           </p>
