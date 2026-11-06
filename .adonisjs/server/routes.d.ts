@@ -10,6 +10,7 @@ export type ScannedRoutes = {
     'student.test.answer': { paramsTuple?: []; params?: {} }
     'student.result': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
+    'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
@@ -27,6 +28,7 @@ export type ScannedRoutes = {
     'student.test.show': { paramsTuple?: []; params?: {} }
     'student.result': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
+    'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
@@ -38,6 +40,7 @@ export type ScannedRoutes = {
     'student.test.show': { paramsTuple?: []; params?: {} }
     'student.result': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
+    'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }

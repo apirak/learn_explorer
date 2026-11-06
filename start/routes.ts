@@ -25,6 +25,7 @@ router
     router.post('test/answers', [controllers.StudentTest, 'answer']).as('test.answer')
     router.get('result', [controllers.StudentResult, 'show']).as('result')
     router.get('careers', [controllers.StudentResult, 'careers']).as('careers')
+    router.get('careers/:code', [controllers.StudentCareers, 'show']).as('career')
   })
   .as('student')
   .use(middleware.studentAttempt({ required: true }))

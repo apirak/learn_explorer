@@ -11,6 +11,7 @@ export interface ApiDefinition {
     }
     result: typeof routes['student.result']
     careers: typeof routes['student.careers']
+    career: typeof routes['student.career']
   }
   health: typeof routes['health']
   newAccount: {
