@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
+import { Link } from '@adonisjs/inertia/react'
 import { client } from '~/client'
 import { type InertiaProps } from '~/types'
 import LikertScale from '~/components/ui/likert_scale'
@@ -112,10 +113,12 @@ export default function StudentTest({
 }>) {
   const [answers, setAnswers] = useState(saved)
   const [serverAnswered, setServerAnswered] = useState(Object.keys(saved).length)
-  // Refresh resumes at the first unanswered question.
+  // Refresh resumes at the first unanswered question; "กลับไปทบทวน" (?review) starts at 1.
+  const review = new URLSearchParams(usePage().url.split('?')[1]).has('review')
   const [idx, setIdx] = useState(() => {
     const open = items.findIndex((it) => !(it.id in saved))
-    return open === -1 ? items.length - 1 : open
+    if (open !== -1) return open
+    return review ? 0 : items.length - 1
   })
   const question = useRef<HTMLParagraphElement>(null)
   const card = useRef<HTMLDivElement>(null)
@@ -199,14 +202,14 @@ export default function StudentTest({
               ถัดไป
             </button>
           ) : (
-            // ponytail: the result page is #6; until then "ดูผล" only shows readiness.
-            <button
-              type="button"
+            <Link
+              route="student.result"
               className={`btn btn--primary${ready ? ' ready' : ''}`}
-              disabled={!ready}
+              aria-disabled={!ready}
+              onClick={(e) => !ready && e.preventDefault()}
             >
               ดูผล
-            </button>
+            </Link>
           )}
         </div>
       </section>

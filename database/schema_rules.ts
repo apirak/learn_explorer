@@ -16,6 +16,10 @@ export default {
           tsType: `'test' | 'result' | 'career' | 'mypath'`,
           decorators: [{ name: '@column' }],
         },
+        profile_status: {
+          tsType: `'ok' | 'all-dislike' | 'flat'`,
+          decorators: [{ name: '@column' }],
+        },
       },
     },
   },

@@ -44,7 +44,11 @@ const read = async <T>(file: string): Promise<T> =>
 
 const [itemsFile, riasecFile, occupationsFile, titlesFile, cipFile, fieldsFile, programsFile] =
   await Promise.all([
-    read<{ items: Item[]; forms: { mini: Form & { ids: string[] }; full: Form } }>('items_th.json'),
+    read<{
+      attribution: string
+      items: Item[]
+      forms: { mini: Form & { ids: string[] }; full: Form }
+    }>('items_th.json'),
     read<{ types: Record<RiasecType, { name: string; desc: string }> }>('riasec_types_th.json'),
     read<{ occupations: Occupation[] }>('occupations.json'),
     read<{ titles: Record<string, string> }>('occupation_titles_th.json'),
@@ -60,6 +64,8 @@ const [itemsFile, riasecFile, occupationsFile, titlesFile, cipFile, fieldsFile, 
  * Server only: `tcasPrograms` is ~2 MB and must never reach the browser whole.
  */
 export class ContentService {
+  /** O*NET license credit: show it in full wherever O*NET content appears. */
+  readonly attribution = itemsFile.attribution
   readonly items = itemsFile.items
   readonly forms = itemsFile.forms
   readonly riasecTypes = riasecFile.types

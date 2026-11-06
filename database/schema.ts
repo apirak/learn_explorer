@@ -33,8 +33,16 @@ export class AttemptSchema extends BaseModel {
     'desiredCareer',
     'furthestStep',
     'id',
+    'interestCode',
     'mypathAt',
+    'profileStatus',
     'resultAt',
+    'scoreA',
+    'scoreC',
+    'scoreE',
+    'scoreI',
+    'scoreR',
+    'scoreS',
     'updatedAt',
     'uuid',
   ] as const
@@ -53,10 +61,26 @@ export class AttemptSchema extends BaseModel {
   declare furthestStep: 'test' | 'result' | 'career' | 'mypath'
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare interestCode: string | null
   @column.dateTime()
   declare mypathAt: DateTime | null
+  @column()
+  declare profileStatus: 'ok' | 'all-dislike' | 'flat' | null
   @column.dateTime()
   declare resultAt: DateTime | null
+  @column()
+  declare scoreA: number | null
+  @column()
+  declare scoreC: number | null
+  @column()
+  declare scoreE: number | null
+  @column()
+  declare scoreI: number | null
+  @column()
+  declare scoreR: number | null
+  @column()
+  declare scoreS: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()
