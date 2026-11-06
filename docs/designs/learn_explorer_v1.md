@@ -315,7 +315,7 @@ All timestamps use `table.timestamp(..., { useTz: true })`. Every child table's 
 | `student_contacts` | `id`; `attempt_id` (unique); `phone` (nullable); `email` (nullable); `consent_at`; `consent_version`; `created_at` | one per attempt |
 | `admin_audits` | `id`; `user_id` (FK users, `SET NULL`); `attempt_id` (FK attempts, cascade); `action`; `created_at` | index `attempt_id` |
 
-Column TypeScript types go in `database/schema_rules.ts`. Examples: the `role` union, the `furthest_step` union, and `answers_json` as `Record<string, number>`. Models extend the generated classes and add only relationships and `reachStep`.
+Column TypeScript types go in `database/schema_rules.ts`. Examples: the `role` union, the `furthest_step` union, and `answers_json` as `Record<string, number>`. Models extend the generated classes and add only relationships, `reachStep`, and `Attempt.score()` (rescores from the answers on each open [M1]).
 
 ### Retention
 

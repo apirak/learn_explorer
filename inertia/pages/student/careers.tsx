@@ -24,7 +24,7 @@ export default function StudentCareers({
           <h1>5 อาชีพที่น่าลองดู</h1>
           <p className="muted">
             อาชีพระดับปริญญาตรีขึ้นไปที่มีรูปแบบความสนใจใกล้กับน้องที่สุด
-            ระดับความเหมาะใช้เกณฑ์เดียวกับ O*NET
+            ระดับความเหมาะใช้เกณฑ์เดียวกับ O*NET กดการ์ดเพื่อดูสาขาที่เรียนได้
           </p>
         </header>
         {guess && (
@@ -35,7 +35,12 @@ export default function StudentCareers({
         )}
         <div className="occ">
           {matches.map((m) => (
-            <article key={m.code} className="occ-card">
+            <Link
+              key={m.code}
+              route="student.career"
+              routeParams={{ code: m.code }}
+              className="occ-card"
+            >
               <span className="occ-head">
                 <span className="occ-name">{m.title}</span>
                 <Chip tone="lime">{FIT_LABELS[m.fit]}</Chip>
@@ -55,7 +60,8 @@ export default function StudentCareers({
                   {m.fields.map((f) => f.name + (f.unsure ? ' (ยังไม่แน่ใจ)' : '')).join(' · ')}
                 </span>
               )}
-            </article>
+              <span className="small more">ดูสาขาที่เรียนได้ →</span>
+            </Link>
           ))}
         </div>
       </div>

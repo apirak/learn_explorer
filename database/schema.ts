@@ -87,6 +87,19 @@ export class AttemptSchema extends BaseModel {
   declare uuid: string
 }
 
+export class CareerViewSchema extends BaseModel {
+  static $columns = ['attemptId', 'createdAt', 'id', 'occupationCode'] as const
+  $columns = CareerViewSchema.$columns
+  @column()
+  declare attemptId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare occupationCode: string
+}
+
 export class UserSchema extends BaseModel {
   static $columns = [
     'affiliation',
