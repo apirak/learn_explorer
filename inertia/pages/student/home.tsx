@@ -1,14 +1,15 @@
 import { Head } from '@inertiajs/react'
 import { Form, Link } from '@adonisjs/inertia/react'
+import { type InertiaProps } from '~/types'
 import Attribution from '~/components/ui/attribution'
 
 export default function StudentHome({
   resume,
   attribution,
-}: {
+}: InertiaProps<{
   resume: { answered: number; total: number } | null
   attribution: string
-}) {
+}>) {
   return (
     <main className="page student">
       <Head title="อาชีพที่ฝันไว้ จะตรงกับสิ่งที่ชอบไหม?" />

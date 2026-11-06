@@ -14,8 +14,10 @@ export default class StudentTestController {
       items: questionOrder(content.items, content.forms.mini.ids).map((item) => ({
         id: item.id,
         text: item.text_th,
+        type: item.type,
       })),
       answers: Object.fromEntries(answers.map((a) => [a.itemId, a.value])),
+      total: content.forms.mini.ids.length,
     })
   }
 

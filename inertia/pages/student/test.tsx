@@ -1,18 +1,21 @@
 import { useState } from 'react'
 import { Head } from '@inertiajs/react'
+import { type InertiaProps } from '~/types'
 import { client } from '~/client'
 import LikertScale from '~/components/ui/likert_scale'
 import ProgressBar from '~/components/ui/progress_bar'
 
-type Item = { id: string; text: string }
+type Item = { id: string; text: string; type: string }
 
 export default function StudentTest({
   items,
   answers: saved,
-}: {
+  total,
+}: InertiaProps<{
   items: Item[]
   answers: Record<string, number>
-}) {
+  total: number
+}>) {
   const [answers, setAnswers] = useState(saved)
   // Refresh resumes at the first unanswered question.
   const [idx, setIdx] = useState(() => {
@@ -25,7 +28,7 @@ export default function StudentTest({
   // ponytail: one send per tap, failures only logged; the retry queue is #7.
   async function answer(value: number) {
     setAnswers((a) => ({ ...a, [item.id]: value }))
-    if (idx < items.length - 1) setIdx(idx + 1) // next question right away
+    if (idx < total - 1) setIdx(idx + 1) // next question right away
     const [, error] = await client.api.student.test
       .answer({ body: { itemId: item.id, value } })
       .safe()
@@ -53,7 +56,7 @@ export default function StudentTest({
         />
       </section>
 
-      <ProgressBar value={done} max={items.length} label="ตอบแล้ว" />
+      <ProgressBar value={done} max={total} label="ตอบแล้ว" />
 
       <div className="student__nav">
         <button
@@ -64,7 +67,7 @@ export default function StudentTest({
         >
           ย้อนกลับ
         </button>
-        {idx < items.length - 1 && (
+        {idx < total - 1 && (
           <button
             type="button"
             className="btn btn--primary"

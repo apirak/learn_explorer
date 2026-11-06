@@ -24,6 +24,7 @@ test.group('Student flow: start and answers', (group) => {
     assert.deepEqual(response.cookie('le_entry')?.value, { code: 'AB5434' })
     assert.isTrue(response.cookie('le_entry')?.httpOnly)
     assert.equal(response.cookie('le_entry')?.sameSite, 'Lax')
+    assert.equal(response.cookie('le_entry')?.maxAge, 24 * 60 * 60)
   })
 
   test('an invalid code is stored as no code', async ({ client, assert }) => {
@@ -174,8 +175,9 @@ test.group('Student flow: start and answers', (group) => {
 
     response.assertInertiaComponent('student/test')
     const props = response.inertiaProps as {
-      items: { id: string; text: string }[]
+      items: { id: string; text: string; type: string }[]
       answers: Record<string, number>
+      total: number
     }
     assert.lengthOf(props.items, 30)
     assert.deepEqual(
@@ -183,7 +185,9 @@ test.group('Student flow: start and answers', (group) => {
       ['R1', 'I1', 'A1', 'S2', 'E4', 'C3']
     )
     assert.isString(props.items[0].text)
+    assert.equal(props.items[0].type, 'Realistic')
     assert.deepEqual(props.answers, { R1: 4, I1: 1 })
+    assert.equal(props.total, 30)
   })
 
   test('Home offers to continue an unfinished attempt', async ({ client }) => {
