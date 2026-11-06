@@ -22,9 +22,11 @@ export default class StudentCareersController {
         : undefined
     if (!match) throw new Exception("Not one of this attempt's matches", { status: 404 })
 
-    const view = { attemptId: attempt!.id, occupationCode: match.occupation.code }
     try {
-      await CareerView.firstOrCreate(view)
+      await CareerView.firstOrCreate({
+        attemptId: attempt!.id,
+        occupationCode: match.occupation.code,
+      })
     } catch (error) {
       // A double tap: the other request already inserted the row.
       if ((error as { code?: string }).code !== UNIQUE_VIOLATION) throw error

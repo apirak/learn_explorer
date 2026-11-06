@@ -48,6 +48,9 @@ test.group('Student career detail', (group) => {
       response.assertStatus(404)
     }
     assert.lengthOf(await CareerView.query().where('attemptId', attempt.id), 0)
+    await attempt.refresh()
+    assert.isNull(attempt.careerAt)
+    assert.equal(attempt.furthestStep, 'result')
   })
 
   test('404s when the profile has no matches', async ({ client }) => {

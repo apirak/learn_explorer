@@ -1,6 +1,6 @@
 import content from '#services/content_service'
 import { fieldsForOccupation, groupOf } from '#services/major_service'
-import { RIASEC, occupationCode, type OccupationMatch } from '#services/scoring_service'
+import { RIASEC, type OccupationMatch } from '#services/scoring_service'
 import { BaseTransformer } from '@adonisjs/core/transformers'
 
 /** Ranked TCAS fields shown on the career page (prototype FIELDS_SHOWN). */
@@ -18,7 +18,6 @@ export default class OccupationTransformer extends BaseTransformer<OccupationMat
       title: content.thaiTitles[o.code] ?? o.title,
       titleEn: o.title,
       fit: fit!, // matches have r ≥ 0, so always a level
-      typeCode: occupationCode(o).join(''),
       /** O*NET interest scores, 1–7, with the Thai type names. */
       profile: RIASEC.map((type) => ({
         type,
