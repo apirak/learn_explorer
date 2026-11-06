@@ -8,7 +8,7 @@ import type { routes } from './index.ts'
 export type ParamValue = string | number | bigint | boolean
 
 export interface Registry {
-  'home': {
+  'student.home': {
     methods: ["GET","HEAD"]
     pattern: '/'
     types: {
@@ -16,9 +16,61 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
-      rawResponse: ExtractRawResponse<unknown>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_home_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_home_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_home_controller').default['show']>>>
+    }
+  }
+  'student.start': {
+    methods: ["POST"]
+    pattern: '/attempts'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/student').startValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/student').startValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_home_controller').default['start']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_home_controller').default['start']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_home_controller').default['start']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'student.test.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/test'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['show']>>>
+    }
+  }
+  'student.test.answer': {
+    methods: ["POST"]
+    pattern: '/test/answers'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/student').answerValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/student').answerValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['answer']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['answer']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['answer']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'health': {
+    methods: ["GET","HEAD"]
+    pattern: '/health'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/health_checks_controller').default['handle']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/health_checks_controller').default['handle']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/health_checks_controller').default['handle']>>>
     }
   }
   'new_account.create': {

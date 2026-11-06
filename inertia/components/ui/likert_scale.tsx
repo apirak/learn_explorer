@@ -30,7 +30,8 @@ const FACES = [
   </>,
 ]
 
-function LikertFace({ value }: { value: number }) {
+/** One answer face, also drawn on the student landing board. */
+export function LikertFace({ value }: { value: number }) {
   return (
     <svg viewBox="0 0 64 64" aria-hidden="true" className="likert__face">
       <rect className="face" x="2" y="2" width="60" height="60" rx="12" />

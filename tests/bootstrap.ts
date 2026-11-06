@@ -4,9 +4,18 @@ import type { Config } from '@japa/runner/types'
 import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import { dbAssertions } from '@adonisjs/lucid/plugins/db'
 import testUtils from '@adonisjs/core/services/test_utils'
+import { apiClient } from '@japa/api-client'
 import { browserClient } from '@japa/browser-client'
+import { shieldApiClient } from '@adonisjs/shield/plugins/api_client'
+import { inertiaApiClient } from '@adonisjs/inertia/plugins/api_client'
+import { sessionApiClient } from '@adonisjs/session/plugins/api_client'
 import { authBrowserClient } from '@adonisjs/auth/plugins/browser_client'
 import { sessionBrowserClient } from '@adonisjs/session/plugins/browser_client'
+import type { Registry } from '../.adonisjs/client/registry/schema.d.ts'
+
+declare module '@japa/api-client/types' {
+  interface RoutesRegistry extends Registry {}
+}
 
 /**
  * This file is imported by the "bin/test.ts" entrypoint file
@@ -20,6 +29,10 @@ export const plugins: Config['plugins'] = [
   assert(),
   pluginAdonisJS(app),
   dbAssertions(app),
+  apiClient(),
+  sessionApiClient(app),
+  shieldApiClient(),
+  inertiaApiClient(app),
   browserClient({ runInSuites: ['browser'] }),
   sessionBrowserClient(app),
   authBrowserClient(app),

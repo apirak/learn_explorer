@@ -3,10 +3,13 @@ export default function ProgressBar({
   value,
   max,
   label,
+  count = `${value}/${max}`,
 }: {
   value: number
   max: number
   label: string
+  /** The visible count; defaults to `value/max`. */
+  count?: string
 }) {
   const done = value >= max
   return (
@@ -22,7 +25,7 @@ export default function ProgressBar({
         <i style={{ width: `${max ? (Math.min(value, max) / max) * 100 : 0}%` }} />
       </div>
       <span className="progress__count" aria-hidden="true">
-        {value}/{max}
+        {count}
       </span>
     </div>
   )

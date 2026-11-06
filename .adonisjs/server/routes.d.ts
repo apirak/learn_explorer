@@ -4,7 +4,11 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
-    'home': { paramsTuple?: []; params?: {} }
+    'student.home': { paramsTuple?: []; params?: {} }
+    'student.start': { paramsTuple?: []; params?: {} }
+    'student.test.show': { paramsTuple?: []; params?: {} }
+    'student.test.answer': { paramsTuple?: []; params?: {} }
+    'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
@@ -13,18 +17,24 @@ export type ScannedRoutes = {
     'session.destroy': { paramsTuple?: []; params?: {} }
   }
   GET: {
-    'home': { paramsTuple?: []; params?: {} }
+    'student.home': { paramsTuple?: []; params?: {} }
+    'student.test.show': { paramsTuple?: []; params?: {} }
+    'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'dashboard': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
-    'home': { paramsTuple?: []; params?: {} }
+    'student.home': { paramsTuple?: []; params?: {} }
+    'student.test.show': { paramsTuple?: []; params?: {} }
+    'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'dashboard': { paramsTuple?: []; params?: {} }
   }
   POST: {
+    'student.start': { paramsTuple?: []; params?: {} }
+    'student.test.answer': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }

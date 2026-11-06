@@ -8,11 +8,35 @@ export type { Route, Path } from './schema.d.ts'
 const placeholder: any = {}
 
 const routes = {
-  'home': {
+  'student.home': {
     methods: ["GET","HEAD"],
     pattern: '/',
     tokens: [[0,"/"]],
-    types: placeholder as Registry['home']['types'],
+    types: placeholder as Registry['student.home']['types'],
+  },
+  'student.start': {
+    methods: ["POST"],
+    pattern: '/attempts',
+    tokens: [[0,"attempts"]],
+    types: placeholder as Registry['student.start']['types'],
+  },
+  'student.test.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/test',
+    tokens: [[0,"test"]],
+    types: placeholder as Registry['student.test.show']['types'],
+  },
+  'student.test.answer': {
+    methods: ["POST"],
+    pattern: '/test/answers',
+    tokens: [[0,"test"],[0,"answers"]],
+    types: placeholder as Registry['student.test.answer']['types'],
+  },
+  'health': {
+    methods: ["GET","HEAD"],
+    pattern: '/health',
+    tokens: [[0,"health"]],
+    types: placeholder as Registry['health']['types'],
   },
   'new_account.create': {
     methods: ["GET","HEAD"],

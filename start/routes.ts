@@ -11,7 +11,21 @@ import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
 import router from '@adonisjs/core/services/router'
 
-router.on('/').renderInertia('home', {}).as('home')
+router
+  .group(() => {
+    router.get('/', [controllers.StudentHome, 'show']).as('home')
+    router.post('attempts', [controllers.StudentHome, 'start']).as('start')
+  })
+  .as('student')
+  .use(middleware.studentAttempt())
+
+router
+  .group(() => {
+    router.get('test', [controllers.StudentTest, 'show']).as('test.show')
+    router.post('test/answers', [controllers.StudentTest, 'answer']).as('test.answer')
+  })
+  .as('student')
+  .use(middleware.studentAttempt({ required: true }))
 router.get('/health', [controllers.HealthChecks]).as('health')
 
 router
