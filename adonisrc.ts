@@ -73,6 +73,7 @@ export default defineConfig({
     () => import('#start/routes'),
     () => import('#start/kernel'),
     () => import('#start/validator'),
+    () => import('#start/content'),
   ],
 
   /*
@@ -115,6 +116,10 @@ export default defineConfig({
   |
   */
   metaFiles: [
+    {
+      pattern: 'content/**',
+      reloadServer: false,
+    },
     {
       pattern: 'resources/views/**/*.edge',
       reloadServer: false,
