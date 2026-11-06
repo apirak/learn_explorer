@@ -12,6 +12,7 @@ import { controllers } from '#generated/controllers'
 import router from '@adonisjs/core/services/router'
 
 router.on('/').renderInertia('home', {}).as('home')
+router.get('/health', [controllers.HealthChecks]).as('health')
 
 router
   .group(() => {
