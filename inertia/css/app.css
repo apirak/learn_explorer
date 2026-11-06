@@ -1195,20 +1195,6 @@ input {
     gap: 56px;
   }
 }
-.ip .topline {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.ip .badge {
-  font: 600 0.75rem/1 var(--body);
-  color: var(--soft);
-  border: 1.5px dashed var(--soft);
-  border-radius: 99px;
-  padding: 6px 10px;
-}
 /* Highlighter: a tilted, rough-edged block behind the words. */
 .ip .hl {
   background: none;

@@ -20,9 +20,6 @@ export default function StudentHome({
       <Head title="อาชีพที่ฝันไว้ จะตรงกับสิ่งที่ชอบไหม?" />
       <section className="sticker">
         <div className="pitch">
-          <div className="topline">
-            <span className="badge">ต้นแบบ · ยังไม่ผ่านการทดสอบ</span>
-          </div>
           <h1 className="headline">
             <span className="dash dash-l" aria-hidden="true" />
             <mark className="hl lime">อาชีพที่ฝันไว้</mark>
