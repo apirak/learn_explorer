@@ -1,6 +1,11 @@
-import content from '#services/content_service'
 import { fieldsForOccupation } from '#services/major_service'
-import { occupationCode, type OccupationMatch } from '#services/scoring_service'
+import content, { type RiasecType, type Scores } from '#services/content_service'
+import {
+  matchOccupations,
+  occupationCode,
+  sharedHighTypes,
+  type OccupationMatch,
+} from '#services/scoring_service'
 import { BaseTransformer } from '@adonisjs/core/transformers'
 
 /** Top TCAS fields shown per occupation on the careers page. */
@@ -24,4 +29,15 @@ export default class OccupationMatchTransformer extends BaseTransformer<
         .map(({ key, field }) => ({ key, name: field.th, unsure: field.confidence === 'low' })),
     }
   }
+}
+
+/** The top matching occupations for a valid profile, as the careers and print pages show them. */
+export function transformMatches(scores: Scores, code: RiasecType[]) {
+  const name = (t: RiasecType) => content.riasecTypes[t].name
+  return OccupationMatchTransformer.transform(
+    matchOccupations(scores, content.occupations).map((m) => ({
+      ...m,
+      shared: sharedHighTypes(m.occupation, code).map(name),
+    }))
+  )
 }

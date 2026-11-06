@@ -50,6 +50,24 @@ const routes = {
     tokens: [[0,"careers"],[1,"code"]],
     types: placeholder as Registry['student.career']['types'],
   },
+  'student.mypath': {
+    methods: ["GET","HEAD"],
+    pattern: '/mypath',
+    tokens: [[0,"mypath"]],
+    types: placeholder as Registry['student.mypath']['types'],
+  },
+  'student.mypath.download': {
+    methods: ["POST"],
+    pattern: '/mypath/download',
+    tokens: [[0,"mypath"],[0,"download"]],
+    types: placeholder as Registry['student.mypath.download']['types'],
+  },
+  'student.mypath.print': {
+    methods: ["GET","HEAD"],
+    pattern: '/mypath/print',
+    tokens: [[0,"mypath"],[0,"print"]],
+    types: placeholder as Registry['student.mypath.print']['types'],
+  },
   'health': {
     methods: ["GET","HEAD"],
     pattern: '/health',

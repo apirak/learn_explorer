@@ -1776,3 +1776,80 @@ input {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+/* --- MyPath: optional contact + consent, kept apart from Download. --- */
+.ip .mypath {
+  gap: 20px;
+}
+.ip .consent {
+  display: grid;
+  gap: 14px;
+  border: 2px dashed var(--line-2);
+  border-radius: 16px;
+  padding: 16px;
+  min-width: 0;
+}
+.ip .consent legend {
+  font: 700 1rem/1.3 var(--display);
+  padding: 0 6px;
+}
+.ip .consent-text {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 12px;
+  background: var(--field);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.ip .consent-text h2 {
+  font-size: 1rem;
+}
+.ip .consent-text ul {
+  padding-left: 1.2em;
+}
+.ip .consent-text > * + * {
+  margin-top: 8px;
+}
+.ip .consent-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ip .consent-check input {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  accent-color: var(--violet);
+}
+.ip .download {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* --- Print page: hint on screen, clean sheet on paper. --- */
+.ip .print-hint {
+  display: grid;
+  gap: 12px;
+}
+.ip .print-careers {
+  display: grid;
+  gap: 10px;
+  padding-left: 1.4em;
+}
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .ip.print .sheet {
+    box-shadow: none;
+    border: none;
+  }
+  body {
+    background: #fff;
+  }
+}

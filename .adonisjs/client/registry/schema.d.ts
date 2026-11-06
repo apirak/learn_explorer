@@ -99,6 +99,45 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_careers_controller').default['show']>>>
     }
   }
+  'student.mypath': {
+    methods: ["GET","HEAD"]
+    pattern: '/mypath'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['show']>>>
+    }
+  }
+  'student.mypath.download': {
+    methods: ["POST"]
+    pattern: '/mypath/download'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/student').downloadValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/student').downloadValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'student.mypath.print': {
+    methods: ["GET","HEAD"]
+    pattern: '/mypath/print'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['print']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['print']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['print']>>>
+    }
+  }
   'health': {
     methods: ["GET","HEAD"]
     pattern: '/health'

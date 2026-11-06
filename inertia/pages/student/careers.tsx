@@ -62,6 +62,9 @@ export default function StudentCareers({
             </Link>
           ))}
         </div>
+        <Link route="student.mypath" className="btn btn--primary">
+          เก็บผลไว้ดูทีหลัง →
+        </Link>
       </div>
     </main>
   )
