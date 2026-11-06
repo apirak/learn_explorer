@@ -41,3 +41,17 @@ Every backend or frontend change starts in `ai-knowledges/`. Open the index, rea
 ## Data rules
 
 Student data belongs to minors under Thai PDPA [DP-001]. Log attempt UUIDs only, never phone, email, `code`, or free text.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `apirak/learn_explorer`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root, created when first needed. See `docs/agents/domain.md`.
