@@ -9,8 +9,10 @@ const DREAM_EXAMPLE = 'นักพัฒนาเกม'
 
 export default function StudentHome({
   resume,
+  finished,
 }: InertiaProps<{
   resume: { answered: number; total: number } | null
+  finished: boolean
 }>) {
   const [guess, setGuess] = useState('')
   const input = useRef<HTMLInputElement>(null)
@@ -49,6 +51,20 @@ export default function StudentHome({
               <Form route="student.start" className="ask">
                 <button type="submit" className="explore">
                   เริ่มใหม่
+                </button>
+              </Form>
+            </div>
+          )}
+
+          {finished && (
+            <div className="ask resume">
+              <span className="label">เคยทำครบแล้ว</span>
+              <Link route="student.result" className="go">
+                ดูผลครั้งก่อน <span aria-hidden="true">→</span>
+              </Link>
+              <Form route="student.start" className="ask">
+                <button type="submit" className="explore">
+                  เริ่มใหม่อีกครั้ง
                 </button>
               </Form>
             </div>
