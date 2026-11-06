@@ -53,7 +53,7 @@ function Invalid({ status }: { status: Data.Result['status'] }) {
           : 'คะแนนทุกด้านเท่ากัน ลองย้อนกลับไปทบทวนคำตอบ และเลือกตามความรู้สึกจริงว่าอยากทำแค่ไหน'}
       </p>
       <div className="nav">
-        <Link route="student.test.show" className="btn btn--primary">
+        <Link route="student.test.show" qs={{ review: 1 }} className="btn btn--primary">
           กลับไปทบทวน
         </Link>
       </div>
