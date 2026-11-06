@@ -11,7 +11,7 @@ test.group('Student return', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
 
   /** An attempt with all 30 answers saved. */
-  const finished = async (code: string | null = 'AB5434') => {
+  const finishedAttempt = async (code: string | null = 'AB5434') => {
     const attempt = await Attempt.create({ code, contentVersion: 'v1', furthestStep: 'test' })
     await Answer.createMany(MINI.map((itemId) => ({ attemptId: attempt.id, itemId, value: 3 })))
     return attempt
@@ -19,7 +19,7 @@ test.group('Student return', (group) => {
   const cookie = (a: Attempt) => ({ uuid: a.uuid, code: a.code })
 
   test('Home offers the previous result to a student who finished', async ({ client }) => {
-    const attempt = await finished()
+    const attempt = await finishedAttempt()
     const response = await client
       .get('/')
       .withEncryptedCookie('le_attempt', cookie(attempt))
@@ -35,7 +35,7 @@ test.group('Student return', (group) => {
   })
 
   test('viewing the previous result creates no attempt', async ({ client, assert }) => {
-    const attempt = await finished()
+    const attempt = await finishedAttempt()
     const response = await client
       .get('/result')
       .withEncryptedCookie('le_attempt', cookie(attempt))
@@ -49,7 +49,7 @@ test.group('Student return', (group) => {
     client,
     assert,
   }) => {
-    const old = await finished('AB5434')
+    const old = await finishedAttempt('AB5434')
     await client.get('/result').withEncryptedCookie('le_attempt', cookie(old)) // scores it
     await old.refresh()
     const before = old.serialize()
@@ -72,7 +72,7 @@ test.group('Student return', (group) => {
   })
 
   test('a different code never shows the previous student', async ({ client, assert }) => {
-    const old = await finished('AB5434')
+    const old = await finishedAttempt('AB5434')
     const entry = { code: 'CD7788' }
 
     const home = await client
@@ -101,7 +101,7 @@ test.group('Student return', (group) => {
   })
 
   test('with no code in the link the attempt is still resumed', async ({ client }) => {
-    const attempt = await finished('AB5434')
+    const attempt = await finishedAttempt('AB5434')
     for (const entry of [null, { code: null }]) {
       const request = client.get('/').withEncryptedCookie('le_attempt', cookie(attempt))
       if (entry) request.withEncryptedCookie('le_entry', entry)
@@ -111,7 +111,7 @@ test.group('Student return', (group) => {
   })
 
   test('a cookie for a deleted attempt is cleared silently', async ({ client, assert }) => {
-    const attempt = await finished()
+    const attempt = await finishedAttempt()
     await attempt.delete()
 
     const response = await client
