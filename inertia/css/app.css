@@ -1,47 +1,61 @@
 /* ==========================================================================
-   AdonisJS Starter Kit
-   Tokens are the only thing you need to touch to re-theme.
+   Sticker Lab theme (from ../learn_explorer_prototype/src/interest_profiler/style.css)
+   Cream paper, black-outlined sticker cards with hard shadows, lime/purple
+   highlighter marks. Light only.
    ========================================================================== */
+@import '@fontsource/mali/500.css';
+@import '@fontsource/mali/700.css';
+@import '@fontsource/ibm-plex-sans-thai-looped/400.css';
+@import '@fontsource/ibm-plex-sans-thai-looped/500.css';
+@import '@fontsource/ibm-plex-sans-thai-looped/600.css';
+@import '@fontsource/ibm-plex-sans-thai-looped/700.css';
 
 :root {
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Sticker Lab palette */
+  --paper: #fbf6ea;
+  --ink-k: #17131f;
+  --lime: #dcf542;
+  --purple: #c9a8ff;
+  --violet: #6a2cf0;
+  --violet-ink: #fff;
+  --soft: #4a4458;
+  --surface: #fffdf7;
+  --card: #fffdf7;
+  --ink: var(--ink-k);
+  --muted: #5e566e;
+  --line: #e6dfcf;
+  --primary: var(--violet);
+  --on-primary: #fff;
+  --mark: var(--lime);
+  --edge: var(--ink-k);
+  --progress: var(--violet);
+  --face: #f1ebfb;
+  --chip-bg: #efe6ff;
+  --done: #3fae2a;
+  --done-ink: #2b7d1b;
+  --error: #c0392b;
+
+  /* type */
+  --hand: 'Mali', 'IBM Plex Sans Thai Looped', sans-serif;
+  --display: var(--hand);
+  --body: 'IBM Plex Sans Thai Looped', system-ui, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-  --serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 
-  --paper: #f5f5f6;
-  --card: #ffffff;
-  --ink: #0a0a0b;
-  --ink-2: #2a2c30;
-  --muted: #6b6f76;
-  --subtle: #a4a8af;
-  --line: #ededee;
-  --line-2: #dddfe2;
-  --btn: #0a0a0b;
-  --btn-fg: #ffffff;
-  --ring: rgba(10, 10, 11, 0.13);
-  --field: #ffffff;
-  --ok: #18794e;
+  /* starter names, mapped onto Sticker Lab */
+  --sans: var(--body);
+  --serif: var(--display);
+  --ink-2: var(--soft);
+  --subtle: #8a8299;
+  --line-2: var(--ink-k);
+  --btn: var(--violet);
+  --btn-fg: var(--violet-ink);
+  --ring: var(--lime);
+  --field: #fff;
+  --ok: var(--done-ink);
 
-  --r: 8px;
-  --r-lg: 14px;
+  --r: 12px;
+  --r-lg: 26px;
   color-scheme: light;
-}
-
-:root[data-theme='dark'] {
-  --paper: #08080a;
-  --card: #111114;
-  --ink: #ededee;
-  --ink-2: #c4c6ca;
-  --muted: #8b8f97;
-  --subtle: #585c64;
-  --line: #1e1f23;
-  --line-2: #2c2e33;
-  --btn: #ededee;
-  --btn-fg: #0a0a0b;
-  --ring: rgba(237, 237, 238, 0.14);
-  --field: #0c0c0f;
-  --ok: #3ecf8e;
-  color-scheme: dark;
 }
 
 * {
@@ -57,8 +71,8 @@ body {
   font-family: var(--sans);
   background: var(--paper);
   color: var(--ink);
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: 16px;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -93,71 +107,81 @@ input {
   color: var(--subtle);
 }
 
-/* --- buttons --- */
+/* --- buttons: sticker push button. The edge is a box-shadow; the face lifts
+   or sinks while the shadow shrinks, so the edge's bottom stays put. --- */
 .btn {
+  --lift: 4px;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  height: 38px;
-  padding: 0 15px;
-  border-radius: var(--r);
-  border: 1px solid transparent;
-  font-size: 14px;
-  font-weight: 500;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 16px;
+  border: 2px solid var(--ink-k);
+  border-bottom: 0;
+  background: #fff;
+  color: var(--ink);
+  font: 700 1rem/1 var(--display);
   white-space: nowrap;
+  box-shadow: 0 var(--lift) 0 var(--edge);
+  transform: translateY(calc(2px - var(--lift)));
   transition:
-    opacity 0.15s,
-    background 0.15s,
-    border-color 0.15s,
-    color 0.15s,
-    scale 0.15s;
+    transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5),
+    box-shadow 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 .btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--ring);
+  outline: 3px solid var(--mark);
+  outline-offset: 2px;
 }
-.btn:active:not(:disabled) {
-  scale: 0.96;
+@media (hover: hover) {
+  .btn:not(:disabled):not(.btn--ghost):hover {
+    --lift: 6px;
+  }
+}
+.btn:not(:disabled):not(.btn--ghost):active {
+  --lift: 2px;
+  transition-duration: 34ms;
+  transition-timing-function: ease;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  --lift: 2px;
 }
 .btn--primary {
-  background: var(--btn);
-  color: var(--btn-fg);
-}
-.btn--primary:hover {
-  opacity: 0.88;
+  background: var(--primary);
+  color: var(--on-primary);
 }
 .btn--secondary {
-  background: var(--card);
-  color: var(--ink);
-  border-color: var(--line-2);
-}
-.btn--secondary:hover {
-  background: var(--paper);
+  background: #fff;
 }
 .btn--ghost {
-  color: var(--ink);
-}
-.btn--ghost:hover {
-  color: var(--muted);
+  border: 0;
+  background: none;
+  box-shadow: none;
+  transform: none;
+  padding-inline: 4px;
+  color: var(--violet);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
 }
 .btn--block {
   width: 100%;
 }
 .btn--sm {
-  height: 34px;
-  padding: 0 12px;
-  font-size: 13.5px;
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 0.9rem;
+  border-radius: 12px;
 }
-/* extend the hit area to 40px tall without growing the visual */
-.btn--sm::after {
-  content: '';
-  position: absolute;
-  top: -3px;
-  bottom: -3px;
-  left: 0;
-  right: 0;
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+    transform: none;
+  }
 }
 
 /* --- fields --- */
@@ -167,19 +191,18 @@ input {
   gap: 6px;
 }
 .field__label {
-  font-size: 13px;
-  font-weight: 500;
+  font: 700 0.95rem/1.3 var(--display);
   color: var(--ink);
 }
 .field__input {
-  height: 40px;
-  padding: 0 12px;
+  height: 48px;
+  padding: 0 16px;
   background: var(--field);
-  border: 1px solid var(--line-2);
-  border-radius: var(--r);
+  border: 2.5px solid var(--ink-k);
+  border-radius: 16px;
   color: var(--ink);
-  font-size: 14px;
-  box-shadow: 0 1px 1px rgba(10, 10, 11, 0.03);
+  font: 500 1rem/1.3 var(--body);
+  box-shadow: 0 3px 0 var(--ink-k);
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -189,8 +212,10 @@ input {
 }
 .field__input:focus {
   outline: none;
-  border-color: var(--ink);
-  box-shadow: 0 0 0 3px var(--ring);
+  border-color: var(--violet);
+  box-shadow:
+    0 3px 0 var(--ink-k),
+    0 0 0 4px var(--ring);
 }
 .field__input:-webkit-autofill,
 .field__input:-webkit-autofill:hover,
@@ -204,23 +229,17 @@ input {
 }
 .field__input[aria-invalid='true'],
 .field__input[data-invalid='true'] {
-  border-color: #c0392b;
-}
-:root[data-theme='dark'] .field__input[aria-invalid='true'],
-:root[data-theme='dark'] .field__input[data-invalid='true'] {
-  border-color: #e0685c;
+  border-color: var(--error);
 }
 .field__hint {
-  font-size: 12.5px;
+  font-size: 0.85rem;
   color: var(--muted);
   text-wrap: pretty;
 }
 .field__error {
-  font-size: 12.5px;
-  color: #c0392b;
-}
-:root[data-theme='dark'] .field__error {
-  color: #e0685c;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--error);
 }
 
 /* --- inline link --- */
@@ -270,22 +289,6 @@ input {
   grid-area: 1 / 1;
 }
 
-/* theme toggle icons cross-fade in place */
-.themetoggle__icon {
-  opacity: 0;
-  scale: 0.25;
-  filter: blur(4px);
-  transition:
-    opacity 0.3s cubic-bezier(0.2, 0, 0, 1),
-    scale 0.3s cubic-bezier(0.2, 0, 0, 1),
-    filter 0.3s cubic-bezier(0.2, 0, 0, 1);
-}
-.themetoggle__icon--on {
-  opacity: 1;
-  scale: 1;
-  filter: blur(0px);
-}
-
 /* ==========================================================================
    Marketing — floating header + centered prose card
    ========================================================================== */
@@ -320,7 +323,7 @@ input {
   display: flex;
   height: 60px;
   background: var(--card);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2.5px solid var(--ink-k);
 }
 
 .home {
@@ -335,15 +338,12 @@ input {
   width: 580px;
   max-width: 100%;
   background: var(--card);
-  border: 1px solid var(--line-2);
+  border: 2.5px solid var(--ink-k);
   border-radius: var(--r-lg);
   padding: 42px 46px 24px;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.5) inset,
-    0 36px 70px -46px rgba(10, 10, 11, 0.45);
-}
-:root[data-theme='dark'] .prose-card {
-  box-shadow: 0 36px 80px -50px rgba(0, 0, 0, 0.8);
+    6px 7px 0 var(--ink-k),
+    16px 16px 0 5px var(--lime);
 }
 
 /* staggered enter: each chunk rises in ~100ms after the previous one */
@@ -550,10 +550,7 @@ input {
   margin-top: 22px;
 }
 .auth__title {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 27px;
-  letter-spacing: 0.2px;
+  font: 700 1.9rem/1.25 var(--display);
   text-wrap: balance;
 }
 .auth__sub {
@@ -570,22 +567,17 @@ input {
 
 .auth__aside {
   position: relative;
-  border-left: 1px solid var(--line);
+  border-left: 2.5px solid var(--ink-k);
   background: var(--paper);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 44px;
 }
-.auth__aside-top {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
 .auth__quote {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 25px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 28px;
   line-height: 1.3;
   letter-spacing: 0.2px;
   text-wrap: balance;
@@ -650,8 +642,9 @@ input {
   left: 0;
   right: 0;
   bottom: -1px;
-  height: 2px;
-  background: var(--ink);
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: var(--violet);
 }
 .app-main {
   min-height: calc(100vh - 108px);
@@ -679,9 +672,12 @@ input {
   margin-bottom: 28px;
 }
 .page__title {
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  display: inline-block;
+  font: 700 1.6rem/1.3 var(--display);
+  background: var(--lime);
+  padding: 2px 14px;
+  border-radius: 12px 18px 10px 20px;
+  rotate: -1.5deg;
   line-height: 1.25;
 }
 .page__description {
@@ -696,19 +692,21 @@ input {
 }
 .panel {
   background: var(--card);
-  border: 1px solid var(--line-2);
+  border: 2.5px solid var(--ink-k);
   border-radius: var(--r-lg);
   padding: 28px;
+  box-shadow:
+    6px 7px 0 var(--ink-k),
+    16px 16px 0 5px var(--purple);
+  margin: 0 14px 14px 0;
 }
 .section + .section {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid var(--line);
+  border-top: 2px dashed var(--line);
 }
 .section__title {
-  font-size: 15px;
-  font-weight: 560;
-  letter-spacing: -0.01em;
+  font: 700 1.1rem/1.35 var(--display);
 }
 .section__description {
   margin-top: 2px;
@@ -733,11 +731,12 @@ input {
 .sidebar-layout__nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 8px;
+  gap: 4px;
+  padding: 10px;
   background: var(--card);
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-lg);
+  border: 2.5px solid var(--ink-k);
+  border-radius: 20px;
+  box-shadow: 4px 5px 0 var(--ink-k);
 }
 .sidebar-layout__item {
   display: flex;
@@ -759,11 +758,11 @@ input {
 }
 .sidebar-layout__item[aria-current='page'] {
   color: var(--ink);
-  background: color-mix(in oklab, var(--ink) 6%, var(--card));
+  background: var(--lime);
 }
 .sidebar-layout__item:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--ring);
+  outline: 3px solid var(--mark);
+  outline-offset: 2px;
 }
 .sidebar-layout__content {
   min-width: 0;
@@ -813,6 +812,151 @@ input {
 }
 
 /* ==========================================================================
+   Profiler components: LikertScale, ProgressBar, Chip, Attribution
+   ========================================================================== */
+.likert {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.likert__opt {
+  --lift: 4px;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  padding: 10px 2px;
+  cursor: pointer;
+  font: 700 0.78rem/1.3 var(--body);
+  border: 2px solid var(--ink-k);
+  border-bottom: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 var(--lift) 0 var(--edge);
+  transform: translateY(calc(2px - var(--lift)));
+  transition:
+    transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5),
+    box-shadow 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+/* the radio stays in the accessibility tree and keyboard order, just unseen */
+.likert__input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.likert__opt span {
+  color: var(--soft);
+  text-align: center;
+}
+.likert__face {
+  width: 52px;
+  height: 52px;
+  max-width: 100%;
+}
+.likert__face .face {
+  fill: var(--face);
+  stroke: var(--ink-k);
+  stroke-width: 3;
+}
+.likert__face .feat {
+  stroke: var(--ink-k);
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.likert__face .dot {
+  fill: var(--ink-k);
+}
+@media (hover: hover) {
+  .likert__opt:hover {
+    --lift: 6px;
+  }
+}
+.likert__opt:active,
+.likert__opt:has(:checked) {
+  --lift: 2px;
+}
+.likert__opt:active {
+  transition-duration: 34ms;
+}
+.likert__opt:has(:checked) {
+  background: var(--chip-bg);
+}
+.likert__opt:has(:checked) span {
+  color: var(--ink-k);
+}
+.likert__opt:has(:checked) .face {
+  fill: var(--lime);
+}
+.likert__opt:has(:focus-visible) {
+  outline: 3px solid var(--mark);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .likert__opt {
+    transition: none;
+    transform: none;
+  }
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.progress__bar {
+  flex: 1;
+  height: 12px;
+  background: #fff;
+  border: 2px solid var(--ink-k);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress__bar > i {
+  display: block;
+  height: 100%;
+  background: var(--progress);
+  border-right: 2px solid var(--ink-k);
+  transition: width 0.25s ease;
+}
+.progress--done .progress__bar > i {
+  background: var(--done);
+}
+.progress--done .progress__count {
+  color: var(--done-ink);
+  font-weight: 700;
+}
+
+.chip {
+  display: inline-block;
+  font: 700 0.85rem/1 var(--display);
+  color: var(--ink-k);
+  border: 2px solid var(--ink-k);
+  border-radius: 99px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+.chip--purple {
+  background: var(--chip-bg);
+}
+.chip--lime {
+  background: var(--lime);
+}
+
+.attribution {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--soft);
+  white-space: pre-line;
+  text-wrap: pretty;
+}
+
+/* ==========================================================================
    Toasts (Sonner)
    ========================================================================== */
 [data-sonner-toaster] {
@@ -826,15 +970,10 @@ input {
   gap: 12px;
   width: 100%;
   background: var(--card);
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-lg);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.5) inset,
-    0 10px 30px -12px rgba(10, 10, 11, 0.18);
+  border: 2.5px solid var(--ink-k);
+  border-radius: 20px;
+  box-shadow: 4px 5px 0 var(--ink-k);
   padding: 16px 18px;
-}
-:root[data-theme='dark'] [data-sonner-toaster] [data-sonner-toast] {
-  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
 }
 [data-sonner-toaster] [data-sonner-toast] [data-icon] {
   margin: 1px 0 0;
@@ -867,10 +1006,7 @@ input {
   color: var(--ok);
 }
 [data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-icon] {
-  color: #c0392b;
-}
-:root[data-theme='dark'] [data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-icon] {
-  color: #e0685c;
+  color: var(--error);
 }
 
 /* ==========================================================================
