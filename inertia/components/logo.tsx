@@ -3,7 +3,7 @@ import { Link } from '@adonisjs/inertia/react'
 export default function Logo({ size = 26 }: { size?: number }) {
   return (
     <Link
-      route="home"
+      route="student.home"
       aria-label="AdonisJS"
       style={{ display: 'inline-flex', color: 'var(--ink)' }}
     >

@@ -1042,3 +1042,25 @@ input {
     padding: 20px;
   }
 }
+
+/* ==========================================================================
+   Student pages
+   ========================================================================== */
+.student {
+  max-width: 640px;
+  gap: 20px;
+}
+.student__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.student__question {
+  font: 700 1.25rem/1.5 var(--display);
+  margin-bottom: 20px;
+  text-wrap: pretty;
+}
+.student__nav {
+  display: flex;
+  justify-content: space-between;
+}

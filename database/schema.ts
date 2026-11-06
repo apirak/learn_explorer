@@ -7,6 +7,62 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class AnswerSchema extends BaseModel {
+  static $columns = ['attemptId', 'createdAt', 'id', 'itemId', 'updatedAt', 'value'] as const
+  $columns = AnswerSchema.$columns
+  @column()
+  declare attemptId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare itemId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare value: number
+}
+
+export class AttemptSchema extends BaseModel {
+  static $columns = [
+    'careerAt',
+    'code',
+    'contentVersion',
+    'createdAt',
+    'desiredCareer',
+    'furthestStep',
+    'id',
+    'mypathAt',
+    'resultAt',
+    'updatedAt',
+    'uuid',
+  ] as const
+  $columns = AttemptSchema.$columns
+  @column.dateTime()
+  declare careerAt: DateTime | null
+  @column()
+  declare code: string | null
+  @column()
+  declare contentVersion: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare desiredCareer: string | null
+  @column()
+  declare furthestStep: 'test' | 'result' | 'career' | 'mypath'
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare mypathAt: DateTime | null
+  @column.dateTime()
+  declare resultAt: DateTime | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare uuid: string
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns

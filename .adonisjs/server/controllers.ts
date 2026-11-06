@@ -7,4 +7,6 @@ export const controllers = {
   HealthChecks: () => import('#controllers/health_checks_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   Session: () => import('#controllers/session_controller'),
+  StudentHome: () => import('#controllers/student_home_controller'),
+  StudentTest: () => import('#controllers/student_test_controller'),
 }
