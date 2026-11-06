@@ -10,6 +10,7 @@ export const controllers = {
   Session: () => import('#controllers/session_controller'),
   StudentCareers: () => import('#controllers/student_careers_controller'),
   StudentHome: () => import('#controllers/student_home_controller'),
+  StudentMypath: () => import('#controllers/student_mypath_controller'),
   StudentResult: () => import('#controllers/student_result_controller'),
   StudentTest: () => import('#controllers/student_test_controller'),
 }

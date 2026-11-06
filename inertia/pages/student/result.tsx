@@ -6,7 +6,7 @@ import { type InertiaProps } from '~/types'
 const RIASEC = ['R', 'I', 'A', 'S', 'E', 'C'] as const
 
 /** Holland hexagon: six axes, grid rings at quarters, the score shape on top (prototype app.js). */
-function Hexagon({ scores, max }: { scores: Data.Result['scores']; max: number }) {
+export function Hexagon({ scores, max }: { scores: Data.Result['scores']; max: number }) {
   const W = 260
   const c = W / 2
   const R = 88
@@ -58,9 +58,7 @@ function Invalid({ status }: { status: Data.Result['status'] }) {
   )
 }
 
-export default function StudentResult({
-  result,
-}: InertiaProps<{ result: Data.Result }>) {
+export default function StudentResult({ result }: InertiaProps<{ result: Data.Result }>) {
   return (
     <main className="ip result">
       <Head title="ผลของน้อง" />

@@ -91,10 +91,7 @@ test.group('Student result', (group) => {
     assert.equal(attempt.interestCode?.[0], 'C')
   })
 
-  test('the result sends the code with Thai names, no matches', async ({
-    client,
-    assert,
-  }) => {
+  test('the result sends the code with Thai names, no matches', async ({ client, assert }) => {
     const attempt = await newAttempt()
     const boost = Object.fromEntries(MINI.filter((id) => id[0] === 'R').map((id) => [id, 4]))
     await answerAll(attempt, 2, boost)

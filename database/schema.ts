@@ -31,6 +31,7 @@ export class AttemptSchema extends BaseModel {
     'contentVersion',
     'createdAt',
     'desiredCareer',
+    'downloadedAt',
     'furthestStep',
     'id',
     'interestCode',
@@ -57,6 +58,8 @@ export class AttemptSchema extends BaseModel {
   declare createdAt: DateTime
   @column()
   declare desiredCareer: string | null
+  @column.dateTime()
+  declare downloadedAt: DateTime | null
   @column()
   declare furthestStep: 'test' | 'result' | 'career' | 'mypath'
   @column({ isPrimary: true })
@@ -98,6 +101,33 @@ export class CareerViewSchema extends BaseModel {
   declare id: number
   @column()
   declare occupationCode: string
+}
+
+export class StudentContactSchema extends BaseModel {
+  static $columns = [
+    'attemptId',
+    'consentAt',
+    'consentVersion',
+    'createdAt',
+    'email',
+    'id',
+    'phone',
+  ] as const
+  $columns = StudentContactSchema.$columns
+  @column()
+  declare attemptId: number
+  @column.dateTime()
+  declare consentAt: DateTime
+  @column()
+  declare consentVersion: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare email: string | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare phone: string | null
 }
 
 export class UserSchema extends BaseModel {

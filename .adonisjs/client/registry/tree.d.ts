@@ -12,6 +12,10 @@ export interface ApiDefinition {
     result: typeof routes['student.result']
     careers: typeof routes['student.careers']
     career: typeof routes['student.career']
+    mypath: typeof routes['student.mypath'] & {
+      download: typeof routes['student.mypath.download']
+      print: typeof routes['student.mypath.print']
+    }
   }
   health: typeof routes['health']
   newAccount: {

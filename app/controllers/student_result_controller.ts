@@ -1,6 +1,4 @@
-import content from '#services/content_service'
-import { matchOccupations, sharedHighTypes } from '#services/scoring_service'
-import OccupationMatchTransformer from '#transformers/occupation_match_transformer'
+import { transformMatches } from '#transformers/occupation_match_transformer'
 import ResultTransformer from '#transformers/result_transformer'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -23,15 +21,9 @@ export default class StudentResultController {
     if (scored.status !== 'ok') return response.redirect().toRoute('student.result')
     await attempt!.save()
 
-    const name = (t: keyof typeof content.riasecTypes) => content.riasecTypes[t].name
     return inertia.render('student/careers', {
       guess: attempt!.desiredCareer,
-      matches: OccupationMatchTransformer.transform(
-        matchOccupations(scored.scores, content.occupations).map((m) => ({
-          ...m,
-          shared: sharedHighTypes(m.occupation, scored.code).map(name),
-        }))
-      ),
+      matches: transformMatches(scored.scores, scored.code),
     })
   }
 }

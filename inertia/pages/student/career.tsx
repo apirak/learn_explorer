@@ -86,6 +86,9 @@ export default function StudentCareer({
             ควรอ่านรายละเอียดหลักสูตรก่อนตัดสินใจ
           </p>
         </div>
+        <Link route="student.mypath" className="btn btn--primary">
+          เก็บผลไว้ดูทีหลัง →
+        </Link>
       </div>
     </main>
   )

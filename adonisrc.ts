@@ -121,6 +121,10 @@ export default defineConfig({
       reloadServer: false,
     },
     {
+      pattern: 'resources/consent/**',
+      reloadServer: false,
+    },
+    {
       pattern: 'resources/views/**/*.edge',
       reloadServer: false,
     },
