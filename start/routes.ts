@@ -40,7 +40,18 @@ router
 
 router
   .group(() => {
-    router.on('/dashboard').renderInertia('dashboard', {}).as('dashboard')
+    router.get('account', [controllers.Account, 'show']).as('account.show')
+    router.put('account/profile', [controllers.Account, 'updateProfile']).as('account.profile')
+    router.put('account/password', [controllers.Account, 'updatePassword']).as('account.password')
+    router.delete('account', [controllers.Account, 'destroy']).as('account.destroy')
     router.post('logout', [controllers.Session, 'destroy'])
   })
   .use(middleware.auth())
+
+router
+  .group(() => {
+    router.on('/').renderInertia('admin/dashboard', {}).as('dashboard')
+  })
+  .prefix('admin')
+  .as('admin')
+  .use([middleware.auth(), middleware.role({ min: 'admin' })])

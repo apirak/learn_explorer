@@ -633,6 +633,10 @@ input {
 .subnav__item:hover {
   color: var(--ink);
 }
+.subnav__item[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .subnav__item[aria-current='page'] {
   color: var(--ink);
 }

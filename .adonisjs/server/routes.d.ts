@@ -13,8 +13,12 @@ export type ScannedRoutes = {
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
-    'dashboard': { paramsTuple?: []; params?: {} }
+    'account.show': { paramsTuple?: []; params?: {} }
+    'account.profile': { paramsTuple?: []; params?: {} }
+    'account.password': { paramsTuple?: []; params?: {} }
+    'account.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'admin.dashboard': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'student.home': { paramsTuple?: []; params?: {} }
@@ -22,7 +26,8 @@ export type ScannedRoutes = {
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
-    'dashboard': { paramsTuple?: []; params?: {} }
+    'account.show': { paramsTuple?: []; params?: {} }
+    'admin.dashboard': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'student.home': { paramsTuple?: []; params?: {} }
@@ -30,7 +35,8 @@ export type ScannedRoutes = {
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
-    'dashboard': { paramsTuple?: []; params?: {} }
+    'account.show': { paramsTuple?: []; params?: {} }
+    'admin.dashboard': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'student.start': { paramsTuple?: []; params?: {} }
@@ -38,6 +44,13 @@ export type ScannedRoutes = {
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+  }
+  PUT: {
+    'account.profile': { paramsTuple?: []; params?: {} }
+    'account.password': { paramsTuple?: []; params?: {} }
+  }
+  DELETE: {
+    'account.destroy': { paramsTuple?: []; params?: {} }
   }
 }
 declare module '@adonisjs/core/types/http' {

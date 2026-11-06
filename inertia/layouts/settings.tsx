@@ -1,4 +1,5 @@
 import Page from '~/components/page'
+import { UserRound } from 'lucide-react'
 import { type ReactNode } from 'react'
 import NavLink, { type NavItem } from '~/components/nav_link'
 
@@ -8,7 +9,7 @@ import NavLink, { type NavItem } from '~/components/nav_link'
  *
  * `{ label: 'Profile', route: 'settings.profile', icon: User }`
  */
-const items: NavItem[] = []
+const items: NavItem[] = [{ label: 'Account', route: 'account.show', icon: UserRound }]
 
 /**
  * Renders the settings heading, a sidebar of links and a card holding the
