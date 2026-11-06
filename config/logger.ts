@@ -26,6 +26,19 @@ const loggerConfig = defineConfig({
       level: env.get('LOG_LEVEL'),
 
       /**
+       * Student data is personal data of minors under PDPA [DP-001].
+       * Log attempt UUIDs only; these keys never reach the output.
+       */
+      redact: {
+        paths: [
+          ...['phone', 'email', 'code', 'desiredCareer', 'password'].flatMap((k) => [k, `*.${k}`]),
+          'req.headers.cookie',
+          'req.headers.authorization',
+          'req.headers["x-xsrf-token"]',
+        ],
+      },
+
+      /**
        * Use sync destination in non-production for immediate flush.
        */
       destination: !app.inProduction ? await syncDestination() : undefined,
