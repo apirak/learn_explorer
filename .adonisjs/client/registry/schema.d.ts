@@ -60,6 +60,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_test_controller').default['answer']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'student.result': {
+    methods: ["GET","HEAD"]
+    pattern: '/result'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['show']>>>
+    }
+  }
   'health': {
     methods: ["GET","HEAD"]
     pattern: '/health'

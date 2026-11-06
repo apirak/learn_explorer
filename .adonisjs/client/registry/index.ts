@@ -32,6 +32,12 @@ const routes = {
     tokens: [[0,"test"],[0,"answers"]],
     types: placeholder as Registry['student.test.answer']['types'],
   },
+  'student.result': {
+    methods: ["GET","HEAD"],
+    pattern: '/result',
+    tokens: [[0,"result"]],
+    types: placeholder as Registry['student.result']['types'],
+  },
   'health': {
     methods: ["GET","HEAD"],
     pattern: '/health',

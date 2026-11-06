@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Head } from '@inertiajs/react'
+import { Link } from '@adonisjs/inertia/react'
 import { client } from '~/client'
 import { type InertiaProps } from '~/types'
 import LikertScale from '~/components/ui/likert_scale'
@@ -199,14 +200,14 @@ export default function StudentTest({
               ถัดไป
             </button>
           ) : (
-            // ponytail: the result page is #6; until then "ดูผล" only shows readiness.
-            <button
-              type="button"
+            <Link
+              route="student.result"
               className={`btn btn--primary${ready ? ' ready' : ''}`}
-              disabled={!ready}
+              aria-disabled={!ready}
+              onClick={(e) => !ready && e.preventDefault()}
             >
               ดูผล
-            </button>
+            </Link>
           )}
         </div>
       </section>

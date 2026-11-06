@@ -9,6 +9,7 @@ export interface ApiDefinition {
       show: typeof routes['student.test.show']
       answer: typeof routes['student.test.answer']
     }
+    result: typeof routes['student.result']
   }
   health: typeof routes['health']
   newAccount: {

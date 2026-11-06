@@ -23,6 +23,7 @@ router
   .group(() => {
     router.get('test', [controllers.StudentTest, 'show']).as('test.show')
     router.post('test/answers', [controllers.StudentTest, 'answer']).as('test.answer')
+    router.get('result', [controllers.StudentResult, 'show']).as('result')
   })
   .as('student')
   .use(middleware.studentAttempt({ required: true }))
