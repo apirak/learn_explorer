@@ -91,7 +91,7 @@ test.group('Student result', (group) => {
     assert.equal(attempt.interestCode?.[0], 'C')
   })
 
-  test('sends the code with Thai names, the top 5 matches and the attribution only', async ({
+  test('the result sends the code with Thai names and the attribution, no matches', async ({
     client,
     assert,
   }) => {
@@ -111,20 +111,10 @@ test.group('Student result', (group) => {
     assert.equal(props.result.max, 20)
     assert.equal(props.result.types[0].name, 'นักลงมือทำ')
     assert.include(props.attribution, 'O*NET')
-
-    assert.lengthOf(props.matches, 5)
-    for (const match of props.matches) {
-      assert.match(match.code, /^\d\d-\d{4}\.\d\d$/)
-      assert.oneOf(match.fit, ['best', 'great', 'good'])
-      assert.isString(match.title)
-      assert.isAtMost(match.fields.length, 3)
-    }
-    // Never the full data files: no program lists, and the whole page stays small.
-    assert.notInclude(JSON.stringify(props), 'university')
-    assert.isBelow(JSON.stringify(props).length, 10_000)
+    assert.notProperty(props, 'matches') // they live on /careers
   })
 
-  test('an invalid profile gets its status and no matches', async ({ client, assert }) => {
+  test('an invalid profile gets its status on the result', async ({ client, assert }) => {
     for (const [value, status] of [
       [0, 'all-dislike'],
       [3, 'flat'],
@@ -136,11 +126,70 @@ test.group('Student result', (group) => {
         .withEncryptedCookie('le_attempt', cookie(attempt))
         .withInertia()
 
-      const props = response.inertiaProps as Record<string, any>
-      assert.equal(props.result.status, status)
-      assert.deepEqual(props.matches, [])
+      assert.equal((response.inertiaProps as Record<string, any>).result.status, status)
       await attempt.refresh()
       assert.equal(attempt.profileStatus, status)
     }
+  })
+})
+
+test.group('Student careers', (group) => {
+  group.each.setup(() => testUtils.db().withGlobalTransaction())
+
+  const cookie = (a: Attempt) => ({ uuid: a.uuid, code: a.code })
+
+  test('needs an attempt, all 30 answers and a valid profile', async ({ client }) => {
+    const none = await client.get('/careers').redirects(0)
+    none.assertHeader('location', '/')
+
+    const partial = await Attempt.create({ contentVersion: 'v1', furthestStep: 'test' })
+    await Answer.create({ attemptId: partial.id, itemId: 'R1', value: 4 })
+    const early = await client
+      .get('/careers')
+      .withEncryptedCookie('le_attempt', cookie(partial))
+      .redirects(0)
+    early.assertHeader('location', '/test')
+
+    const flat = await Attempt.create({ contentVersion: 'v1', furthestStep: 'test' })
+    await answerAll(flat, 3)
+    const invalid = await client
+      .get('/careers')
+      .withEncryptedCookie('le_attempt', cookie(flat))
+      .redirects(0)
+    invalid.assertHeader('location', '/result')
+  })
+
+  test('sends the top 5 matches with fit and fields, the guess and the attribution only', async ({
+    client,
+    assert,
+  }) => {
+    const attempt = await Attempt.create({
+      contentVersion: 'v1',
+      furthestStep: 'test',
+      desiredCareer: 'นักพัฒนาเกม',
+    })
+    const boost = Object.fromEntries(MINI.filter((id) => id[0] === 'R').map((id) => [id, 4]))
+    await answerAll(attempt, 2, boost)
+
+    const response = await client
+      .get('/careers')
+      .withEncryptedCookie('le_attempt', cookie(attempt))
+      .withInertia()
+
+    response.assertInertiaComponent('student/careers')
+    const props = response.inertiaProps as Record<string, any>
+    assert.equal(props.guess, 'นักพัฒนาเกม')
+    assert.include(props.attribution, 'O*NET')
+    assert.lengthOf(props.matches, 5)
+    for (const match of props.matches) {
+      assert.match(match.code, /^\d\d-\d{4}\.\d\d$/)
+      assert.oneOf(match.fit, ['best', 'great', 'good'])
+      assert.isString(match.title)
+      assert.isAtMost(match.fields.length, 3)
+    }
+    assert.include(props.matches[0].shared, 'นักลงมือทำ') // R is the student's top type
+    // Never the full data files: no program lists, and the whole page stays small.
+    assert.notInclude(JSON.stringify(props), 'university')
+    assert.isBelow(JSON.stringify(props).length, 10_000)
   })
 })

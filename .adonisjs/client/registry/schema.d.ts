@@ -73,6 +73,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['show']>>>
     }
   }
+  'student.careers': {
+    methods: ["GET","HEAD"]
+    pattern: '/careers'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['careers']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['careers']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['careers']>>>
+    }
+  }
   'health': {
     methods: ["GET","HEAD"]
     pattern: '/health'

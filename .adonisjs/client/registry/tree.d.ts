@@ -10,6 +10,7 @@ export interface ApiDefinition {
       answer: typeof routes['student.test.answer']
     }
     result: typeof routes['student.result']
+    careers: typeof routes['student.careers']
   }
   health: typeof routes['health']
   newAccount: {

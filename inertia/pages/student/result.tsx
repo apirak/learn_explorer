@@ -3,10 +3,8 @@ import { Link } from '@adonisjs/inertia/react'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 import Attribution from '~/components/ui/attribution'
-import Chip from '~/components/ui/chip'
 
 const RIASEC = ['R', 'I', 'A', 'S', 'E', 'C'] as const
-const FIT_LABELS = { best: 'เหมาะมาก', great: 'เหมาะ', good: 'พอใช้' }
 
 /** Holland hexagon: six axes, grid rings at quarters, the score shape on top (prototype app.js). */
 function Hexagon({ scores, max }: { scores: Data.Result['scores']; max: number }) {
@@ -63,77 +61,40 @@ function Invalid({ status }: { status: Data.Result['status'] }) {
 
 export default function StudentResult({
   result,
-  matches,
   attribution,
-}: InertiaProps<{ result: Data.Result; matches: Data.OccupationMatch[]; attribution: string }>) {
-  const name = (t: string) => result.types.find((x) => x.type === t)?.name
-  const reason = (shared: string[]) =>
-    shared.length
-      ? `งานนี้ใช้ความเป็น${shared.map(name).join(' และ ')} ซึ่งน้องมีสูง`
-      : 'รูปแบบความสนใจโดยรวมคล้ายกับของน้อง'
-
+}: InertiaProps<{ result: Data.Result; attribution: string }>) {
   return (
     <main className="ip result">
       <Head title="ผลของน้อง" />
       {result.status !== 'ok' ? (
         <Invalid status={result.status} />
       ) : (
-        <div className="result-stack">
-          <div className="sheet">
-            <span className="eyebrow">รหัสความสนใจของน้อง</span>
-            <div className="code-row">
-              <span className="code">{result.code.join('')}</span>
-              <span className="muted small">
-                เรียงจากมากไปน้อย
-                <br />
-                อิงทฤษฎี RIASEC ของ Holland
-              </span>
-            </div>
-            <div className="hexwrap">
-              <Hexagon scores={result.scores} max={result.max} />
-            </div>
-            <div className="types">
-              {result.types.map((t) => (
-                <div key={t.type} className="type">
-                  <h3>
-                    {t.type} · {t.name}
-                  </h3>
-                  <p className="small muted">{t.desc}</p>
-                </div>
-              ))}
-            </div>
+        <div className="sheet">
+          <span className="eyebrow">รหัสความสนใจของน้อง</span>
+          <div className="code-row">
+            <span className="code">{result.code.join('')}</span>
+            <span className="muted small">
+              เรียงจากมากไปน้อย
+              <br />
+              อิงทฤษฎี RIASEC ของ Holland
+            </span>
           </div>
-
-          <section className="result-stack" aria-labelledby="careers">
-            <header>
-              <h2 id="careers">{matches.length} อาชีพที่น่าลองดู</h2>
-              <p className="muted">
-                อาชีพระดับปริญญาตรีขึ้นไปที่มีรูปแบบความสนใจใกล้กับน้องที่สุด
-                ระดับความเหมาะใช้เกณฑ์เดียวกับ O*NET
-              </p>
-            </header>
-            <div className="occ">
-              {matches.map((m) => (
-                <article key={m.code} className="occ-card">
-                  <span className="occ-head">
-                    <span className="occ-name">{m.title}</span>
-                    <Chip tone="lime">{FIT_LABELS[m.fit]}</Chip>
-                  </span>
-                  {m.title !== m.titleEn && <span className="small muted">{m.titleEn}</span>}
-                  <span className="small">
-                    <span className="tag">{m.typeCode || '—'}</span>{' '}
-                    <span className="muted">{reason(m.shared)}</span>
-                  </span>
-                  {m.fields.length > 0 && (
-                    <span className="small">
-                      สาขาที่เรียนได้:{' '}
-                      {m.fields.map((f) => f.name + (f.unsure ? ' (ยังไม่แน่ใจ)' : '')).join(' · ')}
-                    </span>
-                  )}
-                </article>
-              ))}
-            </div>
-          </section>
+          <div className="hexwrap">
+            <Hexagon scores={result.scores} max={result.max} />
+          </div>
+          <div className="types">
+            {result.types.map((t) => (
+              <div key={t.type} className="type">
+                <h3>
+                  {t.type} · {t.name}
+                </h3>
+                <p className="small muted">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+          <Link route="student.careers" className="btn btn--primary">
+            5 อาชีพที่น่าลองดู →
+          </Link>
         </div>
       )}
       <Attribution text={attribution} />
