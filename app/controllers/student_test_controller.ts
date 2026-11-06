@@ -11,6 +11,7 @@ export default class StudentTestController {
   async show({ inertia, attempt }: HttpContext) {
     const answers = await attempt!.related('answers').query().select('itemId', 'value')
     return inertia.render('student/test', {
+      attemptUuid: attempt!.uuid, // key for the unsent-answers queue in sessionStorage
       items: questionOrder(content.items, content.forms.mini.ids).map((item) => ({
         id: item.id,
         text: item.text_th,

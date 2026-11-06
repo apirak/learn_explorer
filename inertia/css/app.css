@@ -1134,6 +1134,11 @@ input {
 .ip .quiz > .progress {
   grid-row: 4;
 }
+.ip .save-notice {
+  grid-row: 6;
+  align-self: start;
+  justify-self: center;
+}
 .ip .nav {
   grid-row: 5;
   display: flex;

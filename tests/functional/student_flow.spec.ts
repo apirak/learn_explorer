@@ -175,6 +175,7 @@ test.group('Student flow: start and answers', (group) => {
 
     response.assertInertiaComponent('student/test')
     const props = response.inertiaProps as {
+      attemptUuid: string
       items: { id: string; text: string; type: string }[]
       answers: Record<string, number>
       total: number
@@ -188,6 +189,7 @@ test.group('Student flow: start and answers', (group) => {
     assert.equal(props.items[0].type, 'Realistic')
     assert.deepEqual(props.answers, { R1: 4, I1: 1 })
     assert.equal(props.total, 30)
+    assert.equal(props.attemptUuid, attempt.uuid) // keys the unsent-answers queue
   })
 
   test('Home offers to continue an unfinished attempt', async ({ client }) => {
