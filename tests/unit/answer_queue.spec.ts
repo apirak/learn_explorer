@@ -18,7 +18,7 @@ const DELAYS = [1, 1, 1]
 test.group('AnswerQueue', () => {
   test('keeps the latest value per item and survives a reload', async ({ assert }) => {
     const store = memoryStore()
-    const offline = async (): Promise<Outcome> => 'network'
+    const offline = async (): Promise<Outcome> => 'retry'
     const q = new AnswerQueue('u1', store, offline, () => {}, [60_000])
     q.put('R1', 1)
     q.put('I1', 2)
@@ -59,8 +59,8 @@ test.group('AnswerQueue', () => {
     assert.isFalse(store.data.has('le_answers:u1'))
   })
 
-  test('retries network failures and 5xx, counting failures in a row', async ({ assert }) => {
-    const replies: Outcome[] = ['network', { status: 503 }, 'network', { answered: 1 }]
+  test('retries with backoff, counting failures in a row', async ({ assert }) => {
+    const replies: Outcome[] = ['retry', 'retry', 'retry', { answered: 1 }]
     const seen: number[] = []
     const q: AnswerQueue = new AnswerQueue(
       'u2',
@@ -76,14 +76,14 @@ test.group('AnswerQueue', () => {
     assert.equal(q.answered, 1)
   })
 
-  test('a 4xx is not retried and is reported', async ({ assert }) => {
+  test('a refused answer is not retried and is reported', async ({ assert }) => {
     let calls = 0
     const q = new AnswerQueue(
       'u3',
       memoryStore(),
       async () => {
         calls++
-        return { status: 422 }
+        return { rejected: 422 }
       },
       () => {},
       DELAYS
@@ -94,6 +94,26 @@ test.group('AnswerQueue', () => {
     assert.equal(calls, 1)
     assert.equal(q.rejected, 422)
     assert.equal(q.pending.size, 0)
+  })
+
+  test('a stopped queue sends and schedules nothing more', async ({ assert }) => {
+    let calls = 0
+    const q = new AnswerQueue(
+      'u5',
+      memoryStore(),
+      async () => {
+        calls++
+        q.stop() // page unmounts while this send is in flight
+        return 'retry'
+      },
+      () => {},
+      DELAYS
+    )
+    q.put('R1', 3)
+    await tick()
+    await tick()
+    assert.equal(calls, 1)
+    assert.equal(q.failures, 0)
   })
 
   test('a newer tap during a send stays queued', async ({ assert }) => {

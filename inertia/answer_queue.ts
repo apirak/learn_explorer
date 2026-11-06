@@ -1,17 +1,17 @@
-/** What one save returned: the server's count, an HTTP status, or no response at all. */
-export type Outcome = { answered: number } | { status: number } | 'network'
+/** What one save returned: the server's count, try again later, or refused for good (4xx). */
+export type Outcome = { answered: number } | 'retry' | { rejected: number }
 
 type Store = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 
 /** Wait before retry n (capped at the last value). */
-export const RETRY_DELAYS = [1000, 2000, 4000, 8000, 15000]
+const RETRY_DELAYS = [1000, 2000, 4000, 8000, 15000]
 /** Failed tries in a row before the student is told. */
 export const NOTICE_AFTER = 3
 
 /**
  * Unsent answers, latest value per item, mirrored to `sessionStorage` under the attempt UUID
  * so a reload in the same tab keeps them. Sends one at a time, in order.
- * Network failures and 5xx retry with capped backoff; a 4xx is dropped and reported.
+ * Retryable failures back off (capped); a refused answer is dropped and reported.
  */
 export default class AnswerQueue {
   /** Server-confirmed answer count from the latest save, or null before the first one. */
@@ -23,6 +23,7 @@ export default class AnswerQueue {
 
   #pending: Map<string, number>
   #busy = false
+  #stopped = false
   #timer: ReturnType<typeof setTimeout> | undefined
   #key: string
 
@@ -58,13 +59,14 @@ export default class AnswerQueue {
   async flush() {
     clearTimeout(this.#timer)
     this.#timer = undefined
-    if (this.#busy) return
+    if (this.#busy || this.#stopped) return
     this.#busy = true
     try {
       while (this.#pending.size) {
         const [itemId, value] = this.#pending.entries().next().value!
         const outcome = await this.send(itemId, value)
-        if (outcome === 'network' || ('status' in outcome && outcome.status >= 500)) {
+        if (this.#stopped) return // page left: a new queue owns the storage now
+        if (outcome === 'retry') {
           this.failures++
           const delay = this.delays[Math.min(this.failures, this.delays.length) - 1]
           this.#timer = setTimeout(() => void this.flush(), delay)
@@ -76,8 +78,8 @@ export default class AnswerQueue {
         this.#persist()
         if ('answered' in outcome) this.answered = outcome.answered
         else {
-          this.rejected = outcome.status
-          console.error('answer rejected', itemId, outcome.status)
+          this.rejected = outcome.rejected
+          console.error('answer rejected', itemId, outcome.rejected)
         }
         this.onChange()
       }
@@ -86,7 +88,15 @@ export default class AnswerQueue {
     }
   }
 
+  /** For mount (again, under StrictMode): send what is waiting. */
+  start() {
+    this.#stopped = false
+    void this.flush()
+  }
+
+  /** For unmount: no more sends, no more timers, no more storage writes. */
   stop() {
+    this.#stopped = true
     clearTimeout(this.#timer)
   }
 

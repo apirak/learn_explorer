@@ -12,7 +12,9 @@ type Item = { id: string; text: string; type: string }
 async function sendAnswer(itemId: string, value: number): Promise<Outcome> {
   const [data, error] = await client.api.student.test.answer({ body: { itemId, value } }).safe()
   if (!error) return data
-  return error.kind === 'network' ? 'network' : { status: error.status ?? 0 }
+  // Network and 5xx retry; only a 4xx is a refusal [N4].
+  const status = error.kind === 'http' ? (error.status ?? 0) : 0
+  return status >= 400 && status < 500 ? { rejected: status } : 'retry'
 }
 
 /** Question change motion, from the prototype (app.js STEP_MOTION). */
@@ -110,25 +112,25 @@ function flyToBar(svg: Element, bar: HTMLElement) {
 }
 
 export default function StudentTest({
-  attemptId,
+  attemptUuid,
   items,
   answers: saved,
   total,
 }: InertiaProps<{
-  attemptId: string
+  attemptUuid: string
   items: Item[]
   answers: Record<string, number>
   total: number
 }>) {
   const [, rerender] = useReducer((n: number) => n + 1, 0)
-  const [queue] = useState(() => new AnswerQueue(attemptId, sessionStorage, sendAnswer, rerender))
+  const [queue] = useState(() => new AnswerQueue(attemptUuid, sessionStorage, sendAnswer, rerender))
   // Answers this tab has not sent yet (kept across a reload) win over the server's copy.
   const [answers, setAnswers] = useState(() => ({ ...saved, ...Object.fromEntries(queue.pending) }))
   const serverAnswered = queue.answered ?? Object.keys(saved).length
   // Refresh resumes at the first unanswered question; "กลับไปทบทวน" (?review) starts at 1.
   const review = new URLSearchParams(usePage().url.split('?')[1]).has('review')
   const [idx, setIdx] = useState(() => {
-    const open = items.findIndex((it) => !(it.id in saved))
+    const open = items.findIndex((it) => !(it.id in answers))
     if (open !== -1) return open
     return review ? 0 : items.length - 1
   })
@@ -138,7 +140,7 @@ export default function StudentTest({
 
   useEffect(() => {
     const flush = () => void queue.flush()
-    flush()
+    queue.start()
     addEventListener('online', flush)
     return () => {
       removeEventListener('online', flush)
@@ -150,6 +152,11 @@ export default function StudentTest({
   const done = items.filter((it) => it.id in answers).length
   // "ดูผล" waits for the server to hold every answer, not just this browser.
   const ready = done === total && serverAnswered === total && queue.pending.size === 0
+  const notice = queue.rejected
+    ? { label: 'บันทึกบางข้อไม่สำเร็จ แตะเพื่อโหลดหน้าใหม่', action: () => location.reload() }
+    : queue.failures >= NOTICE_AFTER
+      ? { label: 'บันทึกไม่สำเร็จ แตะเพื่อลองใหม่', action: () => void queue.flush() }
+      : null
 
   useLayoutEffect(() => {
     if (step.current) animateStep(question.current!, step.current.oldText, step.current.dir)
@@ -199,25 +206,16 @@ export default function StudentTest({
           label="ตอบแล้ว"
           count={done === total ? 'ครบแล้ว' : `เหลือ ${total - done} ข้อ`}
         />
-        {queue.rejected ? (
+        {notice && (
           <button
             type="button"
             className="btn btn--secondary save-notice"
             role="alert"
-            onClick={() => location.reload()}
+            onClick={notice.action}
           >
-            บันทึกบางข้อไม่สำเร็จ แตะเพื่อโหลดหน้าใหม่
+            {notice.label}
           </button>
-        ) : queue.failures >= NOTICE_AFTER ? (
-          <button
-            type="button"
-            className="btn btn--secondary save-notice"
-            role="alert"
-            onClick={() => void queue.flush()}
-          >
-            บันทึกไม่สำเร็จ แตะเพื่อลองใหม่
-          </button>
-        ) : null}
+        )}
         <div className="nav">
           <button
             type="button"
