@@ -62,17 +62,41 @@ const routes = {
     tokens: [[0,"login"]],
     types: placeholder as Registry['session.store']['types'],
   },
-  'dashboard': {
+  'account.show': {
     methods: ["GET","HEAD"],
-    pattern: '/dashboard',
-    tokens: [[0,"dashboard"]],
-    types: placeholder as Registry['dashboard']['types'],
+    pattern: '/account',
+    tokens: [[0,"account"]],
+    types: placeholder as Registry['account.show']['types'],
+  },
+  'account.profile': {
+    methods: ["PUT"],
+    pattern: '/account/profile',
+    tokens: [[0,"account"],[0,"profile"]],
+    types: placeholder as Registry['account.profile']['types'],
+  },
+  'account.password': {
+    methods: ["PUT"],
+    pattern: '/account/password',
+    tokens: [[0,"account"],[0,"password"]],
+    types: placeholder as Registry['account.password']['types'],
+  },
+  'account.destroy': {
+    methods: ["DELETE"],
+    pattern: '/account',
+    tokens: [[0,"account"]],
+    types: placeholder as Registry['account.destroy']['types'],
   },
   'session.destroy': {
     methods: ["POST"],
     pattern: '/logout',
     tokens: [[0,"logout"]],
     types: placeholder as Registry['session.destroy']['types'],
+  },
+  'admin.dashboard': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin',
+    tokens: [[0,"admin"]],
+    types: placeholder as Registry['admin.dashboard']['types'],
   },
 } as const satisfies Record<string, AdonisEndpoint>
 

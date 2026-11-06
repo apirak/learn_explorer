@@ -13,8 +13,8 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
           <Logo size={28} />
           <div className="header__right">
             {props.user ? (
-              <Link route="dashboard" className="btn btn--primary btn--sm">
-                Dashboard
+              <Link route="account.show" className="btn btn--primary btn--sm">
+                Account
               </Link>
             ) : (
               <>

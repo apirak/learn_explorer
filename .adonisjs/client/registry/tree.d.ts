@@ -20,5 +20,13 @@ export interface ApiDefinition {
     store: typeof routes['session.store']
     destroy: typeof routes['session.destroy']
   }
-  dashboard: typeof routes['dashboard']
+  account: {
+    show: typeof routes['account.show']
+    profile: typeof routes['account.profile']
+    password: typeof routes['account.password']
+    destroy: typeof routes['account.destroy']
+  }
+  admin: {
+    dashboard: typeof routes['admin.dashboard']
+  }
 }
