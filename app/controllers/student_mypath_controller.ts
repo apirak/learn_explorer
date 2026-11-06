@@ -1,11 +1,12 @@
-import { DateTime } from 'luxon'
 import StudentContact from '#models/student_contact'
 import consent from '#services/consent_service'
 import content from '#services/content_service'
+import ConsentTransformer from '#transformers/consent_transformer'
 import { transformMatches } from '#transformers/occupation_match_transformer'
 import ResultTransformer from '#transformers/result_transformer'
 import { downloadValidator } from '#validators/student'
 import type { HttpContext } from '@adonisjs/core/http'
+import { DateTime } from 'luxon'
 
 export default class StudentMypathController {
   /** `GET /mypath`: contact form, consent text (unticked) and Download. Needs a finished test. */
@@ -13,15 +14,23 @@ export default class StudentMypathController {
     if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
     await attempt!.reachStep('mypath') // saves the scores too
 
-    return inertia.render('student/mypath', { consent: consent.blocks })
+    return inertia.render('student/mypath', { consent: ConsentTransformer.transform(consent) })
   }
 
   /**
-   * `POST /mypath/download`: stores phone and email only when consent is ticked, otherwise
-   * discards them. Records the first download time [N5], then opens the printable page.
+   * `POST /mypath/download`: phone and email count only when consent is ticked; otherwise they
+   * are discarded unread, so they can never block Download. Records the first download time
+   * [N5], then opens the printable page.
    */
   async download({ request, response, logger, attempt }: HttpContext) {
-    const { phone, email, consent: consented } = await request.validateUsing(downloadValidator)
+    if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
+
+    const input = request.only(['phone', 'email', 'consent'])
+    const {
+      phone,
+      email,
+      consent: consented,
+    } = await downloadValidator.validate(input.consent ? input : {})
 
     if (consented && (phone || email)) {
       await StudentContact.updateOrCreate(
@@ -34,8 +43,7 @@ export default class StudentMypathController {
         }
       )
     }
-    attempt!.downloadedAt ??= DateTime.now()
-    await attempt!.save()
+    await attempt!.markDownloaded()
     logger.info({ attempt: attempt!.uuid, consented: !!consented }, 'download') // UUID only [DP-001]
 
     return response.redirect().toRoute('student.mypath.print')

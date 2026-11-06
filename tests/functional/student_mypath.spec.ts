@@ -29,6 +29,16 @@ const cookie = (a: Attempt) => ({ uuid: a.uuid, code: a.code })
 test.group('Student MyPath', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
 
+  /** `POST /mypath/download` from the MyPath form. */
+  const download = (client: any, attempt: Attempt, form: Record<string, string>) =>
+    client
+      .post('/mypath/download')
+      .withEncryptedCookie('le_attempt', cookie(attempt))
+      .withCsrfToken()
+      .header('referer', '/mypath')
+      .form(form)
+      .redirects(0)
+
   test('needs an attempt', async ({ client }) => {
     for (const url of ['/mypath', '/mypath/print']) {
       const response = await client.get(url).redirects(0)
@@ -45,7 +55,7 @@ test.group('Student MyPath', (group) => {
     const response = await open()
     response.assertStatus(200)
     response.assertInertiaComponent('student/mypath')
-    assert.deepInclude(response.inertiaProps.consent, {
+    assert.deepInclude(response.inertiaProps.consent.blocks, {
       type: 'heading',
       text: 'ยินยอมให้ติดต่อกลับ',
     })
@@ -59,25 +69,22 @@ test.group('Student MyPath', (group) => {
     assert.equal(attempt.mypathAt!.toMillis(), mypathAt!.toMillis())
   })
 
-  test('sends an unfinished test back to the test', async ({ client }) => {
+  test('sends an unfinished test back to the test', async ({ client, assert }) => {
     const attempt = await Attempt.create({ contentVersion: 'v1', furthestStep: 'test' })
-    const response = await client
-      .get('/mypath')
-      .withEncryptedCookie('le_attempt', cookie(attempt))
-      .redirects(0)
-    response.assertStatus(302)
-    response.assertHeader('location', '/test')
+    for (const url of ['/mypath', '/mypath/print']) {
+      const response = await client
+        .get(url)
+        .withEncryptedCookie('le_attempt', cookie(attempt))
+        .redirects(0)
+      response.assertStatus(302)
+      response.assertHeader('location', '/test')
+    }
+    const post = await download(client, attempt, {})
+    post.assertHeader('location', '/test')
+    await attempt.refresh()
+    assert.isNull(attempt.downloadedAt)
+    assert.equal(attempt.furthestStep, 'test')
   })
-
-  /** `POST /mypath/download` from the MyPath form. */
-  const download = (client: any, attempt: Attempt, form: Record<string, string>) =>
-    client
-      .post('/mypath/download')
-      .withEncryptedCookie('le_attempt', cookie(attempt))
-      .withCsrfToken()
-      .header('referer', '/mypath')
-      .form(form)
-      .redirects(0)
 
   test('with consent: stores the contact, consent time and version', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
@@ -145,7 +152,7 @@ test.group('Student MyPath', (group) => {
       consent: 'on',
     })
     assert.deepEqual(fieldErrors(email, 'email'), ['อีเมลไม่ถูกต้อง ลองตรวจอีกครั้ง'])
-    const bad = await download(client, attempt, { email: 'not-an-email' })
+    const bad = await download(client, attempt, { email: 'not-an-email', consent: 'on' })
     assert.deepEqual(fieldErrors(bad, 'email'), ['อีเมลไม่ถูกต้อง ลองตรวจอีกครั้ง'])
 
     assert.lengthOf(await StudentContact.all(), 0)
@@ -172,12 +179,22 @@ test.group('Student MyPath', (group) => {
     assert.equal(attribution, content.attribution)
   })
 
-  test('print sends an unfinished test back to the test', async ({ client }) => {
-    const attempt = await Attempt.create({ contentVersion: 'v1', furthestStep: 'test' })
-    const response = await client
-      .get('/mypath/print')
-      .withEncryptedCookie('le_attempt', cookie(attempt))
-      .redirects(0)
-    response.assertHeader('location', '/test')
+  test('without consent: a bad phone or email is discarded, not an error', async ({
+    client,
+    assert,
+  }) => {
+    const attempt = await scoredAttempt()
+    const response = await download(client, attempt, { phone: '12345', email: 'nope' })
+    response.assertHeader('location', '/mypath/print')
+    assert.lengthOf(await StudentContact.all(), 0)
+    await attempt.refresh()
+    assert.isNotNull(attempt.downloadedAt)
+  })
+
+  test('the blank form downloads', async ({ client, assert }) => {
+    const attempt = await scoredAttempt()
+    const response = await download(client, attempt, { phone: '', email: '' })
+    response.assertHeader('location', '/mypath/print')
+    assert.lengthOf(await StudentContact.all(), 0)
   })
 })

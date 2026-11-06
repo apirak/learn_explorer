@@ -61,4 +61,10 @@ export default class Attempt extends AttemptSchema {
     if (step !== 'test') this[STEP_AT[step]] ??= DateTime.now()
     await this.save()
   }
+
+  /** Download records only its first time [N5]. Saves the scores merged by `score()` too. */
+  async markDownloaded() {
+    this.downloadedAt ??= DateTime.now()
+    await this.save()
+  }
 }

@@ -21,7 +21,7 @@ test.group('Consent text', () => {
   /**
    * RELEASE BLOCKER [N2]. Students must see Legal's verbatim text, never the placeholder.
    * TODO(release): add Legal's file to resources/consent/, point CONSENT_VERSION at it, and
-   * this passes. Skipped in day-to-day runs; `RELEASE=1 node ace test` must pass before launch.
+   * this passes. Skipped in day-to-day runs; `npm run test:release` must pass before launch.
    */
   test('CONSENT_VERSION names Legal-approved text, not a placeholder', ({ assert }) => {
     assert.notMatch(CONSENT_VERSION, /^placeholder/)

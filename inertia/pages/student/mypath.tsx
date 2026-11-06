@@ -1,13 +1,10 @@
 import { Fragment } from 'react'
 import { Head } from '@inertiajs/react'
 import { Form, Link } from '@adonisjs/inertia/react'
+import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 
-type Props = { consent: ConsentBlock[] }
-type ConsentBlock =
-  | { type: 'heading'; text: string }
-  | { type: 'paragraph'; text: string }
-  | { type: 'list'; items: string[] }
+type ConsentBlock = Data.Consent['blocks'][number]
 
 /** `**bold**` inside a consent line. */
 function Inline({ text }: { text: string }) {
@@ -39,7 +36,7 @@ function Block({ block }: { block: ConsentBlock }) {
  * MyPath: optional contact details with a separate, unticked consent box, then Download.
  * Download works either way; without consent the phone and email are discarded.
  */
-export default function StudentMypath({ consent }: InertiaProps<Props>) {
+export default function StudentMypath({ consent }: InertiaProps<{ consent: Data.Consent }>) {
   return (
     <main className="ip result">
       <Head title="เส้นทางของน้อง" />
@@ -91,7 +88,7 @@ export default function StudentMypath({ consent }: InertiaProps<Props>) {
                   {errors.email && <span className="field__error">{errors.email}</span>}
                 </div>
                 <div className="consent-text" tabIndex={0} aria-label="ข้อความขอความยินยอม">
-                  {consent.map((block, i) => (
+                  {consent.blocks.map((block, i) => (
                     <Block key={i} block={block} />
                   ))}
                 </div>
