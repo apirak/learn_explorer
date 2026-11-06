@@ -23,6 +23,7 @@ export default class StudentHomeController {
     const answered = attempt ? await attempt.answerCount() : 0
     return inertia.render('student/home', {
       resume: attempt && answered < total ? { answered, total } : null,
+      finished: answered === total, // CUJ 3: offer the previous result
     })
   }
 
