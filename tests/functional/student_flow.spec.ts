@@ -35,12 +35,13 @@ test.group('Student flow: start and answers', (group) => {
     }
   })
 
-  test('opening Home creates nothing', async ({ client, assert }) => {
+  test('opening Home creates nothing and shows the O*NET credit', async ({ client, assert }) => {
     const response = await client.get('/').withInertia()
 
     response.assertStatus(200)
     response.assertInertiaComponent('student/home')
     response.assertInertiaPropsContains({ resume: null })
+    assert.include((response.inertiaProps as Record<string, any>).attribution, 'O*NET')
     assert.lengthOf(await Attempt.all(), 0)
   })
 

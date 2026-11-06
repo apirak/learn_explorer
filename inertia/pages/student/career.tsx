@@ -2,7 +2,6 @@ import { Head } from '@inertiajs/react'
 import { Link } from '@adonisjs/inertia/react'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
-import Attribution from '~/components/ui/attribution'
 import Chip from '~/components/ui/chip'
 
 const FIT_LABELS = { best: 'เหมาะมาก', great: 'เหมาะ', good: 'พอใช้' }
@@ -11,8 +10,7 @@ const PROFILE_MAX = 7 // O*NET interest scores run 1–7
 /** One matched occupation: titles, its RIASEC profile, and the TCAS fields that lead to it (prototype careerView). */
 export default function StudentCareer({
   occupation: o,
-  attribution,
-}: InertiaProps<{ occupation: Data.Occupation; attribution: string }>) {
+}: InertiaProps<{ occupation: Data.Occupation }>) {
   return (
     <main className="ip result">
       <Head title={o.title} />
@@ -89,7 +87,6 @@ export default function StudentCareer({
           </p>
         </div>
       </div>
-      <Attribution text={attribution} />
     </main>
   )
 }

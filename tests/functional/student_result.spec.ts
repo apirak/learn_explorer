@@ -91,7 +91,7 @@ test.group('Student result', (group) => {
     assert.equal(attempt.interestCode?.[0], 'C')
   })
 
-  test('the result sends the code with Thai names and the attribution, no matches', async ({
+  test('the result sends the code with Thai names, no matches', async ({
     client,
     assert,
   }) => {
@@ -110,7 +110,6 @@ test.group('Student result', (group) => {
     assert.equal(props.result.scores.R, 20)
     assert.equal(props.result.max, 20)
     assert.equal(props.result.types[0].name, 'นักลงมือทำ')
-    assert.include(props.attribution, 'O*NET')
     assert.notProperty(props, 'matches') // they live on /careers
   })
 
@@ -159,7 +158,7 @@ test.group('Student careers', (group) => {
     invalid.assertHeader('location', '/result')
   })
 
-  test('sends the top 5 matches with fit and fields, the guess and the attribution only', async ({
+  test('sends the top 5 matches with fit and fields, and the guess only', async ({
     client,
     assert,
   }) => {
@@ -179,7 +178,6 @@ test.group('Student careers', (group) => {
     response.assertInertiaComponent('student/careers')
     const props = response.inertiaProps as Record<string, any>
     assert.equal(props.guess, 'นักพัฒนาเกม')
-    assert.include(props.attribution, 'O*NET')
     assert.lengthOf(props.matches, 5)
     for (const match of props.matches) {
       assert.match(match.code, /^\d\d-\d{4}\.\d\d$/)

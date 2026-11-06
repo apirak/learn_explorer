@@ -24,6 +24,7 @@ export default class StudentHomeController {
     return inertia.render('student/home', {
       resume: attempt && answered < total ? { answered, total } : null,
       finished: answered === total, // CUJ 3: offer the previous result
+      attribution: content.attribution,
     })
   }
 

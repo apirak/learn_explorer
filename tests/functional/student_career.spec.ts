@@ -63,7 +63,7 @@ test.group('Student career detail', (group) => {
     response.assertStatus(404)
   })
 
-  test('sends titles, RIASEC profile, ranked fields with at most 20 programs, and the attribution', async ({
+  test('sends titles, RIASEC profile, ranked fields with at most 20 programs', async ({
     client,
     assert,
   }) => {
@@ -77,7 +77,7 @@ test.group('Student career detail', (group) => {
 
     response.assertStatus(200)
     response.assertInertiaComponent('student/career')
-    const { occupation, attribution } = response.inertiaProps as Record<string, any>
+    const { occupation } = response.inertiaProps as Record<string, any>
     const source = content.occupations.find((o) => o.code === code)!
     assert.equal(occupation.code, code)
     assert.equal(occupation.titleEn, source.title)
@@ -93,7 +93,6 @@ test.group('Student career detail', (group) => {
       assert.equal(field.programCount, (content.tcasPrograms.fields[field.key] ?? []).length)
       assert.isString(field.group)
     }
-    assert.include(attribution, 'O*NET')
   })
 
   test('records one view per occupation and the career time once', async ({ client, assert }) => {

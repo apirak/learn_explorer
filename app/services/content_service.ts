@@ -64,7 +64,7 @@ const [itemsFile, riasecFile, occupationsFile, titlesFile, cipFile, fieldsFile, 
  * Server only: `tcasPrograms` is ~2 MB and must never reach the browser whole.
  */
 export class ContentService {
-  /** O*NET license credit: show it in full wherever O*NET content appears. */
+  /** O*NET license credit, shown in full on Home. */
   readonly attribution = itemsFile.attribution
   readonly items = itemsFile.items
   readonly forms = itemsFile.forms

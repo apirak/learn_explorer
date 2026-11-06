@@ -35,7 +35,6 @@ export default class StudentCareersController {
 
     return inertia.render('student/career', {
       occupation: OccupationTransformer.transform(match),
-      attribution: content.attribution,
     })
   }
 }

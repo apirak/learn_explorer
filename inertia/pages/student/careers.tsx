@@ -2,7 +2,6 @@ import { Head } from '@inertiajs/react'
 import { Link } from '@adonisjs/inertia/react'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
-import Attribution from '~/components/ui/attribution'
 import Chip from '~/components/ui/chip'
 
 const FIT_LABELS = { best: 'เหมาะมาก', great: 'เหมาะ', good: 'พอใช้' }
@@ -11,8 +10,7 @@ const FIT_LABELS = { best: 'เหมาะมาก', great: 'เหมาะ',
 export default function StudentCareers({
   guess,
   matches,
-  attribution,
-}: InertiaProps<{ guess: string | null; matches: Data.OccupationMatch[]; attribution: string }>) {
+}: InertiaProps<{ guess: string | null; matches: Data.OccupationMatch[] }>) {
   return (
     <main className="ip result">
       <Head title="5 อาชีพที่น่าลองดู" />
@@ -65,7 +63,6 @@ export default function StudentCareers({
           ))}
         </div>
       </div>
-      <Attribution text={attribution} />
     </main>
   )
 }

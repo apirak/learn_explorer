@@ -2,7 +2,6 @@ import { Head } from '@inertiajs/react'
 import { Link } from '@adonisjs/inertia/react'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
-import Attribution from '~/components/ui/attribution'
 
 const RIASEC = ['R', 'I', 'A', 'S', 'E', 'C'] as const
 
@@ -61,8 +60,7 @@ function Invalid({ status }: { status: Data.Result['status'] }) {
 
 export default function StudentResult({
   result,
-  attribution,
-}: InertiaProps<{ result: Data.Result; attribution: string }>) {
+}: InertiaProps<{ result: Data.Result }>) {
   return (
     <main className="ip result">
       <Head title="ผลของน้อง" />
@@ -97,7 +95,6 @@ export default function StudentResult({
           </Link>
         </div>
       )}
-      <Attribution text={attribution} />
     </main>
   )
 }

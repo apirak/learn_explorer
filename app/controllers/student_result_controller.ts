@@ -13,7 +13,6 @@ export default class StudentResultController {
 
     return inertia.render('student/result', {
       result: ResultTransformer.transform(attempt!),
-      attribution: content.attribution,
     })
   }
 
@@ -33,7 +32,6 @@ export default class StudentResultController {
           shared: sharedHighTypes(m.occupation, scored.code).map(name),
         }))
       ),
-      attribution: content.attribution,
     })
   }
 }

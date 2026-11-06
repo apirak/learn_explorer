@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react'
 import { Form, Link } from '@adonisjs/inertia/react'
 import { type InertiaProps } from '~/types'
 import { LikertFace } from '~/components/ui/likert_scale'
+import Attribution from '~/components/ui/attribution'
 
 /** The dream card shows this until the student types a career. */
 const DREAM_EXAMPLE = 'นักพัฒนาเกม'
@@ -10,9 +11,11 @@ const DREAM_EXAMPLE = 'นักพัฒนาเกม'
 export default function StudentHome({
   resume,
   finished,
+  attribution,
 }: InertiaProps<{
   resume: { answered: number; total: number } | null
   finished: boolean
+  attribution: string
 }>) {
   const [guess, setGuess] = useState('')
   const input = useRef<HTMLInputElement>(null)
@@ -136,6 +139,7 @@ export default function StudentHome({
       </section>
 
       <footer className="ip-credits">
+        <Attribution text={attribution} />
         <p>
           ข้อคำถามดัดแปลงจาก O*NET Interest Profiler Short Form และ Mini Interest Profiler (Mini-IP)
           และข้อมูลอาชีพจาก O*NET 31.0 Database โดย U.S. Department of Labor, Employment and
