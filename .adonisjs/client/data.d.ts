@@ -6,15 +6,15 @@
 /// <reference path="./manifest.d.ts" />
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
-import type OccupationTransformer from '#transformers/occupation_transformer'
+import type OccupationMatchTransformer from '#transformers/occupation_match_transformer'
 import type ResultTransformer from '#transformers/result_transformer'
 import type UserTransformer from '#transformers/user_transformer'
 import type InertiaMiddleware from '#middleware/inertia_middleware'
 
 export namespace Data {
-  export type Occupation = InferData<OccupationTransformer>
-  export namespace Occupation {
-    export type Variants = InferVariants<OccupationTransformer>
+  export type OccupationMatch = InferData<OccupationMatchTransformer>
+  export namespace OccupationMatch {
+    export type Variants = InferVariants<OccupationMatchTransformer>
   }
   export type Result = InferData<ResultTransformer>
   export namespace Result {

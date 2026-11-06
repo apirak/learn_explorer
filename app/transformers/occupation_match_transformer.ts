@@ -7,7 +7,7 @@ import { BaseTransformer } from '@adonisjs/core/transformers'
 const FIELDS_SHOWN = 3
 
 /** One matched occupation with its top fields; never the program lists. */
-export default class OccupationTransformer extends BaseTransformer<
+export default class OccupationMatchTransformer extends BaseTransformer<
   OccupationMatch & { shared: RiasecType[] }
 > {
   toObject() {

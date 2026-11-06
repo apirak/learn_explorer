@@ -6,7 +6,7 @@ import {
   scoreAnswers,
   sharedHighTypes,
 } from '#services/scoring_service'
-import OccupationTransformer from '#transformers/occupation_transformer'
+import OccupationMatchTransformer from '#transformers/occupation_match_transformer'
 import ResultTransformer from '#transformers/result_transformer'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -41,7 +41,7 @@ export default class StudentResultController {
     const matches = status === 'ok' ? matchOccupations(scores, content.occupations) : []
     return inertia.render('student/result', {
       result: ResultTransformer.transform(attempt!),
-      matches: OccupationTransformer.transform(
+      matches: OccupationMatchTransformer.transform(
         matches.map((m) => ({ ...m, shared: sharedHighTypes(m.occupation, code) }))
       ),
       attribution: content.attribution,

@@ -65,7 +65,7 @@ export default function StudentResult({
   result,
   matches,
   attribution,
-}: InertiaProps<{ result: Data.Result; matches: Data.Occupation[]; attribution: string }>) {
+}: InertiaProps<{ result: Data.Result; matches: Data.OccupationMatch[]; attribution: string }>) {
   const name = (t: string) => result.types.find((x) => x.type === t)?.name
   const reason = (shared: string[]) =>
     shared.length
