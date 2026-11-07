@@ -51,3 +51,7 @@ The live admin page, refreshed every few seconds.
 
 **Report**:
 The admin page for occasional analysis over a chosen date range.
+
+**Export**:
+The CSV of attempts an admin downloads from the Students page, one row per attempt with full contact details, described column by column in `resources/exports/students.md` (ADR 0003).
+_Avoid_: report, dump

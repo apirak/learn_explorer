@@ -29,6 +29,8 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.report': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
+    'admin.students.export': { paramsTuple?: []; params?: {} }
+    'admin.students.dictionary': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.students.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
@@ -54,6 +56,8 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.report': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
+    'admin.students.export': { paramsTuple?: []; params?: {} }
+    'admin.students.dictionary': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
@@ -74,6 +78,8 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.report': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
+    'admin.students.export': { paramsTuple?: []; params?: {} }
+    'admin.students.dictionary': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }

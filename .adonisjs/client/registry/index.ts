@@ -158,6 +158,18 @@ const routes = {
     tokens: [[0,"admin"],[0,"students"]],
     types: placeholder as Registry['admin.students.index']['types'],
   },
+  'admin.students.export': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/students/export',
+    tokens: [[0,"admin"],[0,"students"],[0,"export"]],
+    types: placeholder as Registry['admin.students.export']['types'],
+  },
+  'admin.students.dictionary': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/students/export/dictionary',
+    tokens: [[0,"admin"],[0,"students"],[0,"export"],[0,"dictionary"]],
+    types: placeholder as Registry['admin.students.dictionary']['types'],
+  },
   'admin.students.show': {
     methods: ["GET","HEAD"],
     pattern: '/admin/students/:id',

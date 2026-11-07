@@ -61,6 +61,10 @@ router
     router.get('/', [controllers.admin.Dashboard, 'show']).as('dashboard')
     router.get('report', [controllers.admin.Reports, 'show']).as('report')
     router.get('students', [controllers.admin.Students, 'index']).as('students.index')
+    router.get('students/export', [controllers.admin.Students, 'export']).as('students.export')
+    router
+      .get('students/export/dictionary', [controllers.admin.Students, 'dictionary'])
+      .as('students.dictionary')
     router
       .get('students/:id', [controllers.admin.Students, 'show'])
       .where('id', router.matchers.number())

@@ -8,6 +8,8 @@ import StudentContact from '#models/student_contact'
 import User from '#models/user'
 import content from '#services/content_service'
 import testUtils from '@adonisjs/core/services/test_utils'
+import ace from '@adonisjs/core/services/ace'
+import BackfillScores from '../../commands/backfill_scores.js'
 
 const makeUser = (role: 'admin' | 'member') =>
   User.create({ email: `${role}@ondemand.test`, password: 'secret1234', role })
@@ -202,5 +204,132 @@ test.group('Admin student delete', (group) => {
       .loginAs(await makeUser('member'))
     res.assertStatus(403)
     assert.isNotNull(await Attempt.find(attempt.id))
+  })
+})
+
+/** Parses the export into header → value records. Fields here hold no commas or quotes. */
+const parseCsv = (text: string) => {
+  const [header, ...rows] = text
+    .replace(/^\uFEFF/, '')
+    .trimEnd()
+    .split('\r\n')
+  const keys = header.split(',')
+  return rows.map((row) => Object.fromEntries(row.split(',').map((v, i) => [keys[i], v])))
+}
+
+test.group('Admin student export', (group) => {
+  group.each.setup(() => testUtils.db().truncate())
+
+  test('downloads matching attempts as CSV with full contact and counts', async ({
+    client,
+    assert,
+  }) => {
+    const done = await seed('mypath', {
+      code: 'AB5434',
+      scoreR: 20,
+      scoreI: 1,
+      scoreA: 2,
+      scoreS: 3,
+      scoreE: 4,
+      scoreC: 5,
+      interestCode: 'RCE',
+      profileStatus: 'ok',
+      desiredCareer: '=HYPERLINK("x")',
+    })
+    await Answer.createMany(
+      content.forms.mini.ids.map((itemId) => ({ attemptId: done.id, itemId, value: 2 }))
+    )
+    await CareerView.create({ attemptId: done.id, occupationCode: content.occupations[0].code })
+    await consent(done, '0812341234', 'student@example.com')
+    await seed('test', { code: 'NC-7QX4M' })
+    await seed('result', { code: 'ZZ0001' })
+
+    const res = await client
+      .get('/admin/students/export?step=mypath')
+      .loginAs(await makeUser('admin'))
+    res.assertStatus(200)
+    assert.match(res.header('content-type') ?? '', /^text\/csv; charset=utf-8/)
+    assert.match(
+      res.header('content-disposition') ?? '',
+      /^attachment; filename="students-\d{8}-\d{4}\.csv"$/
+    )
+    assert.isTrue(res.text().startsWith('\uFEFF'))
+
+    const rows = parseCsv(res.text())
+    assert.lengthOf(rows, 1)
+    assert.deepInclude(rows[0], {
+      attempt_uuid: done.uuid,
+      code: 'AB5434',
+      code_type: 'campaign',
+      furthest_step: 'mypath',
+      answer_count: '30',
+      score_r: '20',
+      interest_code: 'RCE',
+      career_view_count: '1',
+      has_consent: 'true',
+      consent_version: 'v1',
+      phone: '0812341234',
+      email: 'student@example.com',
+      result_at: '',
+    })
+    assert.match(rows[0].started_at, /\+07:00$/)
+  })
+
+  test('labels no-code and code-less attempts; formulas are defused', async ({
+    client,
+    assert,
+  }) => {
+    await seed('test', { code: 'NC-7QX4M', desiredCareer: '@SUM(1)' })
+    await seed('test')
+
+    const res = await client.get('/admin/students/export').loginAs(await makeUser('admin'))
+    const rows = parseCsv(res.text())
+    assert.sameDeepMembers(
+      rows.map((r) => [r.code_type, r.has_consent, r.answer_count, r.desired_career]),
+      [
+        ['no_code', 'false', '0', "'@SUM(1)"],
+        ['', 'false', '0', ''],
+      ]
+    )
+  })
+
+  test('members get 403 for the export and the column guide', async ({ client }) => {
+    const member = await makeUser('member')
+    const csv = await client.get('/admin/students/export').loginAs(member)
+    csv.assertStatus(403)
+    const guide = await client.get('/admin/students/export/dictionary').loginAs(member)
+    guide.assertStatus(403)
+  })
+
+  test('the column guide downloads as markdown', async ({ client, assert }) => {
+    const res = await client
+      .get('/admin/students/export/dictionary')
+      .loginAs(await makeUser('admin'))
+    res.assertStatus(200)
+    assert.match(res.header('content-disposition') ?? '', /students-export-dictionary\.md/)
+    assert.include(res.text(), '# Learn Explorer student export')
+  })
+})
+
+test.group('backfill:scores', (group) => {
+  group.each.setup(() => testUtils.db().truncate())
+
+  test('scores finished attempts that have none, and leaves the rest', async ({ assert }) => {
+    const finished = await seed('test')
+    await Answer.createMany(
+      content.forms.mini.ids.map((itemId) => ({ attemptId: finished.id, itemId, value: 3 }))
+    )
+    const unfinished = await seed('test')
+    await Answer.create({ attemptId: unfinished.id, itemId: content.forms.mini.ids[0], value: 4 })
+
+    const command = await ace.create(BackfillScores, [])
+    await command.exec()
+    command.assertSucceeded()
+
+    await finished.refresh()
+    await unfinished.refresh()
+    assert.equal(finished.scoreR, 15)
+    assert.equal(finished.profileStatus, 'flat')
+    assert.isNull(unfinished.scoreR)
   })
 })

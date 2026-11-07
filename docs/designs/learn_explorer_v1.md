@@ -71,7 +71,7 @@ The proposed solution adds three things on top of the prototype's scoring:
 *   **Per-question timing and its median.** Deferred under YAGNI.
 *   **The 36-bar "new attempts per 5 minutes" chart.** Deferred under YAGNI. The v1 dashboard shows counts only.
 *   **Rate limiting.** Creating attempts with a POST already filters out bots and link previews. Add a limiter only if the counts look abnormal.
-*   **Bulk export of student data, and averages across students.** Later analysis can query the database directly.
+*   **Bulk export of student data, and averages across students.** Later analysis can query the database directly. (Export superseded by `docs/adr/0003-student-export.md`.)
 *   **Changing the scoring algorithm, the item translation, or the data pipeline.** Content corrections come from the team review of the prototype's data files and are imported as a new content version.
 *   **Dark theme.** Sticker Lab is light only by choice.
 

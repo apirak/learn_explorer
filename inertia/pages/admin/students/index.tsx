@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Trash2 } from 'lucide-react'
+import { BookOpen, Download, Trash2 } from 'lucide-react'
 import { Form, Link } from '@adonisjs/inertia/react'
 import { urlFor } from '~/client'
 import { type Data } from '@generated/data'
@@ -23,17 +23,17 @@ type PageProps = InertiaProps<{
   }
 }>
 
-/** Every attempt, newest first. Contact details arrive masked [DP-001]. */
+/**
+ * Every attempt, newest first. Contact details arrive masked [DP-001]; the CSV export carries
+ * them in full, for internal use only (ADR 0003).
+ */
 export default function AdminStudents({ filters, attempts }: PageProps) {
   const { data, metadata } = attempts
   // Delete is confirmed in the row, not with the browser's confirm().
   const [confirmId, setConfirmId] = useState<number | null>(null)
+  const filterQs = { code: filters.code ?? undefined, step: filters.step ?? undefined }
   const pageUrl = (page: number) =>
-    urlFor(
-      'admin.students.index',
-      {},
-      { qs: { code: filters.code ?? undefined, step: filters.step ?? undefined, page } }
-    )
+    urlFor('admin.students.index', {}, { qs: { ...filterQs, page } })
 
   return (
     <Page title="Students" description={`${metadata.total} attempts`}>
@@ -61,6 +61,17 @@ export default function AdminStudents({ filters, attempts }: PageProps) {
         <button type="submit" className="btn btn--secondary btn--sm">
           Filter
         </button>
+        {/* Plain links: the browser downloads the files, Inertia never sees them. */}
+        <a
+          className="btn btn--secondary btn--sm"
+          href={urlFor('admin.students.export', {}, { qs: filterQs })}
+          download
+        >
+          <Download size={15} /> Export CSV
+        </a>
+        <a className="btn btn--ghost btn--sm" href={urlFor('admin.students.dictionary')} download>
+          <BookOpen size={15} /> Column guide
+        </a>
       </Form>
 
       <div className="panel records">
