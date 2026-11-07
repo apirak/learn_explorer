@@ -1,0 +1,10 @@
+[build]
+builder = "railpack"
+buildCommand = "pnpm run build"
+
+[deploy]
+preDeployCommand = "cd build && node bin/console.js migration:run --force"
+startCommand = "cd build && node bin/server.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
