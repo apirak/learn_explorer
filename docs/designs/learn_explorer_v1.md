@@ -57,7 +57,7 @@ The proposed solution adds three things on top of the prototype's scoring:
 *   **G4. Same results as the prototype.** For the same answers, the rebuilt scoring returns the same type scores, interest code, validity status, matched occupations, fit levels and TCAS fields as the prototype. A fixed set of at least 20 answer vectors proves it in automated tests.
 *   **G5. Contact with consent.** On MyPath, a student can leave a phone number and email and tick a consent box that lets sales contact them. Contact details are stored only when the box is ticked. The consent text is the version Legal approved, and its version is stored with each consent. Download works with or without consent.
 *   **G6. Staff accounts with roles.** Anyone can sign up as a member. The first account becomes Owner. The Owner can grant or remove Admin and can hand ownership to another account. There is always exactly one Owner, and the Owner cannot delete their own account. Members see only their own Account page.
-*   **G7. Data is kept 60 days.** An ace command deletes attempts older than 60 days, together with their answers, career views and contact details.
+*   **G7. Data is kept for a set period.** Admins set the retention period (default 60 days). The admin pages warn when attempts are older than it, and an admin presses Purge to delete them, together with their answers, career views and contact details. The app never deletes on its own. (Changed 2026-11-07 by the project owner, #14: replaces the ace command.)
 *   **G8. Maintainable code.**
     *   The code follows the AdonisJS Way in `AGENTS.md`.
     *   Shared UI parts come from a small design system based on the prototype's Sticker Lab theme.
@@ -157,8 +157,8 @@ Resolved:
 ### CUJ 9: Operator enforces retention
 
 *   **Given**: The database holds attempts from the last 90 days.
-*   **When**: An operator runs `node ace students:purge --days=60 --dry-run`, then runs it without `--dry-run`.
-*   **Then**: The dry run prints how many rows would be deleted. The real run deletes every attempt older than 60 days, along with its answers, career views, downloads and contact details. It logs counts only.
+*   **When**: An Admin or the Owner sees the warning banner on an admin page, opens Retention, reads how many attempts would be deleted, presses Purge and confirms in the page.
+*   **Then**: Every attempt older than the retention period is deleted, along with its answers, career views, downloads and contact details. The log records counts, the period and the admin's user id only. Members get 403.
 
 ## Technical Plan (Architecture)
 
@@ -319,12 +319,15 @@ Column TypeScript types go in `database/schema_rules.ts`. Examples: the `role` u
 
 ### Retention
 
-`node ace students:purge --days=60 [--dry-run]` is created with `make:command`.
+Changed 2026-11-07 by the project owner (#14): the purge is manual from the admin area, and the period is a setting. There is no ace command and no cron.
 
-*   It deletes attempts whose `created_at` is older than the cutoff, in batches of 500. Cascades remove the child rows.
-*   It prints and logs counts only, and exits non-zero on error.
-*   It is run by hand for v1. A Railway cron service can run it daily once deployment is set up (Future Improvements).
-*   After a purge, the dashboard counts cover only the last 60 days. The page labels them "60 วันล่าสุด".
+*   A one-row `settings` table holds `retention_days` (default 60, `checkBetween([1, 3650])`). Admin and Owner change it on `/admin/retention`.
+*   `RetentionService` owns the cutoff. `dueCount()` feeds the `retentionDue` shared prop (admin pages only) for the warning banner and the purge screen; `purge()` deletes.
+*   The `le_attempt` resume cookie stays at 60 days. A longer period keeps the data, but same-browser resume still ends at 60 days.
+
+*   `POST /admin/retention/purge` deletes attempts whose `created_at` is older than the cutoff, in batches of 500. Cascades remove the child rows.
+*   It logs `purge_completed` with the deleted count, the period and the admin's user id only [DP-001].
+*   The dashboard's "all" range means everything not yet purged.
 
 ### Design system
 
@@ -474,7 +477,7 @@ Column TypeScript types go in `database/schema_rules.ts`. Examples: the `role` u
 *   **36-bar chart.** Add the "new attempts per 5 minutes over 180 minutes" chart.
 *   **Real MyPath content.** Build study plans and a generated file.
 *   **Rate limiting.** Add `@adonisjs/limiter` if the counts look abnormal.
-*   **Railway deploy, CI and a daily purge cron.** Set these up when the app moves to Railway.
+*   **Railway deploy and CI.** Set these up when the app moves to Railway. (No purge cron: purging stays a manual admin action.)
 *   **Database-level one-Owner guard.** Add a partial unique index.
 
 --------------------------------------------------------------------------------
@@ -492,7 +495,7 @@ The work runs in five phases. Each phase ends green: `node ace test`, `npm run t
     *   Add `pg`.
     *   Remove `better-sqlite3` and its `allowScripts` entry.
     *   Add `@fontsource/mali` and `@fontsource/ibm-plex-sans-thai-looped`. These are self-hosted fonts that Vite bundles, so nothing loads from Google.
-    *   Add a `test:load` script that runs `scripts/load_test.ts`.
+    *   Add a `test:load` script that runs `scripts/load_test.js`.
 
 #### 2. `config/database.ts` (Modify)
 
@@ -834,7 +837,7 @@ The work runs in five phases. Each phase ends green: `node ace test`, `npm run t
 *   **Type / Scope**: Unit tests.
 *   **Proposed Changes**: A table-driven test of `reachStep`. It checks that the step only moves forward, that each `*_at` is set once, and that going back changes nothing.
 
-#### 38. `scripts/load_test.ts` (Create)
+#### 38. `scripts/load_test.js` (Create)
 
 *   **Type / Scope**: Load test. Plain Node 24 `fetch`, with no new dependency.
 *   **Proposed Changes**: Simulate N students (default 400), ramping up over 10 s. Each one:
@@ -844,7 +847,7 @@ The work runs in five phases. Each phase ends green: `node ace test`, `npm run t
     *   posts 30 answers at random 1–4 s intervals;
     *   opens `/result`.
 
-    At the end, it reports p50 and p95 latency and the error count, then queries the database to confirm 30 answers per attempt. Run it against a staging database, never production.
+    At the end, it reports p50 and p95 latency and the error count, then queries the database to confirm 30 answers per attempt. Run it against a local production build and local PostgreSQL [M4]; it refuses any host but localhost. Plain JS because `pg` ships no types.
 
 ### Phase P2: Contact, consent and retention
 
@@ -871,21 +874,9 @@ The work runs in five phases. Each phase ends green: `node ace test`, `npm run t
     *   A test fails if the file is missing.
     *   `start/env.ts` rejects a `CONSENT_VERSION` that begins with `placeholder` when `NODE_ENV=production`, so the placeholder cannot reach students.
 
-#### 42. `commands/students_purge.ts` (Create, `node ace make:command students:purge`)
+#### 42–43. Retention (superseded by #14)
 
-*   **Type / Scope**: Ace command.
-*   **Proposed Changes**:
-    *   Flags: `--days` (default 60) and `--dry-run`.
-    *   Deletes `attempts` with `created_at` older than the cutoff, in batches of 500 ids per `delete().whereIn('id', …)`.
-    *   Prints and logs counts. Exits 1 on error.
-
-#### 43. `tests/functional/students_purge.spec.ts` (Create, `--suite=functional`)
-
-*   **Type / Scope**: Console test, following `ai-knowledges/adonisjs7/test-console.md`.
-*   **Proposed Changes**:
-    *   Seeds attempts at 30, 59, 61 and 90 days old, with children.
-    *   A dry run deletes nothing.
-    *   A real run removes the 61- and 90-day attempts and all of their child rows, and keeps the others.
+Replaced on 2026-11-07: no ace command. See [Retention](#retention): `settings` migration and model, `RetentionService`, `admin/retention_controller.ts`, `inertia/pages/admin/retention.tsx`, and `tests/functional/admin_retention.spec.ts` (attempts seeded at 1, 59, 61 and 90 days; the warning, what the purge keeps, the period setting, and 403 for members).
 
 ### Phase P3: Staff accounts and roles
 
@@ -1040,7 +1031,7 @@ The work runs in five phases. Each phase ends green: `node ace test`, `npm run t
 
 *   **Compilation/Build**: `npm run typecheck`, `npm run build`.
 *   **Unit Tests**: `node ace test unit`. This covers scoring parity (G4), majors, content checksums, and step rules.
-*   **Functional Tests**: `node ace test functional` against PostgreSQL. This covers the student flow CUJs 1–4, accounts CUJs 5–6, admin CUJs 7–8, and purge CUJ 9.
+*   **Functional Tests**: `node ace test functional` against PostgreSQL. This covers the student flow CUJs 1–4, accounts CUJs 5–6, admin CUJs 7–8, and retention CUJ 9.
 *   **Static Analysis & Linting**: `npm run lint`.
 *   **Test Coverage Requirement**: Every CUJ has at least one functional test. Every rule in `ScoringService` is reached by a golden vector.
 *   **Load (release gate for G2)**: `npm run test:load` against staging, with 400 students ramping up over 10 s. The gate is zero lost answers and zero 5xx responses, with a p95 for `POST /test/answers` agreed before launch.

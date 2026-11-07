@@ -307,6 +307,45 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['show']>>>
     }
   }
+  'admin.retention.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/retention'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['show']>>>
+    }
+  }
+  'admin.retention.update': {
+    methods: ["PUT"]
+    pattern: '/admin/retention'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/retention').retentionValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/retention').retentionValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'admin.retention.purge': {
+    methods: ["POST"]
+    pattern: '/admin/retention/purge'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['purge']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['purge']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/retention_controller').default['purge']>>>
+    }
+  }
   'admin.users.index': {
     methods: ["GET","HEAD"]
     pattern: '/admin/users'

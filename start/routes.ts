@@ -62,6 +62,9 @@ router
       .get('students/:id', [controllers.admin.Students, 'show'])
       .where('id', router.matchers.number())
       .as('students.show')
+    router.get('retention', [controllers.admin.Retention, 'show']).as('retention.show')
+    router.put('retention', [controllers.admin.Retention, 'update']).as('retention.update')
+    router.post('retention/purge', [controllers.admin.Retention, 'purge']).as('retention.purge')
 
     router
       .group(() => {

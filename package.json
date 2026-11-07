@@ -13,6 +13,7 @@
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "test:release": "RELEASE=1 node ace test",
+    "test:load": "node scripts/load_test.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit && tsc --noEmit --project inertia/tsconfig.json"

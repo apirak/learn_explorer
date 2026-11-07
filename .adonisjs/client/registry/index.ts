@@ -146,6 +146,24 @@ const routes = {
     tokens: [[0,"admin"],[0,"students"],[1,"id"]],
     types: placeholder as Registry['admin.students.show']['types'],
   },
+  'admin.retention.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/retention',
+    tokens: [[0,"admin"],[0,"retention"]],
+    types: placeholder as Registry['admin.retention.show']['types'],
+  },
+  'admin.retention.update': {
+    methods: ["PUT"],
+    pattern: '/admin/retention',
+    tokens: [[0,"admin"],[0,"retention"]],
+    types: placeholder as Registry['admin.retention.update']['types'],
+  },
+  'admin.retention.purge': {
+    methods: ["POST"],
+    pattern: '/admin/retention/purge',
+    tokens: [[0,"admin"],[0,"retention"],[0,"purge"]],
+    types: placeholder as Registry['admin.retention.purge']['types'],
+  },
   'admin.users.index': {
     methods: ["GET","HEAD"],
     pattern: '/admin/users',
