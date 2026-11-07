@@ -51,6 +51,32 @@ test.group('Admin dashboard', (group) => {
     assert.equal(summary.downloads, 0)
   })
 
+  test('the range filter picks 7, 30, 60 days or all; anything else falls back to 60', async ({
+    client,
+    assert,
+  }) => {
+    const now = DateTime.now()
+    for (const days of [1, 10, 45, 100]) {
+      await Attempt.create({
+        contentVersion: 'v1',
+        furthestStep: 'test',
+        createdAt: now.minus({ days }),
+      })
+    }
+    const admin = await makeUser('admin')
+    const countFor = async (qs: string) => {
+      const page = await client.get(`/admin${qs}`).withInertia().loginAs(admin)
+      return [page.inertiaProps.range, page.inertiaProps.summary.steps.test]
+    }
+
+    assert.deepEqual(await countFor('?range=7'), ['7', 1])
+    assert.deepEqual(await countFor('?range=30'), ['30', 2])
+    assert.deepEqual(await countFor('?range=60'), ['60', 3])
+    assert.deepEqual(await countFor('?range=all'), ['all', 4])
+    assert.deepEqual(await countFor(''), ['60', 3])
+    assert.deepEqual(await countFor('?range=999'), ['60', 3])
+  })
+
   test('members get 403', async ({ client }) => {
     const page = await client
       .get('/admin')

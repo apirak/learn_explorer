@@ -3,15 +3,24 @@ import Attempt, { STEPS, type Step } from '#models/attempt'
 
 export type DashboardSummary = Awaited<ReturnType<typeof DashboardService.summary>>
 
+/** Dashboard date filters: the last N days, or every attempt still stored. */
+export const RANGES = ['7', '30', '60', 'all'] as const
+export type Range = (typeof RANGES)[number]
+
 /** Funnel counts for the admin dashboard. Counts only, never codes or contact data [DP-001]. */
 export class DashboardService {
-  /** Attempts started in the last 60 days, so the "60 วันล่าสุด" label holds with or without a purge. */
-  static async summary() {
-    const recentAttempts = Attempt.query().where(
-      'createdAt',
-      '>=',
-      DateTime.now().minus({ days: 60 }).toSQL()!
-    )
+  /** Attempts started within `range` days of now, or all of them. */
+  static async summary(range: Range) {
+    const recentAttempts = Attempt.query()
+    if (range !== 'all') {
+      recentAttempts.where(
+        'createdAt',
+        '>=',
+        DateTime.now()
+          .minus({ days: Number(range) })
+          .toSQL()!
+      )
+    }
 
     const rows = await recentAttempts
       .clone()

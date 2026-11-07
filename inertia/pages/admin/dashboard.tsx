@@ -1,10 +1,20 @@
 import { usePoll } from '@inertiajs/react'
+import { Link } from '@adonisjs/inertia/react'
+import { urlFor } from '~/client'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 import Page from '~/components/page'
 import AppLayout from '~/layouts/app'
 
 type Step = keyof Data.Dashboard['steps']
+type Range = '7' | '30' | '60' | 'all'
+
+const RANGE_LABEL: Record<Range, string> = {
+  '7': '7 วัน',
+  '30': '30 วัน',
+  '60': '60 วัน',
+  'all': 'ทั้งหมด',
+}
 
 const STEP_LABEL: Record<Step, string> = {
   test: 'Test',
@@ -14,13 +24,31 @@ const STEP_LABEL: Record<Step, string> = {
 }
 
 /** Funnel counts by furthest step, refreshed every 5 s while the tab is visible. Counts only. */
-export default function AdminDashboard({ summary }: InertiaProps<{ summary: Data.Dashboard }>) {
+export default function AdminDashboard({
+  summary,
+  range,
+}: InertiaProps<{ summary: Data.Dashboard; range: Range }>) {
+  // The poll reloads the current URL, so it keeps the chosen range.
   usePoll(5000, { only: ['summary'] }, { background: 'pause' })
 
   const max = Math.max(1, ...Object.values(summary.steps))
 
   return (
-    <Page title="Dashboard" description="60 วันล่าสุด · updates every 5 seconds">
+    <Page
+      title="Dashboard"
+      description={`${range === 'all' ? 'ทั้งหมด' : `${range} วันล่าสุด`} · updates every 5 seconds`}
+      actions={(Object.keys(RANGE_LABEL) as Range[]).map((r) => (
+        <Link
+          key={r}
+          href={urlFor('admin.dashboard', {}, { qs: { range: r } })}
+          className={`btn btn--sm ${r === range ? 'btn--primary' : 'btn--ghost'}`}
+          aria-current={r === range ? 'page' : undefined}
+          preserveScroll
+        >
+          {RANGE_LABEL[r]}
+        </Link>
+      ))}
+    >
       <div className="panel funnel">
         <ul className="funnel__steps">
           {(Object.keys(STEP_LABEL) as Step[]).map((step) => (
