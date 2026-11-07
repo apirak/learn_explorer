@@ -22,7 +22,7 @@ export default class extends BaseSchema {
         .inTable('attempts')
         .onDelete('CASCADE')
         .index()
-      table.string('action', 32).notNullable()
+      table.string('action', 32).notNullable().checkIn(['view'])
 
       table.timestamp('created_at', { useTz: true }).notNullable()
     })

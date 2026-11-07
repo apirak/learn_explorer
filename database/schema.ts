@@ -11,7 +11,7 @@ export class AdminAuditSchema extends BaseModel {
   static $columns = ['action', 'attemptId', 'createdAt', 'id', 'userId'] as const
   $columns = AdminAuditSchema.$columns
   @column()
-  declare action: string
+  declare action: 'view'
   @column()
   declare attemptId: number
   @column.dateTime({ autoCreate: true })
