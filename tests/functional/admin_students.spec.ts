@@ -166,3 +166,41 @@ test.group('Admin student detail', (group) => {
     assert.lengthOf(await AdminAudit.all(), 0)
   })
 })
+
+test.group('Admin student delete', (group) => {
+  group.each.setup(() => testUtils.db().truncate())
+
+  test('deletes one attempt and its child rows; audit stays with a null id', async ({
+    client,
+    assert,
+  }) => {
+    const admin = await makeUser('admin')
+    const gone = await seed('mypath')
+    const kept = await seed('test')
+    await consent(gone, '0812341234', null)
+    await AdminAudit.create({ userId: admin.id, attemptId: gone.id, action: 'view' })
+
+    const res = await client
+      .delete(`/admin/students/${gone.id}`)
+      .withCsrfToken()
+      .loginAs(admin)
+      .redirects(0)
+
+    res.assertStatus(302)
+    assert.isNull(await Attempt.find(gone.id))
+    assert.isNotNull(await Attempt.find(kept.id))
+    assert.isNull(await StudentContact.findBy('attemptId', gone.id))
+    const audit = await AdminAudit.findByOrFail('userId', admin.id)
+    assert.isNull(audit.attemptId)
+  })
+
+  test('members get 403 and delete nothing', async ({ client, assert }) => {
+    const attempt = await seed('test')
+    const res = await client
+      .delete(`/admin/students/${attempt.id}`)
+      .withCsrfToken()
+      .loginAs(await makeUser('member'))
+    res.assertStatus(403)
+    assert.isNotNull(await Attempt.find(attempt.id))
+  })
+})

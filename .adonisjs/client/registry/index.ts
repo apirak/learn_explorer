@@ -158,6 +158,12 @@ const routes = {
     tokens: [[0,"admin"],[0,"students"],[1,"id"]],
     types: placeholder as Registry['admin.students.show']['types'],
   },
+  'admin.students.destroy': {
+    methods: ["DELETE"],
+    pattern: '/admin/students/:id',
+    tokens: [[0,"admin"],[0,"students"],[1,"id"]],
+    types: placeholder as Registry['admin.students.destroy']['types'],
+  },
   'admin.retention.show': {
     methods: ["GET","HEAD"],
     pattern: '/admin/retention',

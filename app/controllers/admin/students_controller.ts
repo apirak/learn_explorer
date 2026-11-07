@@ -43,4 +43,14 @@ export default class StudentsController {
       attempt: AttemptTransformer.transform(attempt).useVariant('forDetail'),
     })
   }
+
+  /** Deletes one attempt; answers, career views and contact cascade, audit rows keep a null id. */
+  async destroy({ params, auth, session, response, logger }: HttpContext) {
+    const attempt = await Attempt.findOrFail(params.id)
+    await attempt.delete()
+    // Ids only, never student data [DP-001].
+    logger.info({ attemptId: attempt.id, userId: auth.user!.id }, 'attempt_deleted')
+    session.flash('success', 'Student deleted')
+    return response.redirect().back()
+  }
 }

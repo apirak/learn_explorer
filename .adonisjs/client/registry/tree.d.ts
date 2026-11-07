@@ -41,6 +41,7 @@ export interface ApiDefinition {
     students: {
       index: typeof routes['admin.students.index']
       show: typeof routes['admin.students.show']
+      destroy: typeof routes['admin.students.destroy']
     }
     retention: {
       show: typeof routes['admin.retention.show']

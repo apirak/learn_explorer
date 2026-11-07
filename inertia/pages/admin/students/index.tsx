@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { Trash2 } from 'lucide-react'
 import { Form, Link } from '@adonisjs/inertia/react'
 import { urlFor } from '~/client'
 import { type Data } from '@generated/data'
@@ -24,6 +26,8 @@ type PageProps = InertiaProps<{
 /** Every attempt, newest first. Contact details arrive masked [DP-001]. */
 export default function AdminStudents({ filters, attempts }: PageProps) {
   const { data, metadata } = attempts
+  // Delete is confirmed in the row, not with the browser's confirm().
+  const [confirmId, setConfirmId] = useState<number | null>(null)
   const pageUrl = (page: number) =>
     urlFor(
       'admin.students.index',
@@ -72,6 +76,7 @@ export default function AdminStudents({ filters, attempts }: PageProps) {
                 <th scope="col">Interest</th>
                 <th scope="col">Contact</th>
                 <th scope="col">Download</th>
+                <th scope="col" aria-label="Delete" />
               </tr>
             </thead>
             <tbody>
@@ -87,6 +92,45 @@ export default function AdminStudents({ filters, attempts }: PageProps) {
                   <td>{a.interestCode ?? '–'}</td>
                   <td>{[a.phone, a.email].filter(Boolean).join(' · ') || '–'}</td>
                   <td>{a.downloadedAt ? 'Yes' : '–'}</td>
+                  <td>
+                    {confirmId === a.id ? (
+                      <Form
+                        route="admin.students.destroy"
+                        routeParams={{ id: a.id }}
+                        options={{ preserveScroll: true }}
+                        onSuccess={() => setConfirmId(null)}
+                        className="staff__actions"
+                      >
+                        {({ processing }) => (
+                          <>
+                            <button
+                              type="submit"
+                              className="btn btn--primary btn--sm"
+                              disabled={processing}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn--ghost btn--sm"
+                              onClick={() => setConfirmId(null)}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        )}
+                      </Form>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn--ghost btn--sm"
+                        aria-label={`Delete attempt #${a.id}`}
+                        onClick={() => setConfirmId(a.id)}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

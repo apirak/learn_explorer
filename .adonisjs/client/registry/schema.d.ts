@@ -333,6 +333,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['show']>>>
     }
   }
+  'admin.students.destroy': {
+    methods: ["DELETE"]
+    pattern: '/admin/students/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['destroy']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['destroy']>>>
+    }
+  }
   'admin.retention.show': {
     methods: ["GET","HEAD"]
     pattern: '/admin/retention'

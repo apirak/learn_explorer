@@ -29,6 +29,7 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.students.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.retention.update': { paramsTuple?: []; params?: {} }
     'admin.retention.purge': { paramsTuple?: []; params?: {} }
@@ -93,6 +94,7 @@ export type ScannedRoutes = {
   }
   DELETE: {
     'account.destroy': { paramsTuple?: []; params?: {} }
+    'admin.students.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {
