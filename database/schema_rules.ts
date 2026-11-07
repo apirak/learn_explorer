@@ -2,6 +2,14 @@ import { type SchemaRules } from '@adonisjs/lucid/types/schema_generator'
 
 export default {
   tables: {
+    admin_audits: {
+      columns: {
+        action: {
+          tsType: `'view'`,
+          decorators: [{ name: '@column' }],
+        },
+      },
+    },
     users: {
       columns: {
         role: {

@@ -25,6 +25,8 @@ export type ScannedRoutes = {
     'account.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
+    'admin.students.index': { paramsTuple?: []; params?: {} }
+    'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
     'admin.users.role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.users.transfer': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -42,6 +44,8 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
     'account.show': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
+    'admin.students.index': { paramsTuple?: []; params?: {} }
+    'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -57,6 +61,8 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
     'account.show': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
+    'admin.students.index': { paramsTuple?: []; params?: {} }
+    'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
