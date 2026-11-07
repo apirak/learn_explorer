@@ -1952,6 +1952,15 @@ input {
   font-weight: 600;
   white-space: nowrap;
 }
+.records__table td a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.records__table td a:hover {
+  text-decoration-thickness: 2px;
+}
 .records__pairs {
   display: flex;
   flex-wrap: wrap;
