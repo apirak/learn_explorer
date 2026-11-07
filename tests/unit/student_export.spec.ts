@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises'
 import { test } from '@japa/runner'
 import app from '@adonisjs/core/services/app'
-import { COLUMNS, DICTIONARY, csvField } from '#services/student_export_service'
+import { COLUMNS, DICTIONARY_PATH, csvField } from '#services/student_export_service'
 
 test.group('Student export', () => {
   test('every CSV column is described in the column guide', async ({ assert }) => {
-    const guide = await readFile(app.makePath(DICTIONARY), 'utf8')
+    const guide = await readFile(app.makePath(DICTIONARY_PATH), 'utf8')
     const described = guide.match(/^### .+$/gm)!.flatMap((h) => h.slice(4).split(/,\s*/))
     assert.includeMembers(
       described,

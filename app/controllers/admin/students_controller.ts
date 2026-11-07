@@ -1,6 +1,7 @@
 import AdminAudit from '#models/admin_audit'
 import Attempt, { STEPS, type Step } from '#models/attempt'
-import { DICTIONARY, toCsv } from '#services/student_export_service'
+import { REPORT_ZONE } from '#services/report_service'
+import { DICTIONARY_PATH, toCsv } from '#services/student_export_service'
 import AttemptTransformer from '#transformers/attempt_transformer'
 import app from '@adonisjs/core/services/app'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -55,7 +56,7 @@ export default class StudentsController {
     // Ids and counts only, never student data [DP-001].
     logger.info({ userId: auth.user!.id, rows: attempts.length }, 'students_exported')
 
-    const stamp = DateTime.now().setZone('Asia/Bangkok').toFormat('yyyyMMdd-HHmm')
+    const stamp = DateTime.now().setZone(REPORT_ZONE).toFormat('yyyyMMdd-HHmm')
     response.header('Content-Type', 'text/csv; charset=utf-8')
     response.header('Content-Disposition', `attachment; filename="students-${stamp}.csv"`)
     return toCsv(attempts)
@@ -63,7 +64,7 @@ export default class StudentsController {
 
   /** `GET /admin/students/export/dictionary`: what each export column means, for people and AI. */
   async dictionary({ response }: HttpContext) {
-    response.attachment(app.makePath(DICTIONARY), 'students-export-dictionary.md')
+    response.attachment(app.makePath(DICTIONARY_PATH), 'students-export-dictionary.md')
   }
 
   async show({ inertia, params, auth }: HttpContext) {

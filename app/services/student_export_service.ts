@@ -1,13 +1,13 @@
 import type Attempt from '#models/attempt'
-import { NO_CODE_PREFIX } from '#models/attempt'
+import { REPORT_ZONE } from '#services/report_service'
 import type { DateTime } from 'luxon'
 
 type Value = string | number | boolean | null | undefined
 
 /** The column guide, relative to the app root. */
-export const DICTIONARY = 'resources/exports/students.md'
+export const DICTIONARY_PATH = 'resources/exports/students.md'
 
-const bangkok = (dt: DateTime | null) => dt?.setZone('Asia/Bangkok').toISO() ?? null
+const bangkok = (dt: DateTime | null) => dt?.setZone(REPORT_ZONE).toISO() ?? null
 
 /**
  * The student export: one row per attempt, in this column order. Every header must be described
@@ -17,10 +17,7 @@ const bangkok = (dt: DateTime | null) => dt?.setZone('Asia/Bangkok').toISO() ?? 
 export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['attempt_uuid', (a) => a.uuid],
   ['code', (a) => a.code],
-  [
-    'code_type',
-    (a) => (!a.code ? null : a.code.startsWith(NO_CODE_PREFIX) ? 'no_code' : 'campaign'),
-  ],
+  ['code_type', (a) => (!a.code ? null : a.hasCampaignCode ? 'campaign' : 'no_code')],
   ['furthest_step', (a) => a.furthestStep],
   ['started_at', (a) => bangkok(a.createdAt)],
   ['result_at', (a) => bangkok(a.resultAt)],

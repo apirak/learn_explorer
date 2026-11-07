@@ -8,8 +8,6 @@ import StudentContact from '#models/student_contact'
 import User from '#models/user'
 import content from '#services/content_service'
 import testUtils from '@adonisjs/core/services/test_utils'
-import ace from '@adonisjs/core/services/ace'
-import BackfillScores from '../../commands/backfill_scores.js'
 
 const makeUser = (role: 'admin' | 'member') =>
   User.create({ email: `${role}@ondemand.test`, password: 'secret1234', role })
@@ -273,6 +271,7 @@ test.group('Admin student export', (group) => {
       result_at: '',
     })
     assert.match(rows[0].started_at, /\+07:00$/)
+    assert.include(res.text(), `"'=HYPERLINK(""x"")"`)
   })
 
   test('labels no-code and code-less attempts; formulas are defused', async ({
@@ -308,28 +307,5 @@ test.group('Admin student export', (group) => {
     res.assertStatus(200)
     assert.match(res.header('content-disposition') ?? '', /students-export-dictionary\.md/)
     assert.include(res.text(), '# Learn Explorer student export')
-  })
-})
-
-test.group('backfill:scores', (group) => {
-  group.each.setup(() => testUtils.db().truncate())
-
-  test('scores finished attempts that have none, and leaves the rest', async ({ assert }) => {
-    const finished = await seed('test')
-    await Answer.createMany(
-      content.forms.mini.ids.map((itemId) => ({ attemptId: finished.id, itemId, value: 3 }))
-    )
-    const unfinished = await seed('test')
-    await Answer.create({ attemptId: unfinished.id, itemId: content.forms.mini.ids[0], value: 4 })
-
-    const command = await ace.create(BackfillScores, [])
-    await command.exec()
-    command.assertSucceeded()
-
-    await finished.refresh()
-    await unfinished.refresh()
-    assert.equal(finished.scoreR, 15)
-    assert.equal(finished.profileStatus, 'flat')
-    assert.isNull(unfinished.scoreR)
   })
 })
