@@ -2,6 +2,7 @@
   "name": "learn_explorer_2",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@11.25.0",
   "type": "module",
   "license": "UNLICENSED",
   "engines": {
