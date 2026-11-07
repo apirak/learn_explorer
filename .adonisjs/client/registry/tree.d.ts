@@ -10,6 +10,9 @@ export interface ApiDefinition {
       answer: typeof routes['student.test.answer']
     }
     result: typeof routes['student.result']
+    contact: typeof routes['student.contact'] & {
+      store: typeof routes['student.contact.store']
+    }
     careers: typeof routes['student.careers']
     career: typeof routes['student.career']
     mypath: typeof routes['student.mypath'] & {

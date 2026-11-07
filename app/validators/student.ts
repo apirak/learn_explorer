@@ -21,23 +21,28 @@ export const answerValidator = vine.create({
 const PHONE_MESSAGE = 'เบอร์โทรต้องเป็นตัวเลข 9–10 หลัก เช่น 0812345678'
 const EMAIL_MESSAGE = 'อีเมลไม่ถูกต้อง ลองตรวจอีกครั้ง'
 
+const CONSENT_MESSAGE = 'ติ๊กยินยอมก่อน หรือลบเบอร์และอีเมลออกแล้วไปต่อ'
+
 /**
- * Download on MyPath. Phone: spaces and dashes removed, `+66` becomes `0`, then 9–10 digits
- * starting with 0. The checkbox sends `on` only when ticked. Never logged [DP-001].
+ * Contact form on `/contact` and MyPath. Phone: spaces and dashes removed, `+66` becomes `0`,
+ * then 9–10 digits starting with 0. The checkbox sends `on` only when ticked; it is required
+ * once a phone or email is typed, so nothing typed is dropped silently. Never logged [DP-001].
  */
-export const downloadValidator = vine.create({
+export const contactValidator = vine.create({
   phone: vine
     .string()
     .parse((v) => (typeof v === 'string' ? v.replace(/[\s-]/g, '').replace(/^\+66/, '0') : v))
     .regex(/^0\d{8,9}$/)
     .optional(),
   email: vine.string().trim().email().maxLength(254).optional(),
-  consent: vine.boolean().optional(),
+  consent: vine.boolean().optional().requiredIfAnyExists(['phone', 'email']),
 })
-downloadValidator.messagesProvider = new SimpleMessagesProvider({
+contactValidator.messagesProvider = new SimpleMessagesProvider({
   'phone.string': PHONE_MESSAGE,
   'phone.regex': PHONE_MESSAGE,
   'email.string': EMAIL_MESSAGE,
   'email.email': EMAIL_MESSAGE,
   'email.maxLength': EMAIL_MESSAGE,
+  'consent.required': CONSENT_MESSAGE,
+  'consent.boolean': CONSENT_MESSAGE,
 })

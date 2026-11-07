@@ -100,21 +100,23 @@ test.group('Student MyPath', (group) => {
     assert.equal(contact.phone, '0812345678')
     assert.equal(contact.email, 'student@example.com')
     assert.equal(contact.consentVersion, CONSENT_VERSION)
+    assert.equal(contact.source, 'mypath')
     assert.isNotNull(contact.consentAt)
   })
 
-  test('without consent: discards phone and email, still downloads', async ({ client, assert }) => {
+  test('a phone or email without consent comes back with a message', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
-    const response = await download(client, attempt, {
-      phone: '0812345678',
-      email: 'student@example.com',
-    })
-
-    response.assertStatus(302)
-    response.assertHeader('location', '/mypath/print')
+    const forms: Record<string, string>[] = [{ phone: '0812345678' }, { email: 'a@example.com' }]
+    for (const form of forms) {
+      const response = await download(client, attempt, form)
+      response.assertHeader('location', '/mypath')
+      assert.deepEqual(fieldErrors(response, 'consent'), [
+        'ติ๊กยินยอมก่อน หรือลบเบอร์และอีเมลออกแล้วไปต่อ',
+      ])
+    }
     assert.lengthOf(await StudentContact.all(), 0)
     await attempt.refresh()
-    assert.isNotNull(attempt.downloadedAt)
+    assert.isNull(attempt.downloadedAt)
   })
 
   test('consent with no phone or email stores nothing', async ({ client, assert }) => {
@@ -179,22 +181,30 @@ test.group('Student MyPath', (group) => {
     assert.equal(attribution, content.attribution)
   })
 
-  test('without consent: a bad phone or email is discarded, not an error', async ({
-    client,
-    assert,
-  }) => {
-    const attempt = await scoredAttempt()
-    const response = await download(client, attempt, { phone: '12345', email: 'nope' })
-    response.assertHeader('location', '/mypath/print')
-    assert.lengthOf(await StudentContact.all(), 0)
-    await attempt.refresh()
-    assert.isNotNull(attempt.downloadedAt)
-  })
-
   test('the blank form downloads', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
     const response = await download(client, attempt, { phone: '', email: '' })
     response.assertHeader('location', '/mypath/print')
     assert.lengthOf(await StudentContact.all(), 0)
+  })
+})
+
+test.group('Student MyPath with a contact', (group) => {
+  group.each.setup(() => testUtils.db().withGlobalTransaction())
+
+  test('with a contact, opens the printable page and counts it as a download', async ({
+    client,
+    assert,
+  }) => {
+    const attempt = await scoredAttempt()
+    await StudentContact.record(attempt.id, { phone: '0812345678', consent: true }, 'contact')
+    const response = await client
+      .get('/mypath')
+      .withEncryptedCookie('le_attempt', cookie(attempt))
+      .redirects(0)
+    response.assertHeader('location', '/mypath/print')
+    await attempt.refresh()
+    assert.equal(attempt.furthestStep, 'mypath')
+    assert.isNotNull(attempt.downloadedAt)
   })
 })

@@ -88,7 +88,7 @@ export default function StudentResult({ result }: InertiaProps<{ result: Data.Re
               </div>
             ))}
           </div>
-          <Link route="student.careers" className="btn btn--primary">
+          <Link route="student.contact" className="btn btn--primary">
             5 อาชีพที่น่าลองดู →
           </Link>
         </div>

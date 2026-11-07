@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import Attempt, { STEPS, type Step } from '#models/attempt'
+import StudentContact from '#models/student_contact'
 
 export type DashboardSummary = Awaited<ReturnType<typeof DashboardService.summary>>
 
@@ -36,8 +37,17 @@ export class DashboardService {
       .count('result_at as resultViews')
       .count('downloaded_at as downloads')
 
+    const contactRows = await StudentContact.query()
+      .whereIn('attemptId', recentAttempts.clone().select('id'))
+      .select('source')
+      .groupBy('source')
+      .count('* as total')
+    const contacts = { contact: 0, mypath: 0 }
+    for (const row of contactRows) contacts[row.source] = Number(row.$extras.total)
+
     return {
       steps,
+      contacts,
       resultViews: Number(totals.$extras.resultViews),
       downloads: Number(totals.$extras.downloads),
       generatedAt: DateTime.now().toISO()!,

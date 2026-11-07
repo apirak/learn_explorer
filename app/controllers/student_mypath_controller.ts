@@ -4,47 +4,37 @@ import content from '#services/content_service'
 import ConsentTransformer from '#transformers/consent_transformer'
 import { transformMatches } from '#transformers/occupation_match_transformer'
 import ResultTransformer from '#transformers/result_transformer'
-import { downloadValidator } from '#validators/student'
+import { contactValidator } from '#validators/student'
 import type { HttpContext } from '@adonisjs/core/http'
-import { DateTime } from 'luxon'
 
 export default class StudentMypathController {
-  /** `GET /mypath`: contact form, consent text (unticked) and Download. Needs a finished test. */
+  /**
+   * `GET /mypath`: contact form, consent text (unticked) and Download. With a contact already
+   * left there is nothing to ask, so it counts as a download and opens the printable page.
+   * Needs a finished test.
+   */
   async show({ response, inertia, attempt }: HttpContext) {
     if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
     await attempt!.reachStep('mypath') // saves the scores too
 
+    if (await StudentContact.findBy('attemptId', attempt!.id)) {
+      await attempt!.markDownloaded()
+      return response.redirect().toRoute('student.mypath.print')
+    }
     return inertia.render('student/mypath', { consent: ConsentTransformer.transform(consent) })
   }
 
   /**
-   * `POST /mypath/download`: phone and email count only when consent is ticked; otherwise they
-   * are discarded unread, so they can never block Download. Records the first download time
-   * [N5], then opens the printable page.
+   * `POST /mypath/download`: a typed phone or email needs the consent box, else the form comes
+   * back with a message. Records the first download time [N5], then opens the printable page.
    */
   async download({ request, response, logger, attempt }: HttpContext) {
     if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
 
-    const input = request.only(['phone', 'email', 'consent'])
-    const {
-      phone,
-      email,
-      consent: consented,
-    } = await downloadValidator.validate(input.consent ? input : {})
-
-    if (consented && (phone || email)) {
-      await StudentContact.updateOrCreate(
-        { attemptId: attempt!.id },
-        {
-          phone: phone ?? null,
-          email: email ?? null,
-          consentAt: DateTime.now(),
-          consentVersion: consent.version,
-        }
-      )
-    }
+    const input = await contactValidator.validate(request.only(['phone', 'email', 'consent']))
+    await StudentContact.record(attempt!.id, input, 'mypath')
     await attempt!.markDownloaded()
-    logger.info({ attempt: attempt!.uuid, consented: !!consented }, 'download') // UUID only [DP-001]
+    logger.info({ attempt: attempt!.uuid, consented: !!input.consent }, 'download') // UUID only [DP-001]
 
     return response.redirect().toRoute('student.mypath.print')
   }

@@ -15,6 +15,7 @@ export const controllers = {
   NewAccount: () => import('#controllers/new_account_controller'),
   Session: () => import('#controllers/session_controller'),
   StudentCareers: () => import('#controllers/student_careers_controller'),
+  StudentContacts: () => import('#controllers/student_contacts_controller'),
   StudentHome: () => import('#controllers/student_home_controller'),
   StudentMypath: () => import('#controllers/student_mypath_controller'),
   StudentResult: () => import('#controllers/student_result_controller'),

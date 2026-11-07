@@ -1355,7 +1355,7 @@ input {
 /* Right board: two sticker cards on purple/lime paper scraps. */
 .ip .board {
   display: grid;
-  gap: 22px;
+  gap: 64px;
   position: relative;
 }
 .ip .board-title {
@@ -1501,6 +1501,7 @@ input {
 .ip .result-stack {
   display: grid;
   gap: 24px;
+  align-content: start; /* a short page (MyPath with a contact) stays packed, not stretched */
 }
 .ip .muted {
   color: var(--soft);
@@ -1743,6 +1744,19 @@ input {
   font: 700 1rem/1.3 var(--display);
   padding: 0 6px;
 }
+.ip .consent-details summary {
+  justify-self: start;
+  width: fit-content;
+  padding: 4px 0;
+  color: var(--violet);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.ip .consent-details[open] summary {
+  margin-bottom: 8px;
+}
 .ip .consent-text {
   max-height: 220px;
   overflow-y: auto;
@@ -1779,6 +1793,16 @@ input {
   gap: 8px;
   margin-top: 8px;
   text-align: center;
+}
+
+/* Skip on /contact: plain to see and easy to tap, never faded out. */
+.ip .skip {
+  justify-self: center;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* --- Print page: hint on screen, clean sheet on paper. --- */

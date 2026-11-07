@@ -2,6 +2,7 @@ import { test } from '@japa/runner'
 import { DateTime } from 'luxon'
 import User from '#models/user'
 import Attempt from '#models/attempt'
+import StudentContact from '#models/student_contact'
 import testUtils from '@adonisjs/core/services/test_utils'
 
 const makeUser = (role: 'admin' | 'member') =>
@@ -21,10 +22,18 @@ test.group('Admin dashboard', (group) => {
     await seed('test')
     await seed('test')
     await seed('result', { resultAt: now })
-    await seed('career', { resultAt: now })
-    await seed('mypath', { resultAt: now, mypathAt: now, downloadedAt: now })
+    const career = await seed('career', { resultAt: now })
+    const mypath = await seed('mypath', { resultAt: now, mypathAt: now, downloadedAt: now })
     // Older than 60 days: left out.
-    await seed('mypath', { resultAt: now, downloadedAt: now, createdAt: now.minus({ days: 61 }) })
+    const old = await seed('mypath', {
+      resultAt: now,
+      downloadedAt: now,
+      createdAt: now.minus({ days: 61 }),
+    })
+    const contact = { consent: true, phone: '0812345678' }
+    await StudentContact.record(career.id, contact, 'contact')
+    await StudentContact.record(mypath.id, contact, 'mypath')
+    await StudentContact.record(old.id, contact, 'contact')
 
     const page = await client
       .get('/admin')
@@ -36,8 +45,10 @@ test.group('Admin dashboard', (group) => {
     assert.deepEqual(summary.steps, { test: 2, result: 1, career: 1, mypath: 1 })
     assert.equal(summary.resultViews, 3)
     assert.equal(summary.downloads, 1)
+    assert.deepEqual(summary.contacts, { contact: 1, mypath: 1 })
     // No codes or contact data in the dashboard props.
     assert.notInclude(JSON.stringify(page.inertiaProps), 'AB5434')
+    assert.notInclude(JSON.stringify(page.inertiaProps), '0812345678')
   })
 
   test('steps with no attempts count as zero', async ({ client, assert }) => {
@@ -49,6 +60,7 @@ test.group('Admin dashboard', (group) => {
     assert.deepEqual(summary.steps, { test: 0, result: 0, career: 0, mypath: 0 })
     assert.equal(summary.resultViews, 0)
     assert.equal(summary.downloads, 0)
+    assert.deepEqual(summary.contacts, { contact: 0, mypath: 0 })
   })
 
   test('the range filter picks 7, 30, 60 days or all; anything else falls back to 60', async ({
