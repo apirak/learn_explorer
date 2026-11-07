@@ -1,6 +1,6 @@
 import Logo from '~/components/logo'
 import { type ReactNode } from 'react'
-import { LayoutGrid, LogOut, UserRound } from 'lucide-react'
+import { LayoutGrid, LogOut, UserRound, UsersRound } from 'lucide-react'
 import { usePage } from '@inertiajs/react'
 import { Form } from '@adonisjs/inertia/react'
 import FlashToasts from '~/components/flash_toasts'
@@ -13,7 +13,7 @@ import NavLink, { type NavItem } from '~/components/nav_link'
 const nav: NavItem[] = [{ label: 'Account', route: 'account.show', icon: UserRound }]
 
 export default function AppLayout({ children }: { children: ReactNode }) {
-  const isAdmin = usePage().props.user?.isAdmin
+  const user = usePage().props.user
   return (
     <>
       <header className="header header--bar">
@@ -38,7 +38,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
           {/* Visible to everyone; works once the Owner makes you an admin. */}
-          {isAdmin ? (
+          {user?.isAdmin ? (
             <NavLink route="admin.dashboard" className="subnav__item">
               <LayoutGrid size={14} />
               Admin
@@ -48,6 +48,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <LayoutGrid size={14} />
               Admin
             </span>
+          )}
+          {user?.isOwner && (
+            <NavLink route="admin.users.index" className="subnav__item">
+              <UsersRound size={14} />
+              Users
+            </NavLink>
           )}
         </div>
       </nav>

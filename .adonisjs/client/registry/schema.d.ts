@@ -281,6 +281,45 @@ export interface Registry {
       rawResponse: ExtractRawResponse<unknown>
     }
   }
+  'admin.users.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/users'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['index']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['index']>>>
+    }
+  }
+  'admin.users.role': {
+    methods: ["PUT"]
+    pattern: '/admin/users/:id/role'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/account').roleValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/account').roleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['updateRole']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['updateRole']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['updateRole']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'admin.users.transfer': {
+    methods: ["POST"]
+    pattern: '/admin/users/:id/transfer'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['transfer']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['transfer']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/users_controller').default['transfer']>>>
+    }
+  }
 }
 
 export namespace Route {

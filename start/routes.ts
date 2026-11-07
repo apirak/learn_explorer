@@ -57,6 +57,20 @@ router
 router
   .group(() => {
     router.on('/').renderInertia('admin/dashboard', {}).as('dashboard')
+
+    router
+      .group(() => {
+        router.get('users', [controllers.admin.Users, 'index']).as('users.index')
+        router
+          .put('users/:id/role', [controllers.admin.Users, 'updateRole'])
+          .where('id', router.matchers.number())
+          .as('users.role')
+        router
+          .post('users/:id/transfer', [controllers.admin.Users, 'transfer'])
+          .where('id', router.matchers.number())
+          .as('users.transfer')
+      })
+      .use(middleware.role({ min: 'owner' }))
   })
   .prefix('admin')
   .as('admin')
