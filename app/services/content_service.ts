@@ -4,7 +4,7 @@ import app from '@adonisjs/core/services/app'
 /**
  * Bump together with a new `content/vN/` folder. Files in a version never change.
  */
-export const CONTENT_VERSION = 'v1'
+export const CONTENT_VERSION = 'v2'
 
 export type RiasecType = 'R' | 'I' | 'A' | 'S' | 'E' | 'C'
 export type Scores = Record<RiasecType, number>
@@ -30,19 +30,36 @@ export type TcasField = {
   note?: string
 }
 
+/** One program from learn_tcas `browse.json`. `uni` is a code into `universities`. */
 export type TcasProgram = {
   id: string
-  university: string
+  name: string
+  type: string
+  uni: string
+  group: string
+  field: string
   campus: string
   faculty: string
-  program: string
-  type: string
+  exams: Record<string, number>
+  others: Record<string, number>
+  either: string[][]
+  rounds: number[]
+  scored: number[]
+  /** Round-3 weights filled from last year. */
+  ly?: true
+}
+
+type Browse = {
+  groups: Record<string, string>
+  fields: Record<string, string>
+  universities: Record<string, string>
+  programs: TcasProgram[]
 }
 
 const read = async <T>(file: string): Promise<T> =>
   JSON.parse(await readFile(app.makePath('content', CONTENT_VERSION, file), 'utf8'))
 
-const [itemsFile, riasecFile, occupationsFile, titlesFile, cipFile, fieldsFile, programsFile] =
+const [itemsFile, riasecFile, occupationsFile, titlesFile, cipFile, fieldsFile, browseFile] =
   await Promise.all([
     read<{
       attribution: string
@@ -54,13 +71,25 @@ const [itemsFile, riasecFile, occupationsFile, titlesFile, cipFile, fieldsFile, 
     read<{ titles: Record<string, string> }>('occupation_titles_th.json'),
     read<{ occupations: Record<string, string[]> }>('occupation_cip.json'),
     read<{ fields: Record<string, TcasField> }>('tcas_field_to_cip.json'),
-    read<{ groups: Record<string, string>; fields: Record<string, TcasProgram[]> }>(
-      'tcas_programs.json'
-    ),
+    read<{ data: Browse }>('browse.json'),
   ])
 
+const { groups, universities, programs } = browseFile.data
+
+/** Programs by TCAS field key, sorted by university then program name as in v1. */
+const byField: Record<string, TcasProgram[]> = {}
+for (const p of programs) (byField[p.field] ??= []).push(p)
+const sortKey = (p: TcasProgram) => [universities[p.uni] ?? '', p.name]
+for (const list of Object.values(byField)) {
+  list.sort((a, b) => {
+    const [ua, na] = sortKey(a)
+    const [ub, nb] = sortKey(b)
+    return ua < ub ? -1 : ua > ub ? 1 : na < nb ? -1 : na > nb ? 1 : 0
+  })
+}
+
 /**
- * Content v1, read once when this module is first imported (preloaded at boot by start/content.ts).
+ * Content v2, read once when this module is first imported (preloaded at boot by start/content.ts).
  * Server only: `tcasPrograms` is ~2 MB and must never reach the browser whole.
  */
 export class ContentService {
@@ -73,7 +102,9 @@ export class ContentService {
   readonly thaiTitles = titlesFile.titles
   readonly occupationCip = cipFile.occupations
   readonly tcasFields = fieldsFile.fields
-  readonly tcasPrograms = programsFile
+  readonly tcasPrograms = { groups, fields: byField }
+  /** University code → Thai name. */
+  readonly universities = universities
 }
 
 export default new ContentService()

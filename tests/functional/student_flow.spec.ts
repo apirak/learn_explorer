@@ -61,7 +61,7 @@ test.group('Student flow: start and answers', (group) => {
     const attempt = await Attempt.firstOrFail()
     assert.equal(attempt.code, 'AB5434')
     assert.equal(attempt.desiredCareer, 'นักพัฒนาเกม')
-    assert.equal(attempt.contentVersion, 'v1')
+    assert.equal(attempt.contentVersion, 'v2')
     assert.equal(attempt.furthestStep, 'test')
 
     const cookie = response.cookie('le_attempt')!

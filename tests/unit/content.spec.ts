@@ -1,9 +1,9 @@
 import { test } from '@japa/runner'
 import content, { CONTENT_VERSION } from '#services/content_service'
 
-test.group('Content v1', () => {
+test.group('Content v2', () => {
   test('exposes every content file', ({ assert }) => {
-    assert.equal(CONTENT_VERSION, 'v1')
+    assert.equal(CONTENT_VERSION, 'v2')
     assert.lengthOf(content.items, 60)
     assert.lengthOf(content.forms.mini.ids, 30)
     assert.lengthOf(content.occupations, 923)

@@ -95,6 +95,31 @@ test.group('Student career detail', (group) => {
     }
   })
 
+  test('sends programs from browse.json with university, campus and faculty', async ({
+    client,
+    assert,
+  }) => {
+    const attempt = await scoredAttempt()
+    const programs = []
+    for (const code of await matchCodes(client, attempt)) {
+      const response = await client
+        .get(`/careers/${code}`)
+        .withEncryptedCookie('le_attempt', cookie(attempt))
+        .withInertia()
+      const { occupation } = response.inertiaProps as Record<string, any>
+      const field = occupation.fields.find((f: { key: string }) => f.key === '11-01')
+      if (field) programs.push(...field.programs)
+    }
+    // 10010137110101A in browse.json: uni code 001 → its Thai name.
+    assert.deepInclude(programs, {
+      university: 'จุฬาลงกรณ์มหาวิทยาลัย',
+      campus: 'วิทยาเขตหลัก',
+      faculty: 'คณะสหเวชศาสตร์',
+      program: 'หลักสูตรวิทยาศาสตรบัณฑิต สาขาวิชากายภาพบำบัด',
+      type: 'ภาษาไทย ปกติ',
+    })
+  })
+
   test('records one view per occupation and the career time once', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
     const [first, second] = await matchCodes(client, attempt)

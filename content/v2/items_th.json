@@ -1,0 +1,444 @@
+{
+ "status": "DRAFT — ยังไม่ผ่าน validation, ห้ามใช้กับนักเรียนจริงก่อน pilot",
+ "source": "O*NET Interest Profiler Short Form (paper, v1) - https://www.onetcenter.org/dl_tools/ipsf/Interest_Profiler.pdf",
+ "license": "O*NET Tools Developer License (modified/translated) - https://www.onetcenter.org/license_tools.html",
+ "attribution": "This page includes information from the O*NET Career Exploration Tools by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the O*NET Tools Developer License. O*NET® is a trademark of USDOL/ETA. OnDemand has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+ "instructions_th": "อ่านกิจกรรม 60 ข้อด้านล่าง แล้วเลือกข้อที่น้อง \"อยากลองทำ\" ไม่ต้องคิดว่าต้องเรียนนานแค่ไหน หรือได้เงินเท่าไร ไม่มีคำตอบถูกหรือผิด",
+ "scoring": "นับจำนวนข้อที่เลือกในแต่ละหมวด (0-10) หมวดคะแนนสูงสุด 3 อันดับ = interest code",
+ "forms": {
+  "full": { "label_th": "ฉบับเต็ม", "source": "O*NET Interest Profiler Short Form (60 items)", "ids": "all", "first": "mini" },
+  "mini": {
+   "label_th": "ฉบับสั้น",
+   "source": "O*NET Mini Interest Profiler (Mini-IP), Rounds, Wee, Cao, Song & Lewis (2016), Appendix A - https://www.onetcenter.org/dl_files/Mini-IP.pdf. All 30 items are Short Form items; order is Appendix A's suggested position.",
+   "ids": ["R1", "I1", "A1", "S2", "E4", "C3", "R3", "I2", "A3", "S3", "E5", "C4", "R5", "I3", "A5", "S4", "E6", "C5", "R6", "I5", "A6", "S5", "E8", "C7", "R7", "I7", "A7", "S10", "E9", "C10"]
+  }
+ },
+ "items": [
+  {
+   "id": "R1",
+   "type": "Realistic",
+   "text_en": "Build kitchen cabinets",
+   "text_th": "ต่อตู้หรือทำเฟอร์นิเจอร์ไม้",
+   "adapted": true,
+   "note": "ขยายจาก \"ตู้ในครัว\" เป็นเฟอร์นิเจอร์ไม้ทั่วไป"
+  },
+  {
+   "id": "R2",
+   "type": "Realistic",
+   "text_en": "Lay brick or tile",
+   "text_th": "ก่ออิฐหรือปูกระเบื้อง",
+   "adapted": false
+  },
+  {
+   "id": "R3",
+   "type": "Realistic",
+   "text_en": "Repair household appliances",
+   "text_th": "ซ่อมเครื่องใช้ไฟฟ้าในบ้าน เช่น พัดลม หม้อหุงข้าว",
+   "adapted": false
+  },
+  {
+   "id": "R4",
+   "type": "Realistic",
+   "text_en": "Raise fish in a fish hatchery",
+   "text_th": "เลี้ยงปลาหรือกุ้งในฟาร์มเพาะเลี้ยง",
+   "adapted": true,
+   "note": "fish hatchery ไม่คุ้นในไทย; ใช้ฟาร์มปลา/กุ้งซึ่งเป็นงานเกษตรที่เด็กไทยรู้จัก"
+  },
+  {
+   "id": "R5",
+   "type": "Realistic",
+   "text_en": "Assemble electronic parts",
+   "text_th": "ประกอบชิ้นส่วนอิเล็กทรอนิกส์",
+   "adapted": false
+  },
+  {
+   "id": "R6",
+   "type": "Realistic",
+   "text_en": "Drive a truck to deliver packages to offices and homes",
+   "text_th": "ขับรถส่งพัสดุตามบ้านและสำนักงาน",
+   "adapted": false
+  },
+  {
+   "id": "R7",
+   "type": "Realistic",
+   "text_en": "Test the quality of parts before shipment",
+   "text_th": "ตรวจคุณภาพชิ้นส่วนก่อนส่งให้ลูกค้า",
+   "adapted": false
+  },
+  {
+   "id": "R8",
+   "type": "Realistic",
+   "text_en": "Repair and install locks",
+   "text_th": "ติดตั้งและซ่อมกุญแจหรือลูกบิดประตู",
+   "adapted": false
+  },
+  {
+   "id": "R9",
+   "type": "Realistic",
+   "text_en": "Set up and operate machines to make products",
+   "text_th": "ตั้งค่าและควบคุมเครื่องจักรในโรงงานผลิตสินค้า",
+   "adapted": false
+  },
+  {
+   "id": "R10",
+   "type": "Realistic",
+   "text_en": "Put out forest fires",
+   "text_th": "ดับไฟป่า",
+   "adapted": false
+  },
+  {
+   "id": "I1",
+   "type": "Investigative",
+   "text_en": "Develop a new medicine",
+   "text_th": "คิดค้นยาชนิดใหม่",
+   "adapted": false
+  },
+  {
+   "id": "I2",
+   "type": "Investigative",
+   "text_en": "Study ways to reduce water pollution",
+   "text_th": "ศึกษาวิธีลดมลพิษทางน้ำ",
+   "adapted": false
+  },
+  {
+   "id": "I3",
+   "type": "Investigative",
+   "text_en": "Conduct chemical experiments",
+   "text_th": "ทำการทดลองทางเคมี",
+   "adapted": false
+  },
+  {
+   "id": "I4",
+   "type": "Investigative",
+   "text_en": "Study the movement of planets",
+   "text_th": "ศึกษาการเคลื่อนที่ของดาวเคราะห์",
+   "adapted": false
+  },
+  {
+   "id": "I5",
+   "type": "Investigative",
+   "text_en": "Examine blood samples using a microscope",
+   "text_th": "ตรวจตัวอย่างเลือดด้วยกล้องจุลทรรศน์",
+   "adapted": false
+  },
+  {
+   "id": "I6",
+   "type": "Investigative",
+   "text_en": "Investigate the cause of a fire",
+   "text_th": "สืบหาสาเหตุของไฟไหม้",
+   "adapted": false
+  },
+  {
+   "id": "I7",
+   "type": "Investigative",
+   "text_en": "Develop a way to better predict the weather",
+   "text_th": "พัฒนาวิธีพยากรณ์อากาศให้แม่นยำขึ้น",
+   "adapted": false
+  },
+  {
+   "id": "I8",
+   "type": "Investigative",
+   "text_en": "Work in a biology lab",
+   "text_th": "ทำงานในห้องแล็บชีววิทยา",
+   "adapted": false
+  },
+  {
+   "id": "I9",
+   "type": "Investigative",
+   "text_en": "Invent a replacement for sugar",
+   "text_th": "คิดค้นสารให้ความหวานที่ใช้แทนน้ำตาล",
+   "adapted": false
+  },
+  {
+   "id": "I10",
+   "type": "Investigative",
+   "text_en": "Do laboratory tests to identify diseases",
+   "text_th": "ทำการตรวจในห้องแล็บเพื่อหาว่าผู้ป่วยเป็นโรคอะไร",
+   "adapted": false
+  },
+  {
+   "id": "A1",
+   "type": "Artistic",
+   "text_en": "Write books or plays",
+   "text_th": "เขียนนิยายหรือบทละคร",
+   "adapted": false
+  },
+  {
+   "id": "A2",
+   "type": "Artistic",
+   "text_en": "Play a musical instrument",
+   "text_th": "เล่นเครื่องดนตรี",
+   "adapted": false
+  },
+  {
+   "id": "A3",
+   "type": "Artistic",
+   "text_en": "Compose or arrange music",
+   "text_th": "แต่งเพลงหรือเรียบเรียงดนตรี",
+   "adapted": false
+  },
+  {
+   "id": "A4",
+   "type": "Artistic",
+   "text_en": "Draw pictures",
+   "text_th": "วาดรูป",
+   "adapted": false
+  },
+  {
+   "id": "A5",
+   "type": "Artistic",
+   "text_en": "Create special effects for movies",
+   "text_th": "สร้างเทคนิคพิเศษ (special effects) ให้ภาพยนตร์",
+   "adapted": false
+  },
+  {
+   "id": "A6",
+   "type": "Artistic",
+   "text_en": "Paint sets for plays",
+   "text_th": "ออกแบบและวาดฉากสำหรับละครเวที",
+   "adapted": false
+  },
+  {
+   "id": "A7",
+   "type": "Artistic",
+   "text_en": "Write scripts for movies or television shows",
+   "text_th": "เขียนบทภาพยนตร์ ละคร หรือซีรีส์",
+   "adapted": false
+  },
+  {
+   "id": "A8",
+   "type": "Artistic",
+   "text_en": "Perform jazz or tap dance",
+   "text_th": "แสดงเต้นบนเวที เช่น เต้นโคฟเวอร์ หรือรำนาฏศิลป์",
+   "adapted": true,
+   "note": "jazz/tap dance ไม่คุ้นในไทย; ใช้การเต้นที่เด็กไทยเห็นบ่อย ยังเป็นการแสดง (performing)"
+  },
+  {
+   "id": "A9",
+   "type": "Artistic",
+   "text_en": "Sing in a band",
+   "text_th": "ร้องเพลงในวงดนตรี",
+   "adapted": false
+  },
+  {
+   "id": "A10",
+   "type": "Artistic",
+   "text_en": "Edit movies",
+   "text_th": "ตัดต่อภาพยนตร์หรือวิดีโอ",
+   "adapted": false
+  },
+  {
+   "id": "S1",
+   "type": "Social",
+   "text_en": "Teach an individual an exercise routine",
+   "text_th": "สอนท่าออกกำลังกายให้คนอื่นแบบตัวต่อตัว",
+   "adapted": false
+  },
+  {
+   "id": "S2",
+   "type": "Social",
+   "text_en": "Help people with personal or emotional problems",
+   "text_th": "ช่วยเหลือคนที่มีปัญหาส่วนตัวหรือปัญหาด้านอารมณ์",
+   "adapted": false
+  },
+  {
+   "id": "S3",
+   "type": "Social",
+   "text_en": "Give career guidance to people",
+   "text_th": "ให้คำแนะนำเรื่องการเรียนต่อและอาชีพแก่คนอื่น",
+   "adapted": true,
+   "note": "เพิ่ม \"การเรียนต่อ\" เพราะ career guidance ในบริบทเด็กไทยมักผูกกับการเลือกคณะ"
+  },
+  {
+   "id": "S4",
+   "type": "Social",
+   "text_en": "Perform rehabilitation therapy",
+   "text_th": "ทำกายภาพบำบัดเพื่อช่วยฟื้นฟูผู้ป่วย",
+   "adapted": false
+  },
+  {
+   "id": "S5",
+   "type": "Social",
+   "text_en": "Do volunteer work at a non-profit organization",
+   "text_th": "ทำงานอาสาสมัครกับมูลนิธิหรือองค์กรการกุศล",
+   "adapted": false
+  },
+  {
+   "id": "S6",
+   "type": "Social",
+   "text_en": "Teach children how to play sports",
+   "text_th": "สอนเด็กเล่นกีฬา",
+   "adapted": false
+  },
+  {
+   "id": "S7",
+   "type": "Social",
+   "text_en": "Teach sign language to people who are deaf or hard of hearing",
+   "text_th": "สอนภาษามือให้คนหูหนวกหรือคนที่ได้ยินไม่ชัด",
+   "adapted": false
+  },
+  {
+   "id": "S8",
+   "type": "Social",
+   "text_en": "Help conduct a group therapy session",
+   "text_th": "ช่วยดำเนินกิจกรรมบำบัดแบบกลุ่ม",
+   "adapted": false
+  },
+  {
+   "id": "S9",
+   "type": "Social",
+   "text_en": "Take care of children at a day-care center",
+   "text_th": "ดูแลเด็กเล็กที่ศูนย์เด็กเล็กหรือเนอสเซอรี่",
+   "adapted": false
+  },
+  {
+   "id": "S10",
+   "type": "Social",
+   "text_en": "Teach a high-school class",
+   "text_th": "สอนนักเรียนชั้นมัธยม",
+   "adapted": false
+  },
+  {
+   "id": "E1",
+   "type": "Enterprising",
+   "text_en": "Buy and sell stocks and bonds",
+   "text_th": "ซื้อขายหุ้นและพันธบัตร",
+   "adapted": false
+  },
+  {
+   "id": "E2",
+   "type": "Enterprising",
+   "text_en": "Manage a retail store",
+   "text_th": "บริหารร้านค้าปลีก",
+   "adapted": false
+  },
+  {
+   "id": "E3",
+   "type": "Enterprising",
+   "text_en": "Operate a beauty salon or barber shop",
+   "text_th": "เปิดร้านเสริมสวยหรือร้านตัดผม",
+   "adapted": false
+  },
+  {
+   "id": "E4",
+   "type": "Enterprising",
+   "text_en": "Manage a department within a large company",
+   "text_th": "บริหารฝ่ายหนึ่งในบริษัทขนาดใหญ่",
+   "adapted": false
+  },
+  {
+   "id": "E5",
+   "type": "Enterprising",
+   "text_en": "Start your own business",
+   "text_th": "เริ่มต้นธุรกิจของตัวเอง",
+   "adapted": false
+  },
+  {
+   "id": "E6",
+   "type": "Enterprising",
+   "text_en": "Negotiate business contracts",
+   "text_th": "เจรจาต่อรองสัญญาทางธุรกิจ",
+   "adapted": false
+  },
+  {
+   "id": "E7",
+   "type": "Enterprising",
+   "text_en": "Represent a client in a lawsuit",
+   "text_th": "เป็นทนายว่าความให้ลูกความในศาล",
+   "adapted": false
+  },
+  {
+   "id": "E8",
+   "type": "Enterprising",
+   "text_en": "Market a new line of clothing",
+   "text_th": "ทำการตลาดให้คอลเลกชันใหม่ของแบรนด์เสื้อผ้า",
+   "adapted": false
+  },
+  {
+   "id": "E9",
+   "type": "Enterprising",
+   "text_en": "Sell merchandise at a department store",
+   "text_th": "ขายสินค้าในห้างสรรพสินค้า",
+   "adapted": false
+  },
+  {
+   "id": "E10",
+   "type": "Enterprising",
+   "text_en": "Manage a clothing store",
+   "text_th": "บริหารร้านเสื้อผ้า",
+   "adapted": false
+  },
+  {
+   "id": "C1",
+   "type": "Conventional",
+   "text_en": "Develop a spreadsheet using computer software",
+   "text_th": "ทำตารางข้อมูลด้วยโปรแกรม เช่น Excel",
+   "adapted": false
+  },
+  {
+   "id": "C2",
+   "type": "Conventional",
+   "text_en": "Proofread records or forms",
+   "text_th": "ตรวจทานความถูกต้องของเอกสารหรือแบบฟอร์ม",
+   "adapted": false
+  },
+  {
+   "id": "C3",
+   "type": "Conventional",
+   "text_en": "Install software across computers on a large network",
+   "text_th": "ติดตั้งโปรแกรมให้คอมพิวเตอร์ทุกเครื่องในองค์กรขนาดใหญ่",
+   "adapted": false
+  },
+  {
+   "id": "C4",
+   "type": "Conventional",
+   "text_en": "Operate a calculator",
+   "text_th": "ใช้เครื่องคิดเลขคำนวณตัวเลขในงาน",
+   "adapted": false
+  },
+  {
+   "id": "C5",
+   "type": "Conventional",
+   "text_en": "Keep shipping and receiving records",
+   "text_th": "จดบันทึกการรับ-ส่งสินค้า",
+   "adapted": false
+  },
+  {
+   "id": "C6",
+   "type": "Conventional",
+   "text_en": "Calculate the wages of employees",
+   "text_th": "คำนวณเงินเดือนของพนักงาน",
+   "adapted": false
+  },
+  {
+   "id": "C7",
+   "type": "Conventional",
+   "text_en": "Inventory supplies using a hand-held computer",
+   "text_th": "ตรวจนับสต็อกสินค้าด้วยเครื่องสแกนบาร์โค้ด",
+   "adapted": true,
+   "note": "hand-held computer ล้าสมัย; ใช้เครื่องสแกนบาร์โค้ดที่เห็นในร้านสะดวกซื้อ"
+  },
+  {
+   "id": "C8",
+   "type": "Conventional",
+   "text_en": "Record rent payments",
+   "text_th": "จดบันทึกการรับค่าเช่าห้องหรือหอพัก",
+   "adapted": false
+  },
+  {
+   "id": "C9",
+   "type": "Conventional",
+   "text_en": "Keep inventory records",
+   "text_th": "จัดทำบันทึกคุมสต็อกสินค้า",
+   "adapted": false
+  },
+  {
+   "id": "C10",
+   "type": "Conventional",
+   "text_en": "Stamp, sort, and distribute mail for an organization",
+   "text_th": "คัดแยกและแจกจ่ายจดหมายและพัสดุภายในองค์กร",
+   "adapted": true,
+   "note": "ตัด \"stamp\" (ประทับตราไปรษณีย์) ออกเพราะไม่ใช่งานที่เด็กไทยนึกออก"
+  }
+ ]
+}

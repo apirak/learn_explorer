@@ -33,10 +33,10 @@ export default class OccupationTransformer extends BaseTransformer<OccupationMat
           unsure: field.confidence === 'low',
           programCount: (programs[key] ?? []).length,
           programs: (programs[key] ?? []).slice(0, PROGRAMS_SHOWN).map((p) => ({
-            university: p.university,
+            university: content.universities[p.uni] ?? '',
             campus: p.campus,
             faculty: p.faculty,
-            program: p.program,
+            program: p.name,
             type: p.type,
           })),
         })),
