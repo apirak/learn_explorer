@@ -28,10 +28,21 @@ test.group('Student flow: start and answers', (group) => {
   })
 
   test('an invalid code is stored as no code', async ({ client, assert }) => {
-    for (const code of ['bad code', 'a'.repeat(65), '', 'x<y']) {
+    for (const code of ['bad code', 'a'.repeat(65), '', 'x<y', `NC-${'a'.repeat(60)}`]) {
       const response = await client.get('/').qs({ code }).redirects(0)
       response.assertStatus(302)
       assert.deepEqual(response.cookie('le_entry')?.value, { code: null }, code)
+    }
+  })
+
+  test('a sent NC- code is stored as a manual M-NC- code', async ({ client, assert }) => {
+    for (const [sent, stored] of [
+      ['NC-AB3CD', 'M-NC-AB3CD'],
+      [`NC-${'a'.repeat(59)}`, `M-NC-${'a'.repeat(59)}`],
+      ['M-NC-AB3CD', 'M-NC-AB3CD'],
+    ]) {
+      const response = await client.get('/').qs({ code: sent }).redirects(0)
+      assert.deepEqual(response.cookie('le_entry')?.value, { code: stored }, sent)
     }
   })
 
@@ -71,11 +82,40 @@ test.group('Student flow: start and answers', (group) => {
     assert.equal(cookie.maxAge, 60 * 24 * 60 * 60)
   })
 
-  test('Start without a code or career stores nulls', async ({ client, assert }) => {
-    await client.post('/attempts').withCsrfToken().redirects(0)
+  test('Start without a code gives an NC- code and no career', async ({ client, assert }) => {
+    const response = await client.post('/attempts').withCsrfToken().redirects(0)
     const attempt = await Attempt.firstOrFail()
-    assert.isNull(attempt.code)
+    assert.match(attempt.code!, /^NC-[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{5}$/)
+    assert.isFalse(attempt.hasCampaignCode)
     assert.isNull(attempt.desiredCareer)
+    assert.deepEqual(response.cookie('le_attempt')?.value, {
+      uuid: attempt.uuid,
+      code: attempt.code,
+    })
+  })
+
+  test('restart without a code keeps the NC- code so repeats share it', async ({
+    client,
+    assert,
+  }) => {
+    await client.post('/attempts').withCsrfToken().redirects(0)
+    const old = await Attempt.firstOrFail()
+
+    await client
+      .post('/attempts')
+      .withEncryptedCookie('le_attempt', { uuid: old.uuid, code: old.code })
+      .withCsrfToken()
+      .redirects(0)
+
+    const fresh = await Attempt.query().whereNot('id', old.id).firstOrFail()
+    assert.equal(fresh.code, old.code)
+  })
+
+  test('two students without a code get different NC- codes', async ({ client, assert }) => {
+    await client.post('/attempts').withCsrfToken().redirects(0)
+    await client.post('/attempts').withCsrfToken().redirects(0)
+    const [a, b] = await Attempt.all()
+    assert.notEqual(a.code, b.code)
   })
 
   test('the test pages need an attempt', async ({ client }) => {

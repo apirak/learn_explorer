@@ -7,13 +7,13 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class StudentContactsController {
   /**
    * `GET /contact`: the step between the result and the careers. Skipped for a campaign code
-   * or a contact already left; careers then opens straight away.
+   * or a contact already left; careers then opens straight away. An `NC-` code still asks.
    */
   async show({ response, inertia, attempt }: HttpContext) {
     const scored = await attempt!.score()
     if (!scored) return response.redirect().toRoute('student.test.show')
     if (scored.status !== 'ok') return response.redirect().toRoute('student.result')
-    if (attempt!.code || (await StudentContact.findBy('attemptId', attempt!.id))) {
+    if (attempt!.hasCampaignCode || (await StudentContact.findBy('attemptId', attempt!.id))) {
       return response.redirect().toRoute('student.careers')
     }
 

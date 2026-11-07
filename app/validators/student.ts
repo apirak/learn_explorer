@@ -1,10 +1,18 @@
 import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 import content from '#services/content_service'
+import { NO_CODE_PREFIX } from '#models/attempt'
 import { ANSWER_MAX, ANSWER_MIN } from '#services/scoring_service'
 
-/** Campaign code from `?code=`. A code that fails is treated as no code, never as an error. */
+/**
+ * Campaign code from `?code=`. A code that fails is treated as no code, never as an error.
+ * `NC-` belongs to codes this system makes, so a sent one is stored as `M-NC-…` (manual);
+ * it is capped at 62 characters so the prefixed code still fits the 64-character column.
+ */
 export const entryCodeValidator = vine.create({
-  code: vine.string().regex(/^[A-Za-z0-9_-]{1,64}$/),
+  code: vine
+    .string()
+    .regex(/^(?:NC-[A-Za-z0-9_-]{0,59}|(?!NC-)[A-Za-z0-9_-]{1,64})$/)
+    .transform((code) => (code.startsWith(NO_CODE_PREFIX) ? `M-${code}` : code)),
 })
 
 /** Start: the career the student has in mind (free text, never logged [DP-001]). */
