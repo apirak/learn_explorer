@@ -1804,13 +1804,6 @@ input {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.ip .consent-done {
-  padding: 14px 16px;
-  border: 2px dashed var(--line-2);
-  border-radius: 16px;
-  font-weight: 700;
-  text-align: center;
-}
 
 /* --- Print page: hint on screen, clean sheet on paper. --- */
 .ip .print-hint {

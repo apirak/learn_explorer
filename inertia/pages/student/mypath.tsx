@@ -6,12 +6,10 @@ import ContactFields from '~/components/contact_fields'
 
 /**
  * MyPath: optional contact details with a separate, unticked consent box, then Download.
- * A typed phone or email needs the box ticked. Once a contact exists, only Download is left.
+ * A typed phone or email needs the box ticked. With a contact already left, `/mypath` skips
+ * straight to the printable page.
  */
-export default function StudentMypath({
-  consent,
-  hasContact,
-}: InertiaProps<{ consent: Data.Consent; hasContact: boolean }>) {
+export default function StudentMypath({ consent }: InertiaProps<{ consent: Data.Consent }>) {
   return (
     <main className="ip result">
       <Head title="เส้นทางของน้อง" />
@@ -22,27 +20,20 @@ export default function StudentMypath({
         <header>
           <h1>เก็บผลไว้ดูทีหลัง</h1>
           <p className="muted">
-            กดดาวน์โหลดเพื่อเปิดหน้าผลที่พิมพ์หรือบันทึกเป็น PDF ได้
-            {!hasContact &&
-              ' ถ้าอยากให้พี่ ๆ ช่วยวางแผนการเรียน ฝากเบอร์หรืออีเมลไว้ได้ (ไม่บังคับ)'}
+            กดปุ่มด้านล่างเพื่อเปิดหน้าผลที่พิมพ์หรือบันทึกเป็น PDF ได้ ถ้าอยากให้พี่ ๆ
+            ช่วยวางแผนการเรียน ฝากเบอร์หรืออีเมลไว้ได้ (ไม่บังคับ)
           </p>
         </header>
         <Form route="student.mypath.download" className="sheet mypath">
           {({ errors, processing }) => (
             <>
-              {hasContact ? (
-                <p className="consent-done">ฝากช่องทางติดต่อไว้แล้ว ✓</p>
-              ) : (
-                <ContactFields consent={consent} errors={errors} />
-              )}
+              <ContactFields consent={consent} errors={errors} />
 
               <div className="download">
                 <button type="submit" className="btn btn--primary btn--block" disabled={processing}>
-                  {processing ? 'รอสักครู่…' : 'ดาวน์โหลดผลของน้อง'}
+                  {processing ? 'รอสักครู่…' : 'เปิดหน้าพิมพ์ / บันทึก PDF'}
                 </button>
-                {!hasContact && (
-                  <p className="small muted">ไม่กรอกก็ดาวน์โหลดได้ ถ้ากรอกต้องติ๊กยินยอมด้วย</p>
-                )}
+                <p className="small muted">ไม่กรอกก็เปิดได้ ถ้ากรอกต้องติ๊กยินยอมด้วย</p>
               </div>
             </>
           )}

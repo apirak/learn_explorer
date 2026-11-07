@@ -192,16 +192,19 @@ test.group('Student MyPath', (group) => {
 test.group('Student MyPath with a contact', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
 
-  test('hides the form once a contact exists', async ({ client, assert }) => {
+  test('with a contact, opens the printable page and counts it as a download', async ({
+    client,
+    assert,
+  }) => {
     const attempt = await scoredAttempt()
-    const open = () =>
-      client.get('/mypath').withEncryptedCookie('le_attempt', cookie(attempt)).withInertia()
-
-    const before = await open()
-    assert.isFalse(before.inertiaProps.hasContact)
     await StudentContact.record(attempt.id, { phone: '0812345678', consent: true }, 'contact')
-    const response = await open()
-    assert.isTrue(response.inertiaProps.hasContact)
-    assert.notInclude(JSON.stringify(response.inertiaProps), '0812345678')
+    const response = await client
+      .get('/mypath')
+      .withEncryptedCookie('le_attempt', cookie(attempt))
+      .redirects(0)
+    response.assertHeader('location', '/mypath/print')
+    await attempt.refresh()
+    assert.equal(attempt.furthestStep, 'mypath')
+    assert.isNotNull(attempt.downloadedAt)
   })
 })

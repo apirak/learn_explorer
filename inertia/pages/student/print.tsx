@@ -24,7 +24,7 @@ export default function StudentPrint({
             <button type="button" className="btn btn--primary" onClick={() => window.print()}>
               พิมพ์ / บันทึกเป็น PDF
             </button>
-            <Link route="student.mypath" className="btn btn--ghost">
+            <Link route="student.careers" className="btn btn--ghost">
               กลับ
             </Link>
           </div>

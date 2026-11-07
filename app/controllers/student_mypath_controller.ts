@@ -9,17 +9,19 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 export default class StudentMypathController {
   /**
-   * `GET /mypath`: contact form, consent text (unticked) and Download. The form is hidden once
-   * a contact exists. Needs a finished test.
+   * `GET /mypath`: contact form, consent text (unticked) and Download. With a contact already
+   * left there is nothing to ask, so it counts as a download and opens the printable page.
+   * Needs a finished test.
    */
   async show({ response, inertia, attempt }: HttpContext) {
     if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
     await attempt!.reachStep('mypath') // saves the scores too
 
-    return inertia.render('student/mypath', {
-      consent: ConsentTransformer.transform(consent),
-      hasContact: !!(await StudentContact.findBy('attemptId', attempt!.id)),
-    })
+    if (await StudentContact.findBy('attemptId', attempt!.id)) {
+      await attempt!.markDownloaded()
+      return response.redirect().toRoute('student.mypath.print')
+    }
+    return inertia.render('student/mypath', { consent: ConsentTransformer.transform(consent) })
   }
 
   /**
