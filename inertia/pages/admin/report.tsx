@@ -10,7 +10,7 @@ type FunnelStep = Report['funnel'][number]['step']
 
 const STEP_LABEL: Record<FunnelStep, string> = {
   start: 'Start',
-  testComplete: 'ตอบครบ 30 ข้อ',
+  testComplete: 'ตอบครบทุกข้อ',
   result: 'Result',
   career: 'Career',
   mypath: 'MyPath',
@@ -106,7 +106,7 @@ export default function AdminReport({
       </dl>
 
       <Funnel report={report} />
-      <Incomplete incomplete={report.incomplete} />
+      <Incomplete incomplete={report.incomplete} itemTotal={report.itemTotal} />
       <Gaps gaps={report.gaps} />
     </Page>
   )
@@ -158,7 +158,13 @@ function Funnel({ report }: { report: Report }) {
   )
 }
 
-function Incomplete({ incomplete }: { incomplete: Report['incomplete'] }) {
+function Incomplete({
+  incomplete,
+  itemTotal,
+}: {
+  incomplete: Report['incomplete']
+  itemTotal: number
+}) {
   const bars = [
     { label: 'ยังไม่ตอบ', count: incomplete.none },
     ...incomplete.buckets.map((count, i) => ({ label: `${i * 10}%`, count })),
@@ -167,7 +173,7 @@ function Incomplete({ incomplete }: { incomplete: Report['incomplete'] }) {
     <section className="panel report__section">
       <h2 className="section__title">ทำไม่ครบ {incomplete.total} ครั้ง</h2>
       <p className="section__description">
-        แยกตามสัดส่วนข้อที่ตอบไป (10% = 3 ข้อ) ไม่รวม attempt ที่ทำครบ
+        แยกตามสัดส่วนข้อที่ตอบไป (จาก {itemTotal} ข้อ, ช่องละ 10%) ไม่รวม attempt ที่ทำครบ
       </p>
       <Histogram bars={bars} />
     </section>

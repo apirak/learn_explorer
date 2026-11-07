@@ -5,6 +5,7 @@ import Attempt from '#models/attempt'
 import Answer from '#models/answer'
 import StudentContact from '#models/student_contact'
 import content from '#services/content_service'
+import { REPORT_ZONE } from '#services/report_service'
 import testUtils from '@adonisjs/core/services/test_utils'
 
 const makeUser = (role: 'admin' | 'member') =>
@@ -34,6 +35,14 @@ test.group('Admin report', (group) => {
       gaps.map((a) => a.gapMs),
       [null, 2500, 2500]
     )
+    // A gap past the int column's range is capped instead of failing the save.
+    const late = await Answer.create({
+      attemptId: attempt.id,
+      itemId: ids[3],
+      value: 1,
+      createdAt: DateTime.now().plus({ days: 40 }),
+    })
+    assert.equal(late.gapMs, 2_147_483_647)
 
     await Answer.updateOrCreate({ attemptId: attempt.id, itemId: ids[1] }, { value: 4 })
     const changed = await Answer.findByOrFail({ attemptId: attempt.id, itemId: ids[1] })
@@ -98,7 +107,7 @@ test.group('Admin report', (group) => {
     client,
     assert,
   }) => {
-    const now = DateTime.now().setZone('Asia/Bangkok')
+    const now = DateTime.now().setZone(REPORT_ZONE)
     for (const days of [0, 2, 5]) {
       await Attempt.create({
         contentVersion: 'v1',
@@ -116,6 +125,13 @@ test.group('Admin report', (group) => {
     assert.equal(await attemptsFor(`?from=${day(2)}&to=${day(0)}`), 2)
     assert.equal(await attemptsFor(`?from=${day(5)}&to=${day(5)}`), 1)
     assert.equal(await attemptsFor('?from=nope&to=bad'), 1)
+    // Clamped to the retention period (60 days by default) and to today.
+    await Attempt.create({
+      contentVersion: 'v1',
+      furthestStep: 'test',
+      createdAt: now.minus({ days: 90 }),
+    })
+    assert.equal(await attemptsFor(`?from=${day(100)}&to=${day(-5)}`), 3)
   })
 
   test('members get 403', async ({ client }) => {

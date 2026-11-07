@@ -50,6 +50,7 @@ export class ReportService {
     }
 
     return {
+      itemTotal: total,
       totals: { students: totals.students, attempts: totals.attempts, campaign: totals.campaign },
       funnel: [
         { step: 'start', count: totals.attempts },

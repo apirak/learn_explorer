@@ -12,16 +12,21 @@ export default class ReportsController {
       const parsed = DateTime.fromISO(String(input ?? ''), { zone: REPORT_ZONE })
       return parsed.isValid ? parsed : null
     }
+    // Kept within [oldest, today]: nothing past retention, nothing in the future.
+    const today = DateTime.now().setZone(REPORT_ZONE).startOf('day')
+    const retentionDays = await RetentionService.days()
+    const oldest = today.minus({ days: retentionDays })
+    const clamp = (d: DateTime) => DateTime.max(oldest, DateTime.min(today, d))
     const qs = request.qs()
-    const to = date(qs.to) ?? DateTime.now().setZone(REPORT_ZONE)
-    const from = date(qs.from) ?? to
+    const to = clamp(date(qs.to) ?? today)
+    const from = clamp(date(qs.from) ?? to)
     const start = from > to ? to : from
 
     return inertia.render('admin/report', {
       from: start.toISODate()!,
       to: to.toISODate()!,
-      today: DateTime.now().setZone(REPORT_ZONE).toISODate()!,
-      retentionDays: await RetentionService.days(),
+      today: today.toISODate()!,
+      retentionDays,
       report: ReportTransformer.transform(await ReportService.build(start, to)),
     })
   }
