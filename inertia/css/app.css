@@ -1180,12 +1180,12 @@ input {
   --hl: var(--purple);
 }
 .ip .headline {
-  font: 700 clamp(2.4rem, 8.5vw, 4.4rem)/1.18 var(--hand);
-  letter-spacing: -0.01em;
+  /* Thai stacks marks above the line (ที่, ฝัน): keep letter-spacing 0 and room above. */
+  font: 700 clamp(2.4rem, 8.5vw, 4.4rem)/1.4 var(--hand);
   position: relative;
   text-align: center;
   transform: rotate(-2deg);
-  margin: 8px 0 20px;
+  margin: 32px 0 20px;
 }
 /* Doodle dashes: three strokes fanned out from a corner. */
 .ip .dash {
