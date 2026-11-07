@@ -1,8 +1,16 @@
 import Logo from '~/components/logo'
 import { type ReactNode } from 'react'
-import { GraduationCap, LayoutGrid, LogOut, UserRound, UsersRound } from 'lucide-react'
+import {
+  Archive,
+  GraduationCap,
+  LayoutGrid,
+  LogOut,
+  TriangleAlert,
+  UserRound,
+  UsersRound,
+} from 'lucide-react'
 import { usePage } from '@inertiajs/react'
-import { Form } from '@adonisjs/inertia/react'
+import { Form, Link } from '@adonisjs/inertia/react'
 import FlashToasts from '~/components/flash_toasts'
 import NavLink, { type NavItem } from '~/components/nav_link'
 
@@ -13,7 +21,7 @@ import NavLink, { type NavItem } from '~/components/nav_link'
 const nav: NavItem[] = [{ label: 'Account', route: 'account.show', icon: UserRound }]
 
 export default function AppLayout({ children }: { children: ReactNode }) {
-  const user = usePage().props.user
+  const { user, retentionDue } = usePage().props
   return (
     <>
       <header className="header header--bar">
@@ -55,6 +63,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               Students
             </NavLink>
           )}
+          {user?.isAdmin && (
+            <NavLink route="admin.retention.show" className="subnav__item">
+              <Archive size={14} />
+              Retention
+            </NavLink>
+          )}
           {user?.isOwner && (
             <NavLink route="admin.users.index" className="subnav__item">
               <UsersRound size={14} />
@@ -63,6 +77,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           )}
         </div>
       </nav>
+
+      {/* Admin pages only. The app warns; an admin decides when to purge. */}
+      {!!retentionDue && (
+        <div className="retention-banner" role="status">
+          <TriangleAlert size={16} />
+          <span>{retentionDue} attempts are past the retention period.</span>
+          <Link route="admin.retention.show">Review and purge</Link>
+        </div>
+      )}
 
       <div className="app-main">{children}</div>
       <FlashToasts />

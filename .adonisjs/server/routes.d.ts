@@ -27,6 +27,9 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.retention.show': { paramsTuple?: []; params?: {} }
+    'admin.retention.update': { paramsTuple?: []; params?: {} }
+    'admin.retention.purge': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
     'admin.users.role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.users.transfer': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -46,6 +49,7 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -63,6 +67,7 @@ export type ScannedRoutes = {
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -72,11 +77,13 @@ export type ScannedRoutes = {
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'admin.retention.purge': { paramsTuple?: []; params?: {} }
     'admin.users.transfer': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PUT: {
     'account.profile': { paramsTuple?: []; params?: {} }
     'account.password': { paramsTuple?: []; params?: {} }
+    'admin.retention.update': { paramsTuple?: []; params?: {} }
     'admin.users.role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {

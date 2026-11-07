@@ -13,7 +13,7 @@ export class AdminAuditSchema extends BaseModel {
   @column()
   declare action: 'view'
   @column()
-  declare attemptId: number
+  declare attemptId: number | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column({ isPrimary: true })
@@ -95,6 +95,19 @@ export class CareerViewSchema extends BaseModel {
   declare id: number
   @column()
   declare occupationCode: string
+}
+
+export class SettingSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'retentionDays', 'updatedAt'] as const
+  $columns = SettingSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare retentionDays: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 }
 
 export class StudentContactSchema extends BaseModel {

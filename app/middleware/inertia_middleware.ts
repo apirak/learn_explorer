@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import UserTransformer from '#transformers/user_transformer'
+import { RetentionService } from '#services/retention_service'
 import BaseInertiaMiddleware from '@adonisjs/inertia/inertia_middleware'
 
 export default class InertiaMiddleware extends BaseInertiaMiddleware {
@@ -22,6 +23,14 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
     return {
       errors: ctx.inertia.always(this.getValidationErrors(ctx)),
       user: ctx.inertia.always(auth?.user ? UserTransformer.transform(auth.user) : undefined),
+      /**
+       * Admin pages only: attempts past the retention period, for the warning banner.
+       * A callback, so the dashboard's 5 s partial poll skips the count.
+       */
+      retentionDue:
+        auth?.user?.isAdmin && ctx.route?.name?.startsWith('admin.')
+          ? () => RetentionService.dueCount()
+          : undefined,
     }
   }
 
