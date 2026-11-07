@@ -1006,7 +1006,7 @@ input {
   max-width: 640px;
   margin: 0 auto;
   display: grid;
-  gap: 24px;
+  gap: 64px;
   grid-template-rows: 1fr auto;
   min-height: 100dvh;
   overflow-x: clip; /* the doodle dashes and sticker shadows poke past a phone's edge */
