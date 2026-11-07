@@ -1915,6 +1915,118 @@ input {
   }
 }
 
+/* Admin report: cohort totals, funnel and histograms drawn with CSS sizes */
+.report__totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px 14px;
+}
+.report__totals .panel {
+  padding: 20px 24px;
+}
+.report__totals dt {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+.report__totals dd {
+  font: 700 2rem/1.1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+.report__section {
+  display: grid;
+  gap: 12px;
+}
+.report-funnel {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin: 8px 0;
+}
+.report-funnel__row {
+  display: grid;
+  grid-template-columns: 120px 1fr 19ch;
+  align-items: center;
+  gap: 12px;
+}
+.report-funnel__track {
+  display: flex;
+  justify-content: center;
+}
+.report-funnel__bar {
+  display: block;
+  height: 26px;
+  min-width: 2px;
+  background: var(--purple);
+  border: 2px solid var(--ink-k);
+  border-radius: 8px;
+}
+.report-funnel__row--worst .report-funnel__bar {
+  background: var(--violet);
+}
+.report-funnel__row--worst .report-funnel__label,
+.report-funnel__row--worst .report-funnel__figures span {
+  color: var(--violet);
+  font-weight: 700;
+}
+.report-funnel__figures {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+}
+.report-funnel__figures span {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.histogram {
+  list-style: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 6px;
+  height: 200px;
+}
+.histogram__col {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.histogram__count {
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.histogram__track {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+}
+.histogram__bar {
+  width: 100%;
+  min-height: 2px;
+  background: var(--purple);
+  border: 2px solid var(--ink-k);
+  border-radius: 6px 6px 0 0;
+}
+.histogram__label {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .report-funnel__row {
+    grid-template-columns: 1fr auto;
+  }
+  .report-funnel__track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .histogram__label,
+  .histogram__count {
+    font-size: 10px;
+  }
+}
+
 /* Admin student records: list table and detail sections */
 .records + .records {
   margin-top: 16px;

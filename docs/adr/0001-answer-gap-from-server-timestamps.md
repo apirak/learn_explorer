@@ -11,3 +11,4 @@ The Report shows how long students take per test item. We measure this as the an
 
 - When a student's offline answer queue flushes, it saves several answers back to back. Their gaps come out near zero and inflate the "<1 s" bucket. The Report notes this under the chart.
 - Answers saved before the column existed have no gap. There was no backfill, because the app was not yet in real use.
+- A gap is capped at the int column's maximum (about 24.8 days), so a student who returns weeks later still saves the answer. The 5-minute read filter drops it anyway.

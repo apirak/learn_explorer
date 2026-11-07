@@ -38,6 +38,7 @@ export interface ApiDefinition {
   }
   admin: {
     dashboard: typeof routes['admin.dashboard']
+    report: typeof routes['admin.report']
     students: {
       index: typeof routes['admin.students.index']
       show: typeof routes['admin.students.show']
