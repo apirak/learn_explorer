@@ -28,7 +28,7 @@ export default function StudentCareers({
         {guess && (
           <p className="guess-echo">
             ก่อนเริ่ม น้องเดาไว้ว่า <b>{guess}</b> ลองเทียบกับ 5 อาชีพด้านล่างดู
-            ตรงหรือต่างจากที่คิด?
+            ว่าตรงหรือต่างจากที่คิด?
           </p>
         )}
         <div className="occ">
