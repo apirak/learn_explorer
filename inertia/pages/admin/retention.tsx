@@ -59,9 +59,8 @@ export default function AdminRetention({
         title="Purge"
         description={`${retentionDue} attempts are older than ${retentionDays} days. Purging deletes them with their answers, career views, downloads and contact details. This cannot be undone.`}
       >
-        {retentionDue === 0 ? (
-          <p className="muted">Nothing to delete.</p>
-        ) : confirming ? (
+        {/* Shown but disabled when nothing is due, so admins know where Purge lives. */}
+        {confirming && retentionDue > 0 ? (
           <Form route="admin.retention.purge" onSuccess={() => setConfirming(false)}>
             {({ processing }) => (
               <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
@@ -80,8 +79,14 @@ export default function AdminRetention({
             )}
           </Form>
         ) : (
-          <button type="button" className="btn btn--secondary" onClick={() => setConfirming(true)}>
-            Purge {retentionDue} attempts
+          <button
+            type="button"
+            className="btn btn--secondary"
+            disabled={retentionDue === 0}
+            title={retentionDue === 0 ? 'Nothing to delete' : undefined}
+            onClick={() => setConfirming(true)}
+          >
+            {retentionDue === 0 ? 'Purge (nothing to delete)' : `Purge ${retentionDue} attempts`}
           </button>
         )}
       </Section>

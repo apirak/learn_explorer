@@ -39,22 +39,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       <nav className="subnav">
         <div className="subnav__inner">
-          {nav.map(({ label, route, icon: Icon }) => (
-            <NavLink key={label} route={route} className="subnav__item">
-              {Icon && <Icon size={14} />}
-              {label}
-            </NavLink>
-          ))}
           {/* Visible to everyone; works once the Owner makes you an admin. */}
           {user?.isAdmin ? (
-            <NavLink route="admin.dashboard" className="subnav__item">
+            <NavLink route="admin.dashboard" exact className="subnav__item">
               <LayoutGrid size={14} />
-              Admin
+              Dashboard
             </NavLink>
           ) : (
             <span className="subnav__item" aria-disabled="true" title="Admins only">
               <LayoutGrid size={14} />
-              Admin
+              Dashboard
             </span>
           )}
           {user?.isAdmin && (
@@ -63,18 +57,31 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               Students
             </NavLink>
           )}
-          {user?.isAdmin && (
+          {/* Shown disabled to members, like Dashboard, so they know Purge lives here. */}
+          {user?.isAdmin ? (
             <NavLink route="admin.retention.show" className="subnav__item">
               <Archive size={14} />
               Retention
             </NavLink>
+          ) : (
+            <span className="subnav__item" aria-disabled="true" title="Admins only">
+              <Archive size={14} />
+              Retention
+            </span>
           )}
+          <span className="subnav__spacer" />
           {user?.isOwner && (
             <NavLink route="admin.users.index" className="subnav__item">
               <UsersRound size={14} />
               Users
             </NavLink>
           )}
+          {nav.map(({ label, route, icon: Icon }) => (
+            <NavLink key={label} route={route} className="subnav__item">
+              {Icon && <Icon size={14} />}
+              {label}
+            </NavLink>
+          ))}
         </div>
       </nav>
 
