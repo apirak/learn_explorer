@@ -56,7 +56,7 @@ router
 
 router
   .group(() => {
-    router.on('/').renderInertia('admin/dashboard', {}).as('dashboard')
+    router.get('/', [controllers.admin.Dashboard, 'show']).as('dashboard')
 
     router
       .group(() => {

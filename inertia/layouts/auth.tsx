@@ -14,23 +14,18 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         <aside className="auth__aside">
           <p className="auth__quote">
-            Auth, kept intentionally minimal so you can build it your way.
+            Every student carries a direction. Our job is to help them find it.
           </p>
 
           <div>
-            <div className="pitch__t">Looking for production-ready auth?</div>
+            <div className="pitch__t">For the OnDemand team only</div>
             <p className="pitch__p">
-              Check out Feature packs, production-ready full-stack components from the creator of
-              AdonisJS.
+              New accounts start as Member. Ask the Owner to grant Admin access.
             </p>
-            <a
-              className="il pitch__a"
-              href="https://plus.adonisjs.com/feature-packs"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Explore Feature packs →
-            </a>
+            <p className="pitch__p">
+              Student data is protected under Thailand’s PDPA — do not export or share outside the
+              team.
+            </p>
           </div>
         </aside>
       </div>

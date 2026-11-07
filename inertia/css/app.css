@@ -1886,3 +1886,57 @@ input {
   align-items: center;
   gap: 8px;
 }
+
+/* Admin dashboard: funnel bars drawn with CSS widths */
+.funnel__steps {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.funnel__row {
+  display: grid;
+  grid-template-columns: 72px 1fr 3.5ch;
+  align-items: center;
+  gap: 12px;
+}
+.funnel__track {
+  height: 18px;
+  border: 2px solid var(--ink-k);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.funnel__bar {
+  display: block;
+  height: 100%;
+  background: var(--purple);
+  transition: width 0.4s ease;
+}
+.funnel__count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.funnel__totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px dashed var(--line);
+}
+.funnel__totals dt {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+.funnel__totals dd {
+  font: 700 2rem/1.1 var(--display);
+}
+.funnel__updated {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .funnel__bar {
+    transition: none;
+  }
+}

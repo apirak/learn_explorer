@@ -5,7 +5,7 @@ export default function Signup() {
   return (
     <>
       <h1 className="auth__title">Create your account</h1>
-      <p className="auth__sub">Start building with the starter kit.</p>
+      <p className="auth__sub">For OnDemand staff. Use your work email.</p>
 
       <Form route="new_account.store">
         {({ errors, processing }) => (
@@ -20,7 +20,7 @@ export default function Signup() {
                 type="text"
                 className="field__input"
                 autoComplete="name"
-                placeholder="Ada Lovelace"
+                placeholder="Your name"
                 aria-invalid={errors.fullName ? 'true' : 'false'}
               />
               {errors.fullName && <span className="field__error">{errors.fullName}</span>}
@@ -36,7 +36,7 @@ export default function Signup() {
                 type="email"
                 className="field__input"
                 autoComplete="email"
-                placeholder="you@example.com"
+                placeholder="you@ondemand.in.th"
                 aria-invalid={errors.email ? 'true' : 'false'}
               />
               {errors.email && <span className="field__error">{errors.email}</span>}

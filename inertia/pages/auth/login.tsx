@@ -5,7 +5,7 @@ export default function Login() {
   return (
     <>
       <h1 className="auth__title">Welcome back</h1>
-      <p className="auth__sub">Sign in to continue building.</p>
+      <p className="auth__sub">Sign in to the Learn Explorer admin area.</p>
 
       <Form route="session.store">
         {({ errors, processing }) => (
@@ -20,7 +20,7 @@ export default function Login() {
                 type="email"
                 className="field__input"
                 autoComplete="username"
-                placeholder="you@example.com"
+                placeholder="you@ondemand.in.th"
                 aria-invalid={errors.email ? 'true' : 'false'}
               />
               {errors.email && <span className="field__error">{errors.email}</span>}
