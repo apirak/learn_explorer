@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { randomInt, randomUUID } from 'node:crypto'
 import { DateTime } from 'luxon'
 import { AttemptSchema } from '#database/schema'
 import Answer from '#models/answer'
@@ -15,6 +15,11 @@ export type Step = Attempt['furthestStep']
 export const STEPS: Step[] = ['test', 'result', 'career', 'mypath']
 const STEP_AT = { result: 'resultAt', career: 'careerAt', mypath: 'mypathAt' } as const
 
+/** Prefix of a code this system gives a student who arrived without one ("No Code"). */
+export const NO_CODE_PREFIX = 'NC-'
+/** A–Z and 2–9 without 0/O/1/I/L, so staff can read a code aloud. */
+const NO_CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+
 export default class Attempt extends AttemptSchema {
   @hasMany(() => Answer)
   declare answers: HasMany<typeof Answer>
@@ -29,6 +34,23 @@ export default class Attempt extends AttemptSchema {
   @beforeCreate()
   static assignUuid(attempt: Attempt) {
     attempt.uuid ??= randomUUID()
+  }
+
+  /**
+   * A fresh `NC-XXXXX` for a student without a code. Restarts carry it forward through the
+   * attempt cookie, so repeats on one browser share it. Retries until no attempt has it.
+   */
+  static async newNoCode() {
+    while (true) {
+      const suffix = Array.from({ length: 5 }, () => NO_CODE_CHARS[randomInt(NO_CODE_CHARS.length)])
+      const code = NO_CODE_PREFIX + suffix.join('')
+      if (!(await Attempt.findBy('code', code))) return code
+    }
+  }
+
+  /** A code from another system or campaign, not one this system made up (`NC-`). */
+  get hasEntryCode() {
+    return !!this.code && !this.code.startsWith(NO_CODE_PREFIX)
   }
 
   /**

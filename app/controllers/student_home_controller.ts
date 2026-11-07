@@ -34,7 +34,7 @@ export default class StudentHomeController {
     const entry: EntryCookie | null = request.encryptedCookie('le_entry')
 
     const created = await Attempt.create({
-      code: entry?.code ?? attempt?.code ?? null,
+      code: entry?.code ?? attempt?.code ?? (await Attempt.newNoCode()),
       desiredCareer: desiredCareer || null,
       contentVersion: CONTENT_VERSION,
       furthestStep: 'test',

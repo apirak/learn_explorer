@@ -45,6 +45,16 @@ test.group('Student contact step', (group) => {
     response.assertInertiaComponent('student/contact')
   })
 
+  test('shows the form to a student with an NC- code', async ({ client }) => {
+    const response = await open(client, await scoredAttempt('NC-AB3CD'))
+    response.assertStatus(200)
+  })
+
+  test('skips to careers with a manual M-NC- code', async ({ client }) => {
+    const response = await open(client, await scoredAttempt('M-NC-AB3CD'))
+    response.assertHeader('location', '/careers')
+  })
+
   test('skips to careers with a campaign code or a contact', async ({ client }) => {
     const coded = await scoredAttempt('AB5434')
     const codedRes = await open(client, coded)
