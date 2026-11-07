@@ -13,7 +13,7 @@ export class AdminAuditSchema extends BaseModel {
   @column()
   declare action: 'view'
   @column()
-  declare attemptId: number
+  declare attemptId: number | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column({ isPrimary: true })
@@ -40,28 +40,7 @@ export class AnswerSchema extends BaseModel {
 }
 
 export class AttemptSchema extends BaseModel {
-  static $columns = [
-    'careerAt',
-    'code',
-    'contentVersion',
-    'createdAt',
-    'desiredCareer',
-    'downloadedAt',
-    'furthestStep',
-    'id',
-    'interestCode',
-    'mypathAt',
-    'profileStatus',
-    'resultAt',
-    'scoreA',
-    'scoreC',
-    'scoreE',
-    'scoreI',
-    'scoreR',
-    'scoreS',
-    'updatedAt',
-    'uuid',
-  ] as const
+  static $columns = ['careerAt', 'code', 'contentVersion', 'createdAt', 'desiredCareer', 'downloadedAt', 'furthestStep', 'id', 'interestCode', 'mypathAt', 'profileStatus', 'resultAt', 'scoreA', 'scoreC', 'scoreE', 'scoreI', 'scoreR', 'scoreS', 'updatedAt', 'uuid'] as const
   $columns = AttemptSchema.$columns
   @column.dateTime()
   declare careerAt: DateTime | null
@@ -132,15 +111,7 @@ export class SettingSchema extends BaseModel {
 }
 
 export class StudentContactSchema extends BaseModel {
-  static $columns = [
-    'attemptId',
-    'consentAt',
-    'consentVersion',
-    'createdAt',
-    'email',
-    'id',
-    'phone',
-  ] as const
+  static $columns = ['attemptId', 'consentAt', 'consentVersion', 'createdAt', 'email', 'id', 'phone'] as const
   $columns = StudentContactSchema.$columns
   @column()
   declare attemptId: number
@@ -159,16 +130,7 @@ export class StudentContactSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = [
-    'affiliation',
-    'createdAt',
-    'email',
-    'fullName',
-    'id',
-    'password',
-    'role',
-    'updatedAt',
-  ] as const
+  static $columns = ['affiliation', 'createdAt', 'email', 'fullName', 'id', 'password', 'role', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column()
   declare affiliation: string | null

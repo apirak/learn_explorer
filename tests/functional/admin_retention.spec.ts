@@ -1,5 +1,6 @@
 import { test } from '@japa/runner'
 import { DateTime } from 'luxon'
+import AdminAudit from '#models/admin_audit'
 import Attempt from '#models/attempt'
 import User from '#models/user'
 import db from '@adonisjs/lucid/services/db'
@@ -96,6 +97,19 @@ test.group('Retention setting and purge', (group) => {
       assert.lengthOf(rows, 0, table)
       assert.lengthOf(await db.from(table), 2, table)
     }
+  })
+
+  test('purge keeps the audit trail of who viewed a purged attempt', async ({ client, assert }) => {
+    const admin = await makeUser('admin')
+    const old = await seed(90)
+    await client.get(`/admin/students/${old.id}`).withInertia().loginAs(admin)
+
+    await client.post('/admin/retention/purge').withCsrfToken().loginAs(admin).redirects(0)
+
+    const audits = await AdminAudit.all()
+    assert.lengthOf(audits, 1)
+    assert.equal(audits[0].userId, admin.id)
+    assert.isNull(audits[0].attemptId)
   })
 
   test('purge uses the retention period the admin set', async ({ client, assert }) => {

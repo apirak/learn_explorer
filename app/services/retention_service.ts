@@ -33,7 +33,8 @@ export class RetentionService {
 
   /**
    * Deletes attempts older than the retention period, 500 ids at a time. `ON DELETE CASCADE`
-   * removes their answers, career views, contact details and audit rows. Returns the count.
+   * removes their answers, career views and contact details.
+   * Audit rows stay, with `attempt_id` set to null, so who viewed whom is kept. Returns the count.
    */
   static async purge(days: number) {
     const cutoff = this.cutoff(days)

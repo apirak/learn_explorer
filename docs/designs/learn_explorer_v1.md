@@ -313,7 +313,7 @@ All timestamps use `table.timestamp(..., { useTz: true })`. Every child table's 
 | `answers` | `id`; `attempt_id`; `item_id`; `value` (smallint); `created_at`, `updated_at` | unique `(attempt_id, item_id)`; `value` `checkBetween([0,4])` |
 | `career_views` | `id`; `attempt_id`; `occupation_code`; `created_at` | unique `(attempt_id, occupation_code)` |
 | `student_contacts` | `id`; `attempt_id` (unique); `phone` (nullable); `email` (nullable); `consent_at`; `consent_version`; `created_at` | one per attempt |
-| `admin_audits` | `id`; `user_id` (FK users, `SET NULL`); `attempt_id` (FK attempts, cascade); `action`; `created_at` | index `attempt_id` |
+| `admin_audits` | `id`; `user_id` (FK users, `SET NULL`); `attempt_id` (FK attempts, `SET NULL`, nullable: a purge keeps the audit trail, #14); `action`; `created_at` | index `attempt_id` |
 
 Column TypeScript types go in `database/schema_rules.ts`. Examples: the `role` union, the `furthest_step` union, and `answers_json` as `Record<string, number>`. Models extend the generated classes and add only relationships, `reachStep`, and `Attempt.score()` (rescores from the answers on each open [M1]).
 
@@ -326,6 +326,7 @@ Changed 2026-11-07 by the project owner (#14): the purge is manual from the admi
 *   The `le_attempt` resume cookie stays at 60 days. A longer period keeps the data, but same-browser resume still ends at 60 days.
 
 *   `POST /admin/retention/purge` deletes attempts whose `created_at` is older than the cutoff, in batches of 500. Cascades remove the child rows.
+*   `admin_audits` rows stay: their `attempt_id` becomes null, so who viewed which record survives the purge.
 *   It logs `purge_completed` with the deleted count, the period and the admin's user id only [DP-001].
 *   The dashboard's "all" range means everything not yet purged.
 
