@@ -2,6 +2,7 @@ import Logo from '~/components/logo'
 import { type ReactNode } from 'react'
 import {
   Archive,
+  ChartColumn,
   GraduationCap,
   LayoutGrid,
   LogOut,
@@ -50,6 +51,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <LayoutGrid size={14} />
               Dashboard
             </span>
+          )}
+          {user?.isAdmin && (
+            <NavLink route="admin.report" className="subnav__item">
+              <ChartColumn size={14} />
+              Report
+            </NavLink>
           )}
           {user?.isAdmin && (
             <NavLink route="admin.students.index" className="subnav__item">

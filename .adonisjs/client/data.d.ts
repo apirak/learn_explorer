@@ -11,6 +11,7 @@ import type ConsentTransformer from '#transformers/consent_transformer'
 import type DashboardTransformer from '#transformers/dashboard_transformer'
 import type OccupationMatchTransformer from '#transformers/occupation_match_transformer'
 import type OccupationTransformer from '#transformers/occupation_transformer'
+import type ReportTransformer from '#transformers/report_transformer'
 import type ResultTransformer from '#transformers/result_transformer'
 import type UserTransformer from '#transformers/user_transformer'
 import type InertiaMiddleware from '#middleware/inertia_middleware'
@@ -35,6 +36,10 @@ export namespace Data {
   export type Occupation = InferData<OccupationTransformer>
   export namespace Occupation {
     export type Variants = InferVariants<OccupationTransformer>
+  }
+  export type Report = InferData<ReportTransformer>
+  export namespace Report {
+    export type Variants = InferVariants<ReportTransformer>
   }
   export type Result = InferData<ResultTransformer>
   export namespace Result {

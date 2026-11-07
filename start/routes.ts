@@ -59,6 +59,7 @@ router
 router
   .group(() => {
     router.get('/', [controllers.admin.Dashboard, 'show']).as('dashboard')
+    router.get('report', [controllers.admin.Reports, 'show']).as('report')
     router.get('students', [controllers.admin.Students, 'index']).as('students.index')
     router
       .get('students/:id', [controllers.admin.Students, 'show'])

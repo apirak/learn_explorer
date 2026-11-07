@@ -307,6 +307,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/dashboard_controller').default['show']>>>
     }
   }
+  'admin.report': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/report'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['show']>>>
+    }
+  }
   'admin.students.index': {
     methods: ["GET","HEAD"]
     pattern: '/admin/students'

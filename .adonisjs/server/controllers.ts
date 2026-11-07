@@ -7,6 +7,7 @@ export const controllers = {
   Account: () => import('#controllers/account_controller'),
   admin: {
     Dashboard: () => import('#controllers/admin/dashboard_controller'),
+    Reports: () => import('#controllers/admin/reports_controller'),
     Retention: () => import('#controllers/admin/retention_controller'),
     Students: () => import('#controllers/admin/students_controller'),
     Users: () => import('#controllers/admin/users_controller'),
