@@ -70,8 +70,8 @@ export default function AdminStudents({ filters, attempts }: PageProps) {
                 <th scope="col">Code</th>
                 <th scope="col">Step</th>
                 <th scope="col">Interest</th>
-                <th scope="col">Download</th>
                 <th scope="col">Contact</th>
+                <th scope="col">Download</th>
               </tr>
             </thead>
             <tbody>
@@ -85,8 +85,8 @@ export default function AdminStudents({ filters, attempts }: PageProps) {
                   <td>{a.code ?? '–'}</td>
                   <td>{STEP_LABEL[a.furthestStep]}</td>
                   <td>{a.interestCode ?? '–'}</td>
-                  <td>{a.downloadedAt ? 'Yes' : '–'}</td>
                   <td>{[a.phone, a.email].filter(Boolean).join(' · ') || '–'}</td>
+                  <td>{a.downloadedAt ? 'Yes' : '–'}</td>
                 </tr>
               ))}
             </tbody>

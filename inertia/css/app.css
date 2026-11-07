@@ -1993,3 +1993,107 @@ input {
   font-weight: 600;
   text-decoration: underline;
 }
+
+/* --- Result reveal: first view builds the hexagon, spins the code, throws sticker confetti. --- */
+.ip .code .slot {
+  display: inline-block;
+  min-width: 0.8em;
+  text-align: center;
+}
+.ip .code .slot--spin {
+  color: color-mix(in srgb, var(--ink-k) 45%, transparent);
+  filter: blur(0.6px);
+}
+.ip .hexwrap text {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ip .reveal-status {
+  justify-self: center;
+  min-height: 1.5em;
+  font: 700 1.05rem/1.4 var(--hand);
+  text-align: center;
+}
+.ip .shimmer {
+  color: transparent;
+  background: linear-gradient(100deg, var(--soft) 40%, var(--violet) 50%, var(--soft) 60%) 0 0 /
+    250% 100%;
+  background-clip: text;
+  animation: shimmer 1.3s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -150% 0;
+  }
+}
+.ip .reveal-done {
+  display: inline-block;
+  background: var(--lime);
+  padding: 2px 14px;
+  border-radius: 12px 16px 10px 18px;
+  rotate: -2deg;
+  animation: slap 500ms cubic-bezier(0.3, 0.7, 0.4, 1.5) both;
+}
+.ip .reveal-rest {
+  transition:
+    opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    translate 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ip .reveal-rest:not(.is-in) {
+  opacity: 0;
+  translate: 0 14px;
+}
+.ip .btn.reveal-rest {
+  transition-delay: 120ms;
+}
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+.confetti {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid var(--ink-k);
+}
+.confetti--pill {
+  width: 8px;
+  height: 18px;
+  border-radius: 6px;
+}
+.confetti--dot {
+  border-radius: 50%;
+}
+.confetti--square {
+  border-radius: 3px;
+}
+.confetti--star {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  clip-path: polygon(
+    50% 0,
+    62% 36%,
+    100% 38%,
+    70% 61%,
+    80% 100%,
+    50% 77%,
+    20% 100%,
+    30% 61%,
+    0 38%,
+    38% 36%
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .ip .shimmer {
+    animation: none;
+    color: var(--soft);
+  }
+  .ip .reveal-rest {
+    transition: none;
+  }
+}
