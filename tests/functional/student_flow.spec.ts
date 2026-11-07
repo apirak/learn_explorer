@@ -86,7 +86,7 @@ test.group('Student flow: start and answers', (group) => {
     const response = await client.post('/attempts').withCsrfToken().redirects(0)
     const attempt = await Attempt.firstOrFail()
     assert.match(attempt.code!, /^NC-[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{5}$/)
-    assert.isFalse(attempt.hasEntryCode)
+    assert.isFalse(attempt.hasCampaignCode)
     assert.isNull(attempt.desiredCareer)
     assert.deepEqual(response.cookie('le_attempt')?.value, {
       uuid: attempt.uuid,

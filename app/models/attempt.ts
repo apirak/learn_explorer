@@ -38,18 +38,21 @@ export default class Attempt extends AttemptSchema {
 
   /**
    * A fresh `NC-XXXXX` for a student without a code. Restarts carry it forward through the
-   * attempt cookie, so repeats on one browser share it. Retries until no attempt has it.
+   * attempt cookie, so repeats on one browser share it. Retries while an attempt has it.
+   * ponytail: check-then-insert can race (code is shared by repeats, so no unique index);
+   * 31^5 ≈ 28.6M codes makes it negligible at our volume.
    */
-  static async newNoCode() {
-    while (true) {
+  static async generateNoCode() {
+    for (let tries = 0; tries < 10; tries++) {
       const suffix = Array.from({ length: 5 }, () => NO_CODE_CHARS[randomInt(NO_CODE_CHARS.length)])
       const code = NO_CODE_PREFIX + suffix.join('')
       if (!(await Attempt.findBy('code', code))) return code
     }
+    throw new Error('No free NC- code after 10 tries')
   }
 
   /** A code from another system or campaign, not one this system made up (`NC-`). */
-  get hasEntryCode() {
+  get hasCampaignCode() {
     return !!this.code && !this.code.startsWith(NO_CODE_PREFIX)
   }
 

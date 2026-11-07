@@ -13,7 +13,7 @@ export default class StudentContactsController {
     const scored = await attempt!.score()
     if (!scored) return response.redirect().toRoute('student.test.show')
     if (scored.status !== 'ok') return response.redirect().toRoute('student.result')
-    if (attempt!.hasEntryCode ||(await StudentContact.findBy('attemptId', attempt!.id))) {
+    if (attempt!.hasCampaignCode || (await StudentContact.findBy('attemptId', attempt!.id))) {
       return response.redirect().toRoute('student.careers')
     }
 
