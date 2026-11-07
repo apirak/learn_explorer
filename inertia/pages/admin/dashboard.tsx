@@ -1,15 +1,10 @@
 import { usePoll } from '@inertiajs/react'
+import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 import Page from '~/components/page'
 import AppLayout from '~/layouts/app'
 
-type Step = 'test' | 'result' | 'career' | 'mypath'
-type Summary = {
-  steps: Record<Step, number>
-  resultViews: number
-  downloads: number
-  generatedAt: string
-}
+type Step = keyof Data.Dashboard['steps']
 
 const STEP_LABEL: Record<Step, string> = {
   test: 'Test',
@@ -19,7 +14,7 @@ const STEP_LABEL: Record<Step, string> = {
 }
 
 /** Funnel counts by furthest step, refreshed every 5 s while the tab is visible. Counts only. */
-export default function AdminDashboard({ summary }: InertiaProps<{ summary: Summary }>) {
+export default function AdminDashboard({ summary }: InertiaProps<{ summary: Data.Dashboard }>) {
   usePoll(5000, { only: ['summary'] }, { background: 'pause' })
 
   const max = Math.max(1, ...Object.values(summary.steps))

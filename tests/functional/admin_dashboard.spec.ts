@@ -45,12 +45,10 @@ test.group('Admin dashboard', (group) => {
       .get('/admin')
       .withInertia()
       .loginAs(await makeUser('admin'))
-    assert.deepEqual(page.inertiaProps.summary, {
-      steps: { test: 0, result: 0, career: 0, mypath: 0 },
-      resultViews: 0,
-      downloads: 0,
-      generatedAt: page.inertiaProps.summary.generatedAt,
-    })
+    const { summary } = page.inertiaProps
+    assert.deepEqual(summary.steps, { test: 0, result: 0, career: 0, mypath: 0 })
+    assert.equal(summary.resultViews, 0)
+    assert.equal(summary.downloads, 0)
   })
 
   test('members get 403', async ({ client }) => {
