@@ -25,6 +25,9 @@ export type ScannedRoutes = {
     'account.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
+    'admin.users.index': { paramsTuple?: []; params?: {} }
+    'admin.users.role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.transfer': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   GET: {
     'student.home': { paramsTuple?: []; params?: {} }
@@ -39,6 +42,7 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
     'account.show': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
+    'admin.users.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'student.home': { paramsTuple?: []; params?: {} }
@@ -53,6 +57,7 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
     'account.show': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
+    'admin.users.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'student.start': { paramsTuple?: []; params?: {} }
@@ -61,10 +66,12 @@ export type ScannedRoutes = {
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'admin.users.transfer': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PUT: {
     'account.profile': { paramsTuple?: []; params?: {} }
     'account.password': { paramsTuple?: []; params?: {} }
+    'admin.users.role': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
     'account.destroy': { paramsTuple?: []; params?: {} }

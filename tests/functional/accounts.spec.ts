@@ -113,6 +113,138 @@ test.group('Accounts', (group) => {
     admin.assertStatus(200)
   })
 
+  test('the Owner sees all staff on the users page; admins and members get 403', async ({
+    client,
+    assert,
+  }) => {
+    const owner = await makeUser('owner')
+    const admin = await makeUser('admin')
+    const member = await makeUser('member')
+
+    const page = await client.get('/admin/users').withInertia().loginAs(owner)
+    page.assertStatus(200)
+    page.assertInertiaComponent('admin/users')
+    assert.deepEqual(
+      page.inertiaProps.users.map((u: { role: string }) => u.role),
+      ['owner', 'admin', 'member']
+    )
+
+    for (const user of [admin, member]) {
+      const denied = await client.get('/admin/users').withInertia().loginAs(user)
+      denied.assertStatus(403)
+      denied.assertInertiaComponent('errors/forbidden')
+    }
+  })
+
+  test('the Owner grants and removes Admin', async ({ client, assert }) => {
+    const owner = await makeUser('owner')
+    const member = await makeUser('member')
+    const setRole = (role: string) =>
+      client
+        .put(`/admin/users/${member.id}/role`)
+        .withCsrfToken()
+        .form({ role })
+        .loginAs(owner)
+        .redirects(0)
+
+    const grant = await setRole('admin')
+    grant.assertStatus(302)
+    grant.assertHeader('location', '/admin/users')
+    await member.refresh()
+    assert.equal(member.role, 'admin')
+
+    await setRole('member')
+    await member.refresh()
+    assert.equal(member.role, 'member')
+  })
+
+  test('role changes cannot create or demote an Owner', async ({ client, assert }) => {
+    const owner = await makeUser('owner')
+    const member = await makeUser('member')
+
+    const promote = await client
+      .put(`/admin/users/${member.id}/role`)
+      .withCsrfToken()
+      .form({ role: 'owner' })
+      .loginAs(owner)
+      .redirects(0)
+    promote.assertStatus(302)
+    promote.assertFlashMessage('inputErrorsBag', { role: ['Choose Admin or Member'] })
+
+    const demoteSelf = await client
+      .put(`/admin/users/${owner.id}/role`)
+      .withCsrfToken()
+      .form({ role: 'member' })
+      .loginAs(owner)
+      .redirects(0)
+    demoteSelf.assertStatus(302)
+
+    await Promise.all([owner.refresh(), member.refresh()])
+    assert.equal(owner.role, 'owner')
+    assert.equal(member.role, 'member')
+  })
+
+  test('transfer makes the target Owner and the old Owner Admin', async ({ client, assert }) => {
+    const owner = await makeUser('owner')
+    const admin = await makeUser('admin')
+
+    const response = await client
+      .post(`/admin/users/${admin.id}/transfer`)
+      .withCsrfToken()
+      .loginAs(owner)
+      .redirects(0)
+
+    response.assertStatus(302)
+    response.assertHeader('location', '/account')
+    const owners = await User.query().where('role', 'owner')
+    assert.deepEqual(
+      owners.map((u) => u.id),
+      [admin.id]
+    )
+    await owner.refresh()
+    assert.equal(owner.role, 'admin')
+  })
+
+  test('transfer to yourself or a missing account changes nothing', async ({ client, assert }) => {
+    const owner = await makeUser('owner')
+
+    for (const id of [owner.id, owner.id + 999]) {
+      const response = await client
+        .post(`/admin/users/${id}/transfer`)
+        .withCsrfToken()
+        .loginAs(owner)
+        .redirects(0)
+      response.assertStatus(302)
+      response.assertHeader('location', '/admin/users')
+    }
+
+    await owner.refresh()
+    assert.equal(owner.role, 'owner')
+  })
+
+  test('an Admin cannot change roles or transfer ownership', async ({ client, assert }) => {
+    const owner = await makeUser('owner')
+    const admin = await makeUser('admin')
+    const member = await makeUser('member')
+
+    const role = await client
+      .put(`/admin/users/${member.id}/role`)
+      .withCsrfToken()
+      .form({ role: 'admin' })
+      .loginAs(admin)
+    role.assertStatus(403)
+
+    const transfer = await client
+      .post(`/admin/users/${admin.id}/transfer`)
+      .withCsrfToken()
+      .loginAs(admin)
+    transfer.assertStatus(403)
+
+    await Promise.all([owner.refresh(), member.refresh()])
+    assert.equal(owner.role, 'owner')
+    assert.equal(member.role, 'member')
+  })
+
   test('guests are sent to login from admin routes', async ({ client }) => {
     const response = await client.get('/admin').redirects(0)
     response.assertStatus(302)

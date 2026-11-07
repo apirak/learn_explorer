@@ -134,6 +134,24 @@ const routes = {
     tokens: [[0,"admin"]],
     types: placeholder as Registry['admin.dashboard']['types'],
   },
+  'admin.users.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/users',
+    tokens: [[0,"admin"],[0,"users"]],
+    types: placeholder as Registry['admin.users.index']['types'],
+  },
+  'admin.users.role': {
+    methods: ["PUT"],
+    pattern: '/admin/users/:id/role',
+    tokens: [[0,"admin"],[0,"users"],[1,"id"],[0,"role"]],
+    types: placeholder as Registry['admin.users.role']['types'],
+  },
+  'admin.users.transfer': {
+    methods: ["POST"],
+    pattern: '/admin/users/:id/transfer',
+    tokens: [[0,"admin"],[0,"users"],[1,"id"],[0,"transfer"]],
+    types: placeholder as Registry['admin.users.transfer']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

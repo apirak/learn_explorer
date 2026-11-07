@@ -35,5 +35,10 @@ export interface ApiDefinition {
   }
   admin: {
     dashboard: typeof routes['admin.dashboard']
+    users: {
+      index: typeof routes['admin.users.index']
+      role: typeof routes['admin.users.role']
+      transfer: typeof routes['admin.users.transfer']
+    }
   }
 }
