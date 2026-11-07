@@ -18,6 +18,14 @@ export default {
         },
       },
     },
+    student_contacts: {
+      columns: {
+        source: {
+          tsType: `'contact' | 'mypath'`,
+          decorators: [{ name: '@column' }],
+        },
+      },
+    },
     attempts: {
       columns: {
         furthest_step: {

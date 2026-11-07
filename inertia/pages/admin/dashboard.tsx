@@ -73,6 +73,14 @@ export default function AdminDashboard({
             <dt>Downloads</dt>
             <dd>{summary.downloads}</dd>
           </div>
+          <div>
+            <dt>Contacts · before careers</dt>
+            <dd>{summary.contacts.contact}</dd>
+          </div>
+          <div>
+            <dt>Contacts · MyPath</dt>
+            <dd>{summary.contacts.mypath}</dd>
+          </div>
         </dl>
         <p className="funnel__updated">
           Updated {new Date(summary.generatedAt).toLocaleTimeString('th-TH')}

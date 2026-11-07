@@ -73,6 +73,32 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['show']>>>
     }
   }
+  'student.contact': {
+    methods: ["GET","HEAD"]
+    pattern: '/contact'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_contacts_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_contacts_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_contacts_controller').default['show']>>>
+    }
+  }
+  'student.contact.store': {
+    methods: ["POST"]
+    pattern: '/contact'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/student').contactValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/student').contactValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_contacts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_contacts_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_contacts_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'student.careers': {
     methods: ["GET","HEAD"]
     pattern: '/careers'
@@ -116,10 +142,10 @@ export interface Registry {
     methods: ["POST"]
     pattern: '/mypath/download'
     types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/student').downloadValidator)>>
+      body: ExtractBody<InferInput<(typeof import('#validators/student').contactValidator)>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<InferInput<(typeof import('#validators/student').downloadValidator)>>
+      query: ExtractQuery<InferInput<(typeof import('#validators/student').contactValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }

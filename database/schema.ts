@@ -111,7 +111,7 @@ export class SettingSchema extends BaseModel {
 }
 
 export class StudentContactSchema extends BaseModel {
-  static $columns = ['attemptId', 'consentAt', 'consentVersion', 'createdAt', 'email', 'id', 'phone'] as const
+  static $columns = ['attemptId', 'consentAt', 'consentVersion', 'createdAt', 'email', 'id', 'phone', 'source'] as const
   $columns = StudentContactSchema.$columns
   @column()
   declare attemptId: number
@@ -127,6 +127,8 @@ export class StudentContactSchema extends BaseModel {
   declare id: number
   @column()
   declare phone: string | null
+  @column()
+  declare source: 'contact' | 'mypath'
 }
 
 export class UserSchema extends BaseModel {
