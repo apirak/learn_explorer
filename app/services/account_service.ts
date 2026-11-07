@@ -14,7 +14,7 @@ export class AccountService {
   }
 
   /** Grants or removes Admin. Refuses a missing account or the Owner: ownership moves only by transfer. */
-  static setRole(targetId: number, role: 'admin' | 'member') {
+  static setRole(targetId: number, role: Exclude<User['role'], 'owner'>) {
     return db.transaction(async (trx) => {
       const target = await User.query({ client: trx }).where('id', targetId).forUpdate().first()
       if (!target || target.isOwner) return false

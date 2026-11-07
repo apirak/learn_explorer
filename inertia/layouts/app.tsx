@@ -49,7 +49,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               Admin
             </span>
           )}
-          {user?.role === 'owner' && (
+          {user?.isOwner && (
             <NavLink route="admin.users.index" className="subnav__item">
               <UsersRound size={14} />
               Users

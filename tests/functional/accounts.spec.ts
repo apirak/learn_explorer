@@ -178,6 +178,7 @@ test.group('Accounts', (group) => {
       .loginAs(owner)
       .redirects(0)
     demoteSelf.assertStatus(302)
+    demoteSelf.assertFlashMessage('error', 'That role cannot be changed here')
 
     await Promise.all([owner.refresh(), member.refresh()])
     assert.equal(owner.role, 'owner')
@@ -203,6 +204,23 @@ test.group('Accounts', (group) => {
     )
     await owner.refresh()
     assert.equal(owner.role, 'admin')
+
+    // CUJ 6: the old Owner can now delete their account; the new Owner cannot.
+    const newOwnerDelete = await client
+      .delete('/account')
+      .withCsrfToken()
+      .loginAs(admin)
+      .redirects(0)
+    newOwnerDelete.assertHeader('location', '/account')
+    assert.isNotNull(await User.find(admin.id))
+
+    const oldOwnerDelete = await client
+      .delete('/account')
+      .withCsrfToken()
+      .loginAs(owner)
+      .redirects(0)
+    oldOwnerDelete.assertHeader('location', '/login')
+    assert.isNull(await User.find(owner.id))
   })
 
   test('transfer to yourself or a missing account changes nothing', async ({ client, assert }) => {

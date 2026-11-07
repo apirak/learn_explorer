@@ -13,6 +13,7 @@ export default class UserTransformer extends BaseTransformer<User> {
       'updatedAt',
       'initials',
       'isAdmin',
+      'isOwner',
     ])
   }
 }
