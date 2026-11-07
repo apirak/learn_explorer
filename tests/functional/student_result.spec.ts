@@ -72,6 +72,18 @@ test.group('Student result', (group) => {
     assert.isNotNull(attempt.resultAt)
   })
 
+  test('only the first view plays the reveal', async ({ client }) => {
+    const attempt = await newAttempt()
+    await answerAll(attempt, 2, { R1: 4 })
+    const open = () =>
+      client.get('/result').withEncryptedCookie('le_attempt', cookie(attempt)).withInertia()
+
+    const first = await open()
+    first.assertInertiaPropsContains({ reveal: true })
+    const again = await open()
+    again.assertInertiaPropsContains({ reveal: false })
+  })
+
   test('reopening after an answer change rescores the attempt', async ({ client, assert }) => {
     const attempt = await newAttempt()
     await answerAll(attempt, 2, { R1: 4 })

@@ -6,11 +6,13 @@ export default class StudentResultController {
   /** `GET /result`: the interest code and hexagon. Needs all 30 answers, else back to the test. */
   async show({ response, inertia, logger, attempt }: HttpContext) {
     if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
+    const firstView = !attempt!.resultAt // the reveal plays once; a reload or a return shows the result at rest
     await attempt!.reachStep('result') // saves the scores too
     logger.info({ attempt: attempt!.uuid }, 'attempt_scored') // UUID only [DP-001]
 
     return inertia.render('student/result', {
       result: ResultTransformer.transform(attempt!),
+      reveal: firstView,
     })
   }
 
