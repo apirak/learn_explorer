@@ -1034,7 +1034,7 @@ Replaced on 2026-11-07: no ace command. See [Retention](#retention): `settings` 
 *   **Functional Tests**: `node ace test functional` against PostgreSQL. This covers the student flow CUJs 1–4, accounts CUJs 5–6, admin CUJs 7–8, and retention CUJ 9.
 *   **Static Analysis & Linting**: `npm run lint`.
 *   **Test Coverage Requirement**: Every CUJ has at least one functional test. Every rule in `ScoringService` is reached by a golden vector.
-*   **Load (release gate for G2)**: `npm run test:load` against staging, with 400 students ramping up over 10 s. The gate is zero lost answers and zero 5xx responses, with a p95 for `POST /test/answers` agreed before launch.
+*   **Load (release gate for G2)**: `npm run test:load` against a local production build and local PostgreSQL [M4], with 400 students ramping up over 10 s. The gate is zero lost answers and zero 5xx responses, with a p95 for `POST /test/answers` agreed before launch.
 *   **Manual**:
     *   On a real iPhone and a real Android phone, inside LINE and in the default browser:
         *   complete CUJ 1;

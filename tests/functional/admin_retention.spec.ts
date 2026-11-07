@@ -120,12 +120,14 @@ test.group('Retention setting and purge', (group) => {
   test('the period must be a whole number from 1 to 3650', async ({ client, assert }) => {
     const admin = await makeUser('admin')
     for (const retentionDays of [0, 3651, 1.5, 'abc']) {
-      await client
+      const response = await client
         .put('/admin/retention')
         .form({ retentionDays })
         .withCsrfToken()
         .loginAs(admin)
         .redirects(0)
+      response.assertStatus(302)
+      assert.property(response.flashMessages().inputErrorsBag, 'retentionDays', `${retentionDays}`)
     }
     const page = await client.get('/admin/retention').withInertia().loginAs(admin)
     assert.equal(page.inertiaProps.retentionDays, 60)

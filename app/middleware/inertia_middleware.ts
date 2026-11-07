@@ -28,7 +28,7 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
        * A callback, so the dashboard's 5 s partial poll skips the count.
        */
       retentionDue:
-        auth?.user?.isAdmin && ctx.request.url().startsWith('/admin')
+        auth?.user?.isAdmin && ctx.route?.name?.startsWith('admin.')
           ? () => RetentionService.dueCount()
           : undefined,
     }

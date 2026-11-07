@@ -21,12 +21,12 @@ export class RetentionService {
   }
 
   /** Attempts created before this are due for deletion. */
-  static cutoff(days: number) {
+  private static cutoff(days: number) {
     return DateTime.now().minus({ days }).toSQL()!
   }
 
-  static async dueCount(days?: number) {
-    const cutoff = this.cutoff(days ?? (await this.days()))
+  static async dueCount() {
+    const cutoff = this.cutoff(await this.days())
     const [row] = await Attempt.query().where('createdAt', '<', cutoff).count('* as total')
     return Number(row.$extras.total)
   }
