@@ -6,6 +6,7 @@
 /// <reference path="./manifest.d.ts" />
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
+import type AttemptTransformer from '#transformers/attempt_transformer'
 import type ConsentTransformer from '#transformers/consent_transformer'
 import type DashboardTransformer from '#transformers/dashboard_transformer'
 import type OccupationMatchTransformer from '#transformers/occupation_match_transformer'
@@ -15,6 +16,10 @@ import type UserTransformer from '#transformers/user_transformer'
 import type InertiaMiddleware from '#middleware/inertia_middleware'
 
 export namespace Data {
+  export type Attempt = InferData<AttemptTransformer>
+  export namespace Attempt {
+    export type Variants = InferVariants<AttemptTransformer>
+  }
   export type Consent = InferData<ConsentTransformer>
   export namespace Consent {
     export type Variants = InferVariants<ConsentTransformer>

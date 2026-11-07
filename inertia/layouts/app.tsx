@@ -1,6 +1,6 @@
 import Logo from '~/components/logo'
 import { type ReactNode } from 'react'
-import { LayoutGrid, LogOut, UserRound, UsersRound } from 'lucide-react'
+import { GraduationCap, LayoutGrid, LogOut, UserRound, UsersRound } from 'lucide-react'
 import { usePage } from '@inertiajs/react'
 import { Form } from '@adonisjs/inertia/react'
 import FlashToasts from '~/components/flash_toasts'
@@ -48,6 +48,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <LayoutGrid size={14} />
               Admin
             </span>
+          )}
+          {user?.isAdmin && (
+            <NavLink route="admin.students.index" className="subnav__item">
+              <GraduationCap size={14} />
+              Students
+            </NavLink>
           )}
           {user?.isOwner && (
             <NavLink route="admin.users.index" className="subnav__item">

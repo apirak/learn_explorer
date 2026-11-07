@@ -281,6 +281,32 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/dashboard_controller').default['show']>>>
     }
   }
+  'admin.students.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/students'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['index']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['index']>>>
+    }
+  }
+  'admin.students.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/students/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['show']>>>
+    }
+  }
   'admin.users.index': {
     methods: ["GET","HEAD"]
     pattern: '/admin/users'

@@ -3,10 +3,11 @@ import { DateTime } from 'luxon'
 import { AttemptSchema } from '#database/schema'
 import Answer from '#models/answer'
 import CareerView from '#models/career_view'
+import StudentContact from '#models/student_contact'
 import content from '#services/content_service'
 import { interestCode, profileStatus, scoreAnswers } from '#services/scoring_service'
-import { beforeCreate, hasMany } from '@adonisjs/lucid/orm'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { beforeCreate, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 
 export type Step = Attempt['furthestStep']
 
@@ -20,6 +21,10 @@ export default class Attempt extends AttemptSchema {
 
   @hasMany(() => CareerView)
   declare careerViews: HasMany<typeof CareerView>
+
+  /** Exists only when the student consented [DP-001]. */
+  @hasOne(() => StudentContact)
+  declare contact: HasOne<typeof StudentContact>
 
   @beforeCreate()
   static assignUuid(attempt: Attempt) {

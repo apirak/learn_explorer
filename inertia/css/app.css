@@ -1940,3 +1940,57 @@ input {
     transition: none;
   }
 }
+
+/* Admin student records: list table and detail sections */
+.records + .records {
+  margin-top: 16px;
+}
+.records h2 {
+  margin-bottom: 12px;
+}
+.records__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  margin-bottom: 16px;
+}
+.records__filters .field {
+  flex: 1 1 160px;
+}
+.records {
+  overflow-x: auto;
+}
+.records__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.records__table th,
+.records__table td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 2px dashed var(--line);
+}
+.records__table th {
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.records__pairs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+}
+.records__pairs dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+.records__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
