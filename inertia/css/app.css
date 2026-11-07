@@ -1355,7 +1355,7 @@ input {
 /* Right board: two sticker cards on purple/lime paper scraps. */
 .ip .board {
   display: grid;
-  gap: 22px;
+  gap: 64px;
   position: relative;
 }
 .ip .board-title {
