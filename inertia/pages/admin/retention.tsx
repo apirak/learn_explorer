@@ -79,15 +79,18 @@ export default function AdminRetention({
             )}
           </Form>
         ) : (
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled={retentionDue === 0}
-            title={retentionDue === 0 ? 'Nothing to delete' : undefined}
-            onClick={() => setConfirming(true)}
-          >
-            {retentionDue === 0 ? 'Purge (nothing to delete)' : `Purge ${retentionDue} attempts`}
-          </button>
+          // Wrapped like "Save period": a direct child of .section__body stretches full width.
+          <div>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={retentionDue === 0}
+              title={retentionDue === 0 ? 'Nothing to delete' : undefined}
+              onClick={() => setConfirming(true)}
+            >
+              Purge {retentionDue} attempts
+            </button>
+          </div>
         )}
       </Section>
     </Page>
