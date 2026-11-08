@@ -59,7 +59,7 @@ The real risks are about personal data, about what counts as one "record", and a
   * Do not store phone or email when consent is not given, unless Legal decides otherwise.
 * **Every row is identifiable.** Upstream can link `code` back to a real student, so the whole table is personal data about minors. The design needs a short data dictionary that gives each field's purpose, its legal basis, how long it is kept, and who can see it.
 * **Free-text "desired career".** Students can type anything into this box, including names or sensitive information. Limit its length, keep it out of list views and logs, or replace it with a pick from the occupation list.
-* **Admins can see every student.** Mask contact details in lists. Show them only for students who consented. Write an audit row when an admin opens a student's detail page. Add no bulk export this round.
+* **Admins can see every student.** Mask contact details in lists. Show them only for students who consented. Write an audit row when an admin opens a student's detail page. Add no bulk export this round (later superseded by `docs/adr/0003-student-export.md`).
 * **Deletion has to cover everything.** A purge that depends on someone remembering to run it gets forgotten. Measure age from `created_at`. Declare every child table's foreign key with `.onDelete('CASCADE')`. Support `--dry-run`. Log only counts. Run it from a host cron if possible. Backups and logs also keep data, so their retention needs to be written down. After a purge the "all time" funnel only covers 60 days, so label it that way.
 
 ### 2. What one "record" means

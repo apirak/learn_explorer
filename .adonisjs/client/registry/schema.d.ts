@@ -333,6 +333,32 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['index']>>>
     }
   }
+  'admin.students.export': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/students/export'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['export']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['export']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['export']>>>
+    }
+  }
+  'admin.students.dictionary': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/students/export/dictionary'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['dictionary']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['dictionary']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['dictionary']>>>
+    }
+  }
   'admin.students.show': {
     methods: ["GET","HEAD"]
     pattern: '/admin/students/:id'

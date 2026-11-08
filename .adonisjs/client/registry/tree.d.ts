@@ -41,6 +41,8 @@ export interface ApiDefinition {
     report: typeof routes['admin.report']
     students: {
       index: typeof routes['admin.students.index']
+      export: typeof routes['admin.students.export']
+      dictionary: typeof routes['admin.students.dictionary']
       show: typeof routes['admin.students.show']
       destroy: typeof routes['admin.students.destroy']
     }
