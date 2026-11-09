@@ -28,7 +28,7 @@ export default function StudentCareers({
         <header>
           <div className="title-row">
             <h1>5 อาชีพที่น่าลองดู</h1>
-            <Link route="student.mypath" className="title-link">
+            <Link route="student.print_prep" className="title-link">
               <Save size={16} aria-hidden />
               เก็บผลไว้ดูทีหลัง
             </Link>
@@ -76,7 +76,7 @@ export default function StudentCareers({
           ))}
         </div>
         <NpsForm initial={nps} />
-        <Link route="student.mypath" className="btn btn--primary">
+        <Link route="student.print_prep" className="btn btn--primary">
           <Save size={18} aria-hidden />
           เก็บผลไว้ดูทีหลัง
         </Link>

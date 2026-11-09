@@ -40,7 +40,7 @@ const withPhoneOrEmail = vine.createRule((value, _options, field) => {
 })
 
 /**
- * Contact form on `/contact` and MyPath. Name: the student's own name or nickname, only kept
+ * Contact form on `/contact` and Print prep. Name: the student's own name or nickname, only kept
  * with a phone or email. Phone: spaces and dashes removed, `+66` becomes `0`,
  * then 9–10 digits starting with 0. The checkbox sends `on` only when ticked; it is required
  * once anything is typed, so nothing typed is dropped silently. Never logged [DP-001].

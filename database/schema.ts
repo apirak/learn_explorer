@@ -61,7 +61,7 @@ export class AttemptSchema extends BaseModel {
     'furthestStep',
     'id',
     'interestCode',
-    'mypathAt',
+    'printPrepAt',
     'profileStatus',
     'resultAt',
     'scoreA',
@@ -89,13 +89,13 @@ export class AttemptSchema extends BaseModel {
   @column.dateTime()
   declare downloadedAt: DateTime | null
   @column()
-  declare furthestStep: 'test' | 'result' | 'career' | 'mypath'
+  declare furthestStep: 'test' | 'result' | 'career' | 'print_prep'
   @column({ isPrimary: true })
   declare id: number
   @column()
   declare interestCode: string | null
   @column.dateTime()
-  declare mypathAt: DateTime | null
+  declare printPrepAt: DateTime | null
   @column()
   declare profileStatus: 'ok' | 'all-dislike' | 'flat' | null
   @column.dateTime()
@@ -203,7 +203,7 @@ export class StudentContactSchema extends BaseModel {
   @column()
   declare phone: string | null
   @column()
-  declare source: 'contact' | 'mypath'
+  declare source: 'contact' | 'print_prep'
 }
 
 export class UserSchema extends BaseModel {

@@ -13,8 +13,8 @@ import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 export type Step = Attempt['furthestStep']
 
 /** Student flow order. Test entry time is `created_at` [M5]; later steps have their own `*_at`. */
-export const STEPS: Step[] = ['test', 'result', 'career', 'mypath']
-const STEP_AT = { result: 'resultAt', career: 'careerAt', mypath: 'mypathAt' } as const
+export const STEPS: Step[] = ['test', 'result', 'career', 'print_prep']
+const STEP_AT = { result: 'resultAt', career: 'careerAt', print_prep: 'printPrepAt' } as const
 
 /** Prefix of a code this system gives a student who arrived without one ("No Code"). */
 export const NO_CODE_PREFIX = 'NC-'

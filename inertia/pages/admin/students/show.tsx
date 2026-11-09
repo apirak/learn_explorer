@@ -15,7 +15,7 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
     ['Test', a.createdAt],
     ['Result', a.resultAt],
     ['Career', a.careerAt],
-    ['MyPath', a.mypathAt],
+    ['Print prep', a.printPrepAt],
     ['Download', a.downloadedAt],
   ]
 

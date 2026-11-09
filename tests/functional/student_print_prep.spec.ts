@@ -26,52 +26,52 @@ const fieldErrors = (response: any, field: string): string[] =>
 
 const cookie = (a: Attempt) => ({ uuid: a.uuid, code: a.code })
 
-test.group('Student MyPath', (group) => {
+test.group('Student Print prep', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
 
-  /** `POST /mypath/download` from the MyPath form. */
+  /** `POST /print-prep/download` from the Print prep form. */
   const download = (client: any, attempt: Attempt, form: Record<string, string>) =>
     client
-      .post('/mypath/download')
+      .post('/print-prep/download')
       .withEncryptedCookie('le_attempt', cookie(attempt))
       .withCsrfToken()
-      .header('referer', '/mypath')
+      .header('referer', '/print-prep')
       .form(form)
       .redirects(0)
 
   test('needs an attempt', async ({ client }) => {
-    for (const url of ['/mypath', '/mypath/print']) {
+    for (const url of ['/print-prep', '/print-prep/print']) {
       const response = await client.get(url).redirects(0)
       response.assertStatus(302)
       response.assertHeader('location', '/')
     }
   })
 
-  test('shows the consent text and records the MyPath time once', async ({ client, assert }) => {
+  test('shows the consent text and records the Print prep time once', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
     const open = () =>
-      client.get('/mypath').withEncryptedCookie('le_attempt', cookie(attempt)).withInertia()
+      client.get('/print-prep').withEncryptedCookie('le_attempt', cookie(attempt)).withInertia()
 
     const response = await open()
     response.assertStatus(200)
-    response.assertInertiaComponent('student/mypath')
+    response.assertInertiaComponent('student/print_prep')
     assert.deepInclude(response.inertiaProps.consent.blocks, {
       type: 'heading',
       text: 'ยินยอมให้ติดต่อกลับ',
     })
     await attempt.refresh()
-    assert.equal(attempt.furthestStep, 'mypath')
-    const mypathAt = attempt.mypathAt
-    assert.isNotNull(mypathAt)
+    assert.equal(attempt.furthestStep, 'print_prep')
+    const printPrepAt = attempt.printPrepAt
+    assert.isNotNull(printPrepAt)
 
     await open()
     await attempt.refresh()
-    assert.equal(attempt.mypathAt!.toMillis(), mypathAt!.toMillis())
+    assert.equal(attempt.printPrepAt!.toMillis(), printPrepAt!.toMillis())
   })
 
   test('sends an unfinished test back to the test', async ({ client, assert }) => {
     const attempt = await Attempt.create({ contentVersion: 'v1', furthestStep: 'test' })
-    for (const url of ['/mypath', '/mypath/print']) {
+    for (const url of ['/print-prep', '/print-prep/print']) {
       const response = await client
         .get(url)
         .withEncryptedCookie('le_attempt', cookie(attempt))
@@ -95,12 +95,12 @@ test.group('Student MyPath', (group) => {
     })
 
     response.assertStatus(302)
-    response.assertHeader('location', '/mypath/print')
+    response.assertHeader('location', '/print-prep/print')
     const contact = await StudentContact.findByOrFail('attemptId', attempt.id)
     assert.equal(contact.phone, '0812345678')
     assert.equal(contact.email, 'student@example.com')
     assert.equal(contact.consentVersion, CONSENT_VERSION)
-    assert.equal(contact.source, 'mypath')
+    assert.equal(contact.source, 'print_prep')
     assert.isNotNull(contact.consentAt)
   })
 
@@ -109,7 +109,7 @@ test.group('Student MyPath', (group) => {
     const forms: Record<string, string>[] = [{ phone: '0812345678' }, { email: 'a@example.com' }]
     for (const form of forms) {
       const response = await download(client, attempt, form)
-      response.assertHeader('location', '/mypath')
+      response.assertHeader('location', '/print-prep')
       assert.deepEqual(fieldErrors(response, 'consent'), [
         'ติ๊กยินยอมก่อน หรือลบชื่อ เบอร์ และอีเมลออกแล้วไปต่อ',
       ])
@@ -122,7 +122,7 @@ test.group('Student MyPath', (group) => {
   test('consent with no phone or email stores nothing', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
     const response = await download(client, attempt, { consent: 'on' })
-    response.assertHeader('location', '/mypath/print')
+    response.assertHeader('location', '/print-prep/print')
     assert.lengthOf(await StudentContact.all(), 0)
   })
 
@@ -144,7 +144,7 @@ test.group('Student MyPath', (group) => {
     for (const phone of ['12345', '08123456789', '1812345678', 'abc0812345']) {
       const response = await download(client, attempt, { phone, consent: 'on' })
       response.assertStatus(302)
-      response.assertHeader('location', '/mypath')
+      response.assertHeader('location', '/print-prep')
       assert.deepEqual(fieldErrors(response, 'phone'), [
         'เบอร์โทรต้องเป็นตัวเลข 9–10 หลัก เช่น 0812345678',
       ])
@@ -168,7 +168,7 @@ test.group('Student MyPath', (group) => {
   }) => {
     const attempt = await scoredAttempt()
     const response = await client
-      .get('/mypath/print')
+      .get('/print-prep/print')
       .withEncryptedCookie('le_attempt', cookie(attempt))
       .withInertia()
 
@@ -184,12 +184,12 @@ test.group('Student MyPath', (group) => {
   test('the blank form downloads', async ({ client, assert }) => {
     const attempt = await scoredAttempt()
     const response = await download(client, attempt, { phone: '', email: '' })
-    response.assertHeader('location', '/mypath/print')
+    response.assertHeader('location', '/print-prep/print')
     assert.lengthOf(await StudentContact.all(), 0)
   })
 })
 
-test.group('Student MyPath with a contact', (group) => {
+test.group('Student Print prep with a contact', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
 
   test('with a contact, opens the printable page and counts it as a download', async ({
@@ -199,12 +199,12 @@ test.group('Student MyPath with a contact', (group) => {
     const attempt = await scoredAttempt()
     await StudentContact.record(attempt.id, { phone: '0812345678', consent: true }, 'contact')
     const response = await client
-      .get('/mypath')
+      .get('/print-prep')
       .withEncryptedCookie('le_attempt', cookie(attempt))
       .redirects(0)
-    response.assertHeader('location', '/mypath/print')
+    response.assertHeader('location', '/print-prep/print')
     await attempt.refresh()
-    assert.equal(attempt.furthestStep, 'mypath')
+    assert.equal(attempt.furthestStep, 'print_prep')
     assert.isNotNull(attempt.downloadedAt)
   })
 })

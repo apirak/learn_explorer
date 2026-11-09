@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import app from '@adonisjs/core/services/app'
 
 /**
- * The consent text students see on MyPath: the file `resources/consent/<CONSENT_VERSION>.th.md`.
+ * The consent text students see on Print prep: the file `resources/consent/<CONSENT_VERSION>.th.md`.
  * Stored with every consent [N2]. Before launch, add Legal's verbatim text as a new file and
  * point this at it. `tests/unit/consent.spec.ts` blocks release while it names a placeholder.
  */

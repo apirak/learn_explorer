@@ -23,16 +23,16 @@ test.group('Admin dashboard', (group) => {
     await seed('test')
     await seed('result', { resultAt: now })
     const career = await seed('career', { resultAt: now })
-    const mypath = await seed('mypath', { resultAt: now, mypathAt: now, downloadedAt: now })
+    const printPrep = await seed('print_prep', { resultAt: now, printPrepAt: now, downloadedAt: now })
     // Older than 60 days: left out.
-    const old = await seed('mypath', {
+    const old = await seed('print_prep', {
       resultAt: now,
       downloadedAt: now,
       createdAt: now.minus({ days: 61 }),
     })
     const contact = { consent: true, phone: '0812345678' }
     await StudentContact.record(career.id, contact, 'contact')
-    await StudentContact.record(mypath.id, contact, 'mypath')
+    await StudentContact.record(printPrep.id, contact, 'print_prep')
     await StudentContact.record(old.id, contact, 'contact')
 
     const page = await client
@@ -42,10 +42,10 @@ test.group('Admin dashboard', (group) => {
 
     page.assertInertiaComponent('admin/dashboard')
     const { summary } = page.inertiaProps
-    assert.deepEqual(summary.steps, { test: 2, result: 1, career: 1, mypath: 1 })
+    assert.deepEqual(summary.steps, { test: 2, result: 1, career: 1, print_prep: 1 })
     assert.equal(summary.resultViews, 3)
     assert.equal(summary.downloads, 1)
-    assert.deepEqual(summary.contacts, { contact: 1, mypath: 1 })
+    assert.deepEqual(summary.contacts, { contact: 1, print_prep: 1 })
     // No codes or contact data in the dashboard props.
     assert.notInclude(JSON.stringify(page.inertiaProps), 'AB5434')
     assert.notInclude(JSON.stringify(page.inertiaProps), '0812345678')
@@ -57,10 +57,10 @@ test.group('Admin dashboard', (group) => {
       .withInertia()
       .loginAs(await makeUser('admin'))
     const { summary } = page.inertiaProps
-    assert.deepEqual(summary.steps, { test: 0, result: 0, career: 0, mypath: 0 })
+    assert.deepEqual(summary.steps, { test: 0, result: 0, career: 0, print_prep: 0 })
     assert.equal(summary.resultViews, 0)
     assert.equal(summary.downloads, 0)
-    assert.deepEqual(summary.contacts, { contact: 0, mypath: 0 })
+    assert.deepEqual(summary.contacts, { contact: 0, print_prep: 0 })
   })
 
   test('the range filter picks 7, 30, 60 days or all; anything else falls back to today', async ({

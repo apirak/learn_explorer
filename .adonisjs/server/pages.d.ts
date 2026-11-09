@@ -29,7 +29,7 @@ declare module '@adonisjs/inertia/types' {
     'student/careers': ExtractProps<(typeof import('../../inertia/pages/student/careers.tsx'))['default']>
     'student/contact': ExtractProps<(typeof import('../../inertia/pages/student/contact.tsx'))['default']>
     'student/home': ExtractProps<(typeof import('../../inertia/pages/student/home.tsx'))['default']>
-    'student/mypath': ExtractProps<(typeof import('../../inertia/pages/student/mypath.tsx'))['default']>
+    'student/print_prep': ExtractProps<(typeof import('../../inertia/pages/student/print_prep.tsx'))['default']>
     'student/print': ExtractProps<(typeof import('../../inertia/pages/student/print.tsx'))['default']>
     'student/result': ExtractProps<(typeof import('../../inertia/pages/student/result.tsx'))['default']>
     'student/test': ExtractProps<(typeof import('../../inertia/pages/student/test.tsx'))['default']>

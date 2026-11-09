@@ -12,7 +12,7 @@ The flow has these steps, in order:
 2. **Test**: the student answers the 30 items.
 3. **Result**: the student sees their interest code and scores.
 4. **Career**: the student browses matching careers and opens their details.
-5. **MyPath**: the student sees study paths, can leave a phone or email, and optionally a name (with consent), and can download their result page.
+5. **Print prep**: the page before the printable result. The student can leave a phone or email, and optionally a name (with consent), and can download their result page.
 
 ## Key terms
 
@@ -29,7 +29,7 @@ The flow has these steps, in order:
 
 - **Rows are attempts.** To count people, use distinct `code`. Treat any attempt with an empty `code` as a separate person. One person often has several attempts, for example after a restart.
 - **Scores exist only for finished tests.** The six `score_*` columns, `interest_code` and `profile_status` are filled once the student has answered all 30 items and opened the result page. Otherwise they are empty. An attempt with `answer_count` = 30 and empty scores means the student closed the app before the result appeared. An admin can fill these in by running `node ace backfill:scores`.
-- **Scores follow the latest answers.** A student can change an answer after seeing the result. The stored scores are updated the next time they open the result, career or MyPath page.
+- **Scores follow the latest answers.** A student can change an answer after seeing the result. The stored scores are updated the next time they open the result, career or Print prep page.
 - **Each score ranges from 0 to 20.** Each RIASEC type has 5 items, and each answer is worth 0 to 4. The answer scale is: 0 = would not want to do it at all, 1 = would not want to, 2 = not sure, 3 = would want to, 4 = would very much want to.
 - **Ties in the interest code** are broken in R-I-A-S-E-C order. A student with equal S and A scores gets `S` after `A`.
 - **Timestamps** are ISO 8601 in Bangkok time (UTC+07:00), for example `2026-11-08T14:05:31.120+07:00`. An empty timestamp means the student has not reached that step yet.
@@ -69,7 +69,7 @@ The flow has these steps, in order:
 
 - **Meaning**: the furthest step this attempt has reached.
 - **Source**: `attempts.furthest_step`.
-- **Values**, in flow order: `test` (started, possibly mid-test), `result` (saw the result), `career` (opened at least one career's detail page), `mypath` (reached MyPath).
+- **Values**, in flow order: `test` (started, possibly mid-test), `result` (saw the result), `career` (opened at least one career's detail page), `print_prep` (reached Print prep).
 
 ### started_at
 
@@ -89,15 +89,15 @@ The flow has these steps, in order:
 - **Source**: `attempts.career_at`.
 - **Type**: timestamp. Empty if they have not reached it.
 
-### mypath_at
+### print_prep_at
 
-- **Meaning**: the first time the student opened MyPath.
-- **Source**: `attempts.mypath_at`.
+- **Meaning**: the first time the student opened Print prep.
+- **Source**: `attempts.print_prep_at`.
 - **Type**: timestamp. Empty if they have not reached it.
 
 ### downloaded_at
 
-- **Meaning**: the first time the student downloaded their result from MyPath. That is either pressing Download on MyPath, or opening MyPath after they had already left contact details, which takes them straight to the printable page.
+- **Meaning**: the first time the student downloaded their result from Print prep. That is either pressing Download on Print prep, or opening Print prep after they had already left contact details, which takes them straight to the printable page.
 - **Source**: `attempts.downloaded_at`.
 - **Type**: timestamp. Empty if they never downloaded. Later downloads do not change it.
 
@@ -141,7 +141,7 @@ The flow has these steps, in order:
 
 ### career_save_count
 
-- **Meaning**: how many different careers the student pressed "เก็บอาชีพนี้ไว้ดูทีหลัง" on, which opens the browser's print dialog to keep that career's page as a PDF. It counts presses, not files: a student who cancels the dialog still counts. This is separate from `downloaded_at`, which is about the whole result after MyPath.
+- **Meaning**: how many different careers the student pressed "เก็บอาชีพนี้ไว้ดูทีหลัง" on, which opens the browser's print dialog to keep that career's page as a PDF. It counts presses, not files: a student who cancels the dialog still counts. This is separate from `downloaded_at`, which is about the whole result after Print prep.
 - **Source**: count of rows in `career_views` for this attempt that have a save time. Each career counts once, however many times it was saved.
 - **Type**: integer, 0 up to `career_view_count`.
 
@@ -179,7 +179,7 @@ The flow has these steps, in order:
 
 - **Meaning**: the page where the student first left their contact details.
 - **Source**: `student_contacts.source`.
-- **Values**: `contact` (the contact step between the result and the careers, shown to students without a campaign code) or `mypath` (the MyPath page). Empty when `has_consent` is `false`.
+- **Values**: `contact` (the contact step between the result and the careers, shown to students without a campaign code) or `print_prep` (the Print prep page). Empty when `has_consent` is `false`.
 
 ### name
 

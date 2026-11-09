@@ -36,7 +36,7 @@ test.group('Admin students list', (group) => {
 
   test('lists attempts newest first with contact details masked', async ({ client, assert }) => {
     const old = await seed('test', { code: 'AB5434', createdAt: DateTime.now().minus({ days: 2 }) })
-    const withContact = await seed('mypath', { code: 'AB5434' })
+    const withContact = await seed('print_prep', { code: 'AB5434' })
     await consent(withContact, '0812341234', 'student@example.com')
 
     const page = await client
@@ -97,11 +97,11 @@ test.group('Admin student detail', (group) => {
     assert,
   }) => {
     const now = DateTime.now()
-    const attempt = await seed('mypath', {
+    const attempt = await seed('print_prep', {
       code: 'AB5434',
       resultAt: now,
       careerAt: now,
-      mypathAt: now,
+      printPrepAt: now,
       downloadedAt: now,
     })
     const ids = content.forms.mini.ids
@@ -122,7 +122,7 @@ test.group('Admin student detail', (group) => {
 
     page.assertInertiaComponent('admin/students/show')
     const { attempt: a } = page.inertiaProps
-    assert.equal(a.furthestStep, 'mypath')
+    assert.equal(a.furthestStep, 'print_prep')
     assert.isNotNull(a.resultAt)
     assert.isNotNull(a.downloadedAt)
     assert.lengthOf(a.answers, ids.length)
@@ -192,7 +192,7 @@ test.group('Admin student delete', (group) => {
     assert,
   }) => {
     const admin = await makeUser('admin')
-    const gone = await seed('mypath')
+    const gone = await seed('print_prep')
     const kept = await seed('test')
     await consent(gone, '0812341234', null)
     await AdminAudit.create({ userId: admin.id, attemptId: gone.id, action: 'view' })
@@ -239,7 +239,7 @@ test.group('Admin student export', (group) => {
     client,
     assert,
   }) => {
-    const done = await seed('mypath', {
+    const done = await seed('print_prep', {
       code: 'AB5434',
       scoreR: 20,
       scoreI: 1,
@@ -271,7 +271,7 @@ test.group('Admin student export', (group) => {
     await seed('result', { code: 'ZZ0001' })
 
     const res = await client
-      .get('/admin/students/export?step=mypath')
+      .get('/admin/students/export?step=print_prep')
       .loginAs(await makeUser('admin'))
     res.assertStatus(200)
     assert.match(res.header('content-type') ?? '', /^text\/csv; charset=utf-8/)
@@ -287,7 +287,7 @@ test.group('Admin student export', (group) => {
       attempt_uuid: done.uuid,
       code: 'AB5434',
       code_type: 'campaign',
-      furthest_step: 'mypath',
+      furthest_step: 'print_prep',
       answer_count: '30',
       score_r: '20',
       interest_code: 'RCE',

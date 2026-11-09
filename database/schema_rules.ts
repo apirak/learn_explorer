@@ -21,7 +21,7 @@ export default {
     student_contacts: {
       columns: {
         source: {
-          tsType: `'contact' | 'mypath'`,
+          tsType: `'contact' | 'print_prep'`,
           decorators: [{ name: '@column' }],
         },
       },
@@ -29,7 +29,7 @@ export default {
     attempts: {
       columns: {
         furthest_step: {
-          tsType: `'test' | 'result' | 'career' | 'mypath'`,
+          tsType: `'test' | 'result' | 'career' | 'print_prep'`,
           decorators: [{ name: '@column' }],
         },
         profile_status: {

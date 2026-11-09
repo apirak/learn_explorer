@@ -37,10 +37,14 @@ _Avoid_: result code
 ## Flow and reporting
 
 **Step**:
-A stage of the flow an attempt can reach: Start, Test complete, Result, Career, MyPath, Download. An attempt's furthest step never moves backward.
+A stage of the flow an attempt can reach: Start, Test complete, Result, Career, Print prep, Download. An attempt's furthest step never moves backward.
 
 **Careers list view**:
 A student first opening the five-careers page. Recorded once per attempt, as the denominator of the NPS response rate. Not a step: the Career step is opening one career's own page.
+
+**Print prep**:
+The page reached from the five-careers page ("เก็บผลไว้ดูทีหลัง") where a student can leave a contact, then opens the printable result. A step; pressing its button is the Download.
+_Avoid_: MyPath (reserved for the future study-plan feature, which will not live on this page)
 
 **Career save**:
 A student keeping one career's detail page as a PDF, straight from that page. What is known is the press of the save button, first time only, not that a file was actually kept. Not a step, and not a Download.

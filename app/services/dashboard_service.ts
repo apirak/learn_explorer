@@ -49,7 +49,7 @@ export class DashboardService {
       .select('source')
       .groupBy('source')
       .count('* as total')
-    const contacts = { contact: 0, mypath: 0 }
+    const contacts = { contact: 0, print_prep: 0 }
     for (const row of contactRows) contacts[row.source] = Number(row.$extras.total)
 
     return {

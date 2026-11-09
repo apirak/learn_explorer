@@ -22,7 +22,7 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['started_at', (a) => bangkok(a.createdAt)],
   ['result_at', (a) => bangkok(a.resultAt)],
   ['career_at', (a) => bangkok(a.careerAt)],
-  ['mypath_at', (a) => bangkok(a.mypathAt)],
+  ['print_prep_at', (a) => bangkok(a.printPrepAt)],
   ['downloaded_at', (a) => bangkok(a.downloadedAt)],
   ['answer_count', (a) => Number(a.$extras.answer_count)],
   ['score_r', (a) => a.scoreR],

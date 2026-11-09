@@ -15,9 +15,9 @@ export type ScannedRoutes = {
     'student.nps.store': { paramsTuple?: []; params?: {} }
     'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
     'student.career.save': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath': { paramsTuple?: []; params?: {} }
-    'student.mypath.download': { paramsTuple?: []; params?: {} }
-    'student.mypath.print': { paramsTuple?: []; params?: {} }
+    'student.print_prep': { paramsTuple?: []; params?: {} }
+    'student.print_prep.download': { paramsTuple?: []; params?: {} }
+    'student.print_prep.print': { paramsTuple?: []; params?: {} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
@@ -50,8 +50,8 @@ export type ScannedRoutes = {
     'student.contact': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
     'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath': { paramsTuple?: []; params?: {} }
-    'student.mypath.print': { paramsTuple?: []; params?: {} }
+    'student.print_prep': { paramsTuple?: []; params?: {} }
+    'student.print_prep.print': { paramsTuple?: []; params?: {} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
@@ -73,8 +73,8 @@ export type ScannedRoutes = {
     'student.contact': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
     'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath': { paramsTuple?: []; params?: {} }
-    'student.mypath.print': { paramsTuple?: []; params?: {} }
+    'student.print_prep': { paramsTuple?: []; params?: {} }
+    'student.print_prep.print': { paramsTuple?: []; params?: {} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
@@ -95,7 +95,7 @@ export type ScannedRoutes = {
     'student.contact.store': { paramsTuple?: []; params?: {} }
     'student.nps.store': { paramsTuple?: []; params?: {} }
     'student.career.save': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath.download': { paramsTuple?: []; params?: {} }
+    'student.print_prep.download': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }

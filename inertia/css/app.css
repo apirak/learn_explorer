@@ -1501,7 +1501,7 @@ input {
 .ip .result-stack {
   display: grid;
   gap: 24px;
-  align-content: start; /* a short page (MyPath with a contact) stays packed, not stretched */
+  align-content: start; /* a short page (Print prep with a contact) stays packed, not stretched */
 }
 .ip .muted {
   color: var(--soft);
@@ -1749,8 +1749,8 @@ button.title-link {
   overflow-wrap: anywhere;
 }
 
-/* --- MyPath: optional contact + consent, kept apart from Download. --- */
-.ip .mypath {
+/* --- Print prep: optional contact + consent, kept apart from Download. --- */
+.ip .contact-form {
   gap: 20px;
 }
 .ip .consent {

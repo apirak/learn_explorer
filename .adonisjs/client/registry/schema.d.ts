@@ -151,43 +151,43 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_careers_controller').default['save']>>>
     }
   }
-  'student.mypath': {
+  'student.print_prep': {
     methods: ["GET","HEAD"]
-    pattern: '/mypath'
+    pattern: '/print-prep'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['show']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['show']>>>
-      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['show']>>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['show']>>>
     }
   }
-  'student.mypath.download': {
+  'student.print_prep.download': {
     methods: ["POST"]
-    pattern: '/mypath/download'
+    pattern: '/print-prep/download'
     types: {
       body: ExtractBody<InferInput<(typeof import('#validators/student').contactValidator)>>
       paramsTuple: []
       params: {}
       query: ExtractQuery<InferInput<(typeof import('#validators/student').contactValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
-      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['download']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['download']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
-  'student.mypath.print': {
+  'student.print_prep.print': {
     methods: ["GET","HEAD"]
-    pattern: '/mypath/print'
+    pattern: '/print-prep/print'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['print']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['print']>>>
-      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_mypath_controller').default['print']>>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['print']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['print']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_print_prep_controller').default['print']>>>
     }
   }
   'health': {

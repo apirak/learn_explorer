@@ -13,7 +13,7 @@ const STEP_LABEL: Record<FunnelStep, string> = {
   testComplete: 'ตอบครบทุกข้อ',
   result: 'Result',
   career: 'Career',
-  mypath: 'MyPath',
+  print_prep: 'Print prep',
   download: 'Download',
 }
 
@@ -153,7 +153,7 @@ function Funnel({ report }: { report: Report }) {
         })}
       </ol>
       <p className="section__description">
-        Contact: ก่อน Career {report.contacts.contact} · MyPath {report.contacts.mypath}
+        Contact: ก่อน Career {report.contacts.contact} · Print prep {report.contacts.print_prep}
       </p>
     </section>
   )

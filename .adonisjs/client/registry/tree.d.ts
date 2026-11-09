@@ -20,9 +20,9 @@ export interface ApiDefinition {
     career: typeof routes['student.career'] & {
       save: typeof routes['student.career.save']
     }
-    mypath: typeof routes['student.mypath'] & {
-      download: typeof routes['student.mypath.download']
-      print: typeof routes['student.mypath.print']
+    printPrep: typeof routes['student.print_prep'] & {
+      download: typeof routes['student.print_prep.download']
+      print: typeof routes['student.print_prep.print']
     }
   }
   health: typeof routes['health']

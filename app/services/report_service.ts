@@ -10,7 +10,7 @@ type AttemptQuery = ModelQueryBuilderContract<typeof Attempt>
 
 export type ReportData = Awaited<ReturnType<typeof ReportService.build>>
 
-export type FunnelStep = 'start' | 'testComplete' | 'result' | 'career' | 'mypath' | 'download'
+export type FunnelStep = 'start' | 'testComplete' | 'result' | 'career' | 'print_prep' | 'download'
 
 export const REPORT_ZONE = 'Asia/Bangkok'
 
@@ -67,7 +67,7 @@ export class ReportService {
         { step: 'testComplete', count: testComplete },
         { step: 'result', count: totals.result },
         { step: 'career', count: totals.career },
-        { step: 'mypath', count: totals.mypath },
+        { step: 'print_prep', count: totals.print_prep },
         { step: 'download', count: totals.download },
       ] satisfies { step: FunnelStep; count: number }[],
       contacts,
@@ -128,7 +128,7 @@ export class ReportService {
       .count('* as attempts')
       .count('result_at as result')
       .count('career_at as career')
-      .count('mypath_at as mypath')
+      .count('print_prep_at as print_prep')
       .count('downloaded_at as download')
       .count('careers_viewed_at as careers_viewed')
     const [coded] = await cohort().countDistinct('code as total')
@@ -143,7 +143,7 @@ export class ReportService {
       attempts: n(steps, 'attempts'),
       result: n(steps, 'result'),
       career: n(steps, 'career'),
-      mypath: n(steps, 'mypath'),
+      print_prep: n(steps, 'print_prep'),
       download: n(steps, 'download'),
       careersViewed: n(steps, 'careers_viewed'),
       // An attempt without a code is a student on its own (GLOSSARY: Student).
@@ -189,7 +189,7 @@ export class ReportService {
       .select('source')
       .groupBy('source')
       .count('* as total')
-    const contacts = { contact: 0, mypath: 0 }
+    const contacts = { contact: 0, print_prep: 0 }
     for (const row of rows) contacts[row.source] = Number(row.$extras.total)
     return contacts
   }
