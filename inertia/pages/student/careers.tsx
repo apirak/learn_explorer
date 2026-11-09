@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react'
 import { Link } from '@adonisjs/inertia/react'
+import { Save } from 'lucide-react'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 import Chip from '~/components/ui/chip'
@@ -22,6 +23,7 @@ export default function StudentCareers({
           <div className="title-row">
             <h1>5 อาชีพที่น่าลองดู</h1>
             <Link route="student.mypath" className="title-link">
+              <Save size={16} aria-hidden />
               เก็บผลไว้ดูทีหลัง
             </Link>
           </div>
@@ -68,7 +70,8 @@ export default function StudentCareers({
           ))}
         </div>
         <Link route="student.mypath" className="btn btn--primary">
-          เก็บผลไว้ดูทีหลัง →
+          <Save size={18} aria-hidden />
+          เก็บผลไว้ดูทีหลัง
         </Link>
       </div>
     </main>

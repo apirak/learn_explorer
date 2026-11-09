@@ -1645,6 +1645,9 @@ input {
 }
 .ip .title-link {
   flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   color: var(--violet);
   font: 700 0.95rem var(--hand);
   text-decoration: none;
