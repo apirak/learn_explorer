@@ -4,6 +4,7 @@ import { matchOccupations } from '#services/scoring_service'
 import OccupationTransformer from '#transformers/occupation_transformer'
 import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
+import { DateTime } from 'luxon'
 
 const UNIQUE_VIOLATION = '23505'
 
@@ -35,6 +36,25 @@ export default class StudentCareersController {
 
     return inertia.render('student/career', {
       occupation: OccupationTransformer.transform(match),
+      attribution: content.attribution, // the license credit, printed with a Career save
     })
+  }
+
+  /**
+   * `POST /careers/:code/save`: a Career save, sent as the print dialog opens. Keeps the first
+   * press only, on a career this attempt has opened, else 404. Not a step, not a Download.
+   */
+  async save({ params, response, logger, attempt }: HttpContext) {
+    const view = await CareerView.findByOrFail({
+      attemptId: attempt!.id,
+      occupationCode: params.code,
+    })
+    // One conditional update, so a double tap cannot replace the first time.
+    const [saved] = await CareerView.query()
+      .where('id', view.id)
+      .whereNull('savedAt')
+      .update({ savedAt: DateTime.now() })
+    if (Number(saved)) logger.info({ attempt: attempt!.uuid }, 'career_saved') // UUID only [DP-001]
+    return response.noContent()
   }
 }

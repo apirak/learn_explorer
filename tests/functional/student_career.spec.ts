@@ -145,3 +145,58 @@ test.group('Student career detail', (group) => {
     )
   })
 })
+
+test.group('Student career save', (group) => {
+  group.each.setup(() => testUtils.db().withGlobalTransaction())
+
+  const save = (client: any, attempt: Attempt, code: string) =>
+    client
+      .post(`/careers/${code}/save`)
+      .withEncryptedCookie('le_attempt', cookie(attempt))
+      .withCsrfToken()
+
+  /** Opens one matched career page and returns its code. */
+  async function openFirstMatch(client: any, attempt: Attempt) {
+    const list = await client
+      .get('/careers')
+      .withEncryptedCookie('le_attempt', cookie(attempt))
+      .withInertia()
+    const [code] = list.inertiaProps.matches.map((m: { code: string }) => m.code)
+    await client.get(`/careers/${code}`).withEncryptedCookie('le_attempt', cookie(attempt))
+    return code as string
+  }
+
+  test('records the first save time only; not a step or a Download', async ({ client, assert }) => {
+    const attempt = await scoredAttempt()
+    const code = await openFirstMatch(client, attempt)
+
+    const first = await save(client, attempt, code)
+    first.assertStatus(204)
+    const view = await CareerView.findByOrFail({ attemptId: attempt.id, occupationCode: code })
+    assert.isNotNull(view.savedAt)
+    const savedAt = view.savedAt!.toMillis()
+
+    ;(await save(client, attempt, code)).assertStatus(204)
+    await view.refresh()
+    assert.equal(view.savedAt!.toMillis(), savedAt)
+
+    await attempt.refresh()
+    assert.equal(attempt.furthestStep, 'career')
+    assert.isNull(attempt.downloadedAt)
+  })
+
+  test('404s for a career this attempt has not opened', async ({ client, assert }) => {
+    const attempt = await scoredAttempt()
+    const code = await openFirstMatch(client, attempt)
+    const other = content.occupations.find((o) => o.code !== code)!
+
+    for (const c of [other.code, 'not-a-code']) {
+      ;(await save(client, attempt, c)).assertStatus(404)
+    }
+    const views = await CareerView.query().where('attemptId', attempt.id)
+    assert.deepEqual(
+      views.map((v) => [v.occupationCode, v.savedAt]),
+      [[code, null]]
+    )
+  })
+})

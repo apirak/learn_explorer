@@ -69,12 +69,13 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
           text: items.get(id)!.text_th,
           value: values.get(id)!,
         })),
-      careersViewed: a.careerViews.map(({ occupationCode: code }) => ({
+      careersViewed: a.careerViews.map(({ occupationCode: code, savedAt }) => ({
         code,
         title:
           content.thaiTitles[code] ??
           content.occupations.find((o) => o.code === code)?.title ??
           code,
+        savedAt,
       })),
       contact: a.contact
         ? this.pick(a.contact, ['name', 'phone', 'email', 'consentAt', 'consentVersion'])

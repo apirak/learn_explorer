@@ -28,6 +28,7 @@ router
     router.post('contact', [controllers.StudentContacts, 'store']).as('contact.store')
     router.get('careers', [controllers.StudentResult, 'careers']).as('careers')
     router.get('careers/:code', [controllers.StudentCareers, 'show']).as('career')
+    router.post('careers/:code/save', [controllers.StudentCareers, 'save']).as('career.save')
     router.get('mypath', [controllers.StudentMypath, 'show']).as('mypath')
     router.post('mypath/download', [controllers.StudentMypath, 'download']).as('mypath.download')
     router.get('mypath/print', [controllers.StudentMypath, 'print']).as('mypath.print')

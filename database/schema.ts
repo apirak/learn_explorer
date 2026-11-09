@@ -23,15 +23,7 @@ export class AdminAuditSchema extends BaseModel {
 }
 
 export class AnswerSchema extends BaseModel {
-  static $columns = [
-    'attemptId',
-    'createdAt',
-    'gapMs',
-    'id',
-    'itemId',
-    'updatedAt',
-    'value',
-  ] as const
+  static $columns = ['attemptId', 'createdAt', 'gapMs', 'id', 'itemId', 'updatedAt', 'value'] as const
   $columns = AnswerSchema.$columns
   @column()
   declare attemptId: number
@@ -50,28 +42,7 @@ export class AnswerSchema extends BaseModel {
 }
 
 export class AttemptSchema extends BaseModel {
-  static $columns = [
-    'careerAt',
-    'code',
-    'contentVersion',
-    'createdAt',
-    'desiredCareer',
-    'downloadedAt',
-    'furthestStep',
-    'id',
-    'interestCode',
-    'mypathAt',
-    'profileStatus',
-    'resultAt',
-    'scoreA',
-    'scoreC',
-    'scoreE',
-    'scoreI',
-    'scoreR',
-    'scoreS',
-    'updatedAt',
-    'uuid',
-  ] as const
+  static $columns = ['careerAt', 'code', 'contentVersion', 'createdAt', 'desiredCareer', 'downloadedAt', 'furthestStep', 'id', 'interestCode', 'mypathAt', 'profileStatus', 'resultAt', 'scoreA', 'scoreC', 'scoreE', 'scoreI', 'scoreR', 'scoreS', 'updatedAt', 'uuid'] as const
   $columns = AttemptSchema.$columns
   @column.dateTime()
   declare careerAt: DateTime | null
@@ -116,7 +87,7 @@ export class AttemptSchema extends BaseModel {
 }
 
 export class CareerViewSchema extends BaseModel {
-  static $columns = ['attemptId', 'createdAt', 'id', 'occupationCode'] as const
+  static $columns = ['attemptId', 'createdAt', 'id', 'occupationCode', 'savedAt'] as const
   $columns = CareerViewSchema.$columns
   @column()
   declare attemptId: number
@@ -126,6 +97,8 @@ export class CareerViewSchema extends BaseModel {
   declare id: number
   @column()
   declare occupationCode: string
+  @column.dateTime()
+  declare savedAt: DateTime | null
 }
 
 export class SettingSchema extends BaseModel {
@@ -142,17 +115,7 @@ export class SettingSchema extends BaseModel {
 }
 
 export class StudentContactSchema extends BaseModel {
-  static $columns = [
-    'attemptId',
-    'consentAt',
-    'consentVersion',
-    'createdAt',
-    'email',
-    'id',
-    'name',
-    'phone',
-    'source',
-  ] as const
+  static $columns = ['attemptId', 'consentAt', 'consentVersion', 'createdAt', 'email', 'id', 'name', 'phone', 'source'] as const
   $columns = StudentContactSchema.$columns
   @column()
   declare attemptId: number
@@ -175,16 +138,7 @@ export class StudentContactSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = [
-    'affiliation',
-    'createdAt',
-    'email',
-    'fullName',
-    'id',
-    'password',
-    'role',
-    'updatedAt',
-  ] as const
+  static $columns = ['affiliation', 'createdAt', 'email', 'fullName', 'id', 'password', 'role', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column()
   declare affiliation: string | null

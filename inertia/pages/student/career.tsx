@@ -1,22 +1,55 @@
+import { useEffect } from 'react'
 import { Head } from '@inertiajs/react'
 import { Link } from '@adonisjs/inertia/react'
 import { Save } from 'lucide-react'
 import { type Data } from '@generated/data'
+import { client } from '~/client'
 import { type InertiaProps } from '~/types'
+import Attribution from '~/components/ui/attribution'
 import Chip from '~/components/ui/chip'
 
 const FIT_LABELS = { best: 'เหมาะมาก', great: 'เหมาะ', good: 'พอใช้' }
 const PROFILE_MAX = 7 // O*NET interest scores run 1–7
 
+/**
+ * Career save: record the press without waiting (a lost request only costs the stat), then open
+ * the print dialog so the student can keep this page as a PDF. The dialog blocks the page, so it
+ * opens on the next task, after the request has gone out.
+ */
+function saveCareer(code: string) {
+  void client.api.student.career.save({ params: { code } }).safe()
+  setTimeout(() => window.print(), 0)
+}
+
+/** Prints every field open, so the PDF lists the programs; restores what the student had open. */
+function usePrintOpensFields() {
+  useEffect(() => {
+    let closed: HTMLDetailsElement[] = []
+    const open = () => {
+      closed = [...document.querySelectorAll<HTMLDetailsElement>('.tcas-field:not([open])')]
+      closed.forEach((d) => (d.open = true))
+    }
+    const restore = () => closed.forEach((d) => (d.open = false))
+    window.addEventListener('beforeprint', open)
+    window.addEventListener('afterprint', restore)
+    return () => {
+      window.removeEventListener('beforeprint', open)
+      window.removeEventListener('afterprint', restore)
+    }
+  }, [])
+}
+
 /** One matched occupation: titles, its RIASEC profile, and the TCAS fields that lead to it (prototype careerView). */
 export default function StudentCareer({
   occupation: o,
-}: InertiaProps<{ occupation: Data.Occupation }>) {
+  attribution,
+}: InertiaProps<{ occupation: Data.Occupation; attribution: string }>) {
+  usePrintOpensFields()
   return (
-    <main className="ip result">
+    <main className="ip result print">
       <Head title={o.title} />
       <div className="result-stack">
-        <Link route="student.careers" className="back">
+        <Link route="student.careers" className="back no-print">
           ← กลับ
         </Link>
         <div className="sheet">
@@ -40,7 +73,7 @@ export default function StudentCareer({
             ))}
           </ul>
           <a
-            className="small"
+            className="small print-url"
             href={`https://www.onetonline.org/link/summary/${o.code}`}
             target="_blank"
             rel="noreferrer"
@@ -86,11 +119,18 @@ export default function StudentCareer({
             สาขาและหลักสูตรมาจากข้อมูล mytcas การจับคู่อาชีพกับสาขายังเป็นฉบับร่าง
             ควรอ่านรายละเอียดหลักสูตรก่อนตัดสินใจ
           </p>
+          <div className="print-only">
+            <Attribution text={attribution} />
+          </div>
         </div>
-        <Link route="student.mypath" className="btn btn--primary">
+        <button
+          type="button"
+          className="btn btn--primary no-print"
+          onClick={() => saveCareer(o.code)}
+        >
           <Save size={18} aria-hidden />
-          เก็บผลไว้ดูทีหลัง
-        </Link>
+          เก็บอาชีพนี้ไว้ดูทีหลัง
+        </button>
       </div>
     </main>
   )

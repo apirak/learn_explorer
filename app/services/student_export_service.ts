@@ -12,7 +12,7 @@ const bangkok = (dt: DateTime | null) => dt?.setZone(REPORT_ZONE).toISO() ?? nul
 /**
  * The student export: one row per attempt, in this column order. Every header must be described
  * in `resources/exports/students.md` (a test checks). Needs `contact` preloaded and the
- * `answer_count` and `career_view_count` counts. Carries full contact details [DP-001].
+ * `answer_count`, `career_view_count` and `career_save_count` counts. Carries full contact details [DP-001].
  */
 export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['attempt_uuid', (a) => a.uuid],
@@ -35,6 +35,7 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['profile_status', (a) => a.profileStatus],
   ['desired_career', (a) => a.desiredCareer],
   ['career_view_count', (a) => Number(a.$extras.career_view_count)],
+  ['career_save_count', (a) => Number(a.$extras.career_save_count)],
   ['has_consent', (a) => !!a.contact],
   ['consent_at', (a) => bangkok(a.contact?.consentAt ?? null)],
   ['consent_version', (a) => a.contact?.consentVersion],

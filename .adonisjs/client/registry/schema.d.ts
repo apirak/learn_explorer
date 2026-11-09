@@ -125,6 +125,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_careers_controller').default['show']>>>
     }
   }
+  'student.career.save': {
+    methods: ["POST"]
+    pattern: '/careers/:code/save'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { code: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_careers_controller').default['save']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_careers_controller').default['save']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_careers_controller').default['save']>>>
+    }
+  }
   'student.mypath': {
     methods: ["GET","HEAD"]
     pattern: '/mypath'

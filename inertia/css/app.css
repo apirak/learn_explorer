@@ -1830,9 +1830,22 @@ input {
   gap: 10px;
   padding-left: 1.4em;
 }
+/* Shown only on paper, e.g. the O*NET credit on a Career save. */
+.print-only {
+  display: none;
+}
+
 @media print {
   .no-print {
     display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  /* A PDF link cannot be tapped, so print where it goes. */
+  .print-url::after {
+    content: ' (' attr(href) ')';
+    word-break: break-all;
   }
   .ip.print .sheet {
     box-shadow: none;

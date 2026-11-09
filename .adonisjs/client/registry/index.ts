@@ -62,6 +62,12 @@ const routes = {
     tokens: [[0,"careers"],[1,"code"]],
     types: placeholder as Registry['student.career']['types'],
   },
+  'student.career.save': {
+    methods: ["POST"],
+    pattern: '/careers/:code/save',
+    tokens: [[0,"careers"],[1,"code"],[0,"save"]],
+    types: placeholder as Registry['student.career.save']['types'],
+  },
   'student.mypath': {
     methods: ["GET","HEAD"],
     pattern: '/mypath',

@@ -14,7 +14,9 @@ export interface ApiDefinition {
       store: typeof routes['student.contact.store']
     }
     careers: typeof routes['student.careers']
-    career: typeof routes['student.career']
+    career: typeof routes['student.career'] & {
+      save: typeof routes['student.career.save']
+    }
     mypath: typeof routes['student.mypath'] & {
       download: typeof routes['student.mypath.download']
       print: typeof routes['student.mypath.print']

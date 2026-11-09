@@ -108,8 +108,10 @@ test.group('Admin student detail', (group) => {
     await Answer.createMany(
       ids.map((itemId, i) => ({ attemptId: attempt.id, itemId, value: i === 0 ? 0 : 4 }))
     )
-    const occupation = content.occupations[0]
+    const [occupation, saved] = content.occupations
     await CareerView.create({ attemptId: attempt.id, occupationCode: occupation.code })
+    const savedAt = DateTime.fromISO('2026-11-09T22:40:00+07:00')
+    await CareerView.create({ attemptId: attempt.id, occupationCode: saved.code, savedAt })
     await consent(attempt, '0812341234', 'student@example.com')
 
     const page = await client
@@ -127,9 +129,14 @@ test.group('Admin student detail', (group) => {
     assert.deepInclude(a.answers[0], { itemId: ids[0], text: first.text_th, value: 0 })
     assert.sameMembers(Object.keys(a.scores), ['R', 'I', 'A', 'S', 'E', 'C'])
     assert.lengthOf(a.interestCode, 3)
-    assert.deepEqual(a.careersViewed, [
-      { code: occupation.code, title: content.thaiTitles[occupation.code] ?? occupation.title },
-    ])
+    const byCode = new Map(a.careersViewed.map((c: { code: string }) => [c.code, c]))
+    assert.deepEqual(byCode.get(occupation.code), {
+      code: occupation.code,
+      title: content.thaiTitles[occupation.code] ?? occupation.title,
+      savedAt: null,
+    })
+    const savedView = byCode.get(saved.code) as { savedAt: string }
+    assert.equal(DateTime.fromISO(savedView.savedAt).toMillis(), savedAt.toMillis())
     assert.equal(a.contact.name, 'สมชาย')
     assert.equal(a.contact.phone, '0812341234')
     assert.equal(a.contact.email, 'student@example.com')
@@ -247,6 +254,11 @@ test.group('Admin student export', (group) => {
       content.forms.mini.ids.map((itemId) => ({ attemptId: done.id, itemId, value: 2 }))
     )
     await CareerView.create({ attemptId: done.id, occupationCode: content.occupations[0].code })
+    await CareerView.create({
+      attemptId: done.id,
+      occupationCode: content.occupations[1].code,
+      savedAt: DateTime.now(),
+    })
     await consent(done, '0812341234', 'student@example.com')
     await seed('test', { code: 'NC-7QX4M' })
     await seed('result', { code: 'ZZ0001' })
@@ -272,7 +284,8 @@ test.group('Admin student export', (group) => {
       answer_count: '30',
       score_r: '20',
       interest_code: 'RCE',
-      career_view_count: '1',
+      career_view_count: '2',
+      career_save_count: '1',
       has_consent: 'true',
       consent_version: 'v1',
       name: 'สมชาย',

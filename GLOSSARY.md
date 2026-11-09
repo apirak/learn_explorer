@@ -39,6 +39,10 @@ _Avoid_: result code
 **Step**:
 A stage of the flow an attempt can reach: Start, Test complete, Result, Career, MyPath, Download. An attempt's furthest step never moves backward.
 
+**Career save**:
+A student keeping one career's detail page as a PDF, straight from that page. What is known is the press of the save button, first time only, not that a file was actually kept. Not a step, and not a Download.
+_Avoid_: career download
+
 **Funnel**:
 How many attempts reached each step, with the conversion and drop-off between steps.
 

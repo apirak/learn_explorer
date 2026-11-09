@@ -69,6 +69,7 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
             {a.careersViewed.map((c) => (
               <li key={c.code}>
                 {c.title} <span className="muted">{c.code}</span>
+                {c.savedAt && <> · saved {fmt(c.savedAt)}</>}
               </li>
             ))}
           </ul>

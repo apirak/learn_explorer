@@ -53,6 +53,7 @@ export default class StudentsController {
     const attempts = await filteredAttempts(readFilters(request.qs()))
       .withCount('answers', (q) => q.as('answer_count'))
       .withCount('careerViews', (q) => q.as('career_view_count'))
+      .withCount('careerViews', (q) => q.whereNotNull('savedAt').as('career_save_count'))
     // Ids and counts only, never student data [DP-001].
     logger.info({ userId: auth.user!.id, rows: attempts.length }, 'students_exported')
 

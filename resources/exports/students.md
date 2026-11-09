@@ -139,6 +139,12 @@ The flow has these steps, in order:
 - **Source**: count of rows in `career_views` for this attempt. Learn Explorer records each career once per attempt, so opening the same career twice counts once.
 - **Type**: integer, 0 or more.
 
+### career_save_count
+
+- **Meaning**: how many different careers the student pressed "เก็บอาชีพนี้ไว้ดูทีหลัง" on, which opens the browser's print dialog to keep that career's page as a PDF. It counts presses, not files: a student who cancels the dialog still counts. This is separate from `downloaded_at`, which is about the whole result after MyPath.
+- **Source**: count of rows in `career_views` for this attempt that have a save time. Each career counts once, however many times it was saved.
+- **Type**: integer, 0 up to `career_view_count`.
+
 ### has_consent
 
 - **Meaning**: whether the student left a phone number or email (and optionally a name) and ticked the consent box agreeing that OnDemand may contact them.
