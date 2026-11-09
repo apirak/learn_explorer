@@ -23,7 +23,7 @@ export default function StudentContact({ consent }: InertiaProps<{ consent: Data
             หรือช่วยวางแผนการเรียนให้ได้ด้วยนะ และข้อมูลอาชีพพี่ๆ จะส่งตามไปให้อีกทีด้วย
           </p>
         </header>
-        <Form route="student.contact.store" className="sheet mypath">
+        <Form route="student.contact.store" className="sheet contact-form">
           {({ errors, processing }) => (
             <>
               <ContactFields consent={consent} errors={errors} />

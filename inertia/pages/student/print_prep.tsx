@@ -5,11 +5,11 @@ import { type InertiaProps } from '~/types'
 import ContactFields from '~/components/contact_fields'
 
 /**
- * MyPath: optional contact details with a separate, unticked consent box, then Download.
- * A typed phone or email needs the box ticked. With a contact already left, `/mypath` skips
+ * Print prep: optional contact details with a separate, unticked consent box, then Download.
+ * A typed phone or email needs the box ticked. With a contact already left, `/print-prep` skips
  * straight to the printable page.
  */
-export default function StudentMypath({ consent }: InertiaProps<{ consent: Data.Consent }>) {
+export default function StudentPrintPrep({ consent }: InertiaProps<{ consent: Data.Consent }>) {
   return (
     <main className="ip result">
       <Head title="เส้นทางของน้อง" />
@@ -24,7 +24,7 @@ export default function StudentMypath({ consent }: InertiaProps<{ consent: Data.
             ช่วยวางแผนการเรียน ฝากเบอร์หรืออีเมลไว้ได้ (ไม่บังคับ)
           </p>
         </header>
-        <Form route="student.mypath.download" className="sheet mypath">
+        <Form route="student.print_prep.download" className="sheet contact-form">
           {({ errors, processing }) => (
             <>
               <ContactFields consent={consent} errors={errors} />

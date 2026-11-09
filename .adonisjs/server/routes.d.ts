@@ -12,11 +12,12 @@ export type ScannedRoutes = {
     'student.contact': { paramsTuple?: []; params?: {} }
     'student.contact.store': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
+    'student.nps.store': { paramsTuple?: []; params?: {} }
     'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
     'student.career.save': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath': { paramsTuple?: []; params?: {} }
-    'student.mypath.download': { paramsTuple?: []; params?: {} }
-    'student.mypath.print': { paramsTuple?: []; params?: {} }
+    'student.print_prep': { paramsTuple?: []; params?: {} }
+    'student.print_prep.download': { paramsTuple?: []; params?: {} }
+    'student.print_prep.print': { paramsTuple?: []; params?: {} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
@@ -29,6 +30,7 @@ export type ScannedRoutes = {
     'session.destroy': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.report': { paramsTuple?: []; params?: {} }
+    'admin.report.nps': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.export': { paramsTuple?: []; params?: {} }
     'admin.students.dictionary': { paramsTuple?: []; params?: {} }
@@ -48,14 +50,15 @@ export type ScannedRoutes = {
     'student.contact': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
     'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath': { paramsTuple?: []; params?: {} }
-    'student.mypath.print': { paramsTuple?: []; params?: {} }
+    'student.print_prep': { paramsTuple?: []; params?: {} }
+    'student.print_prep.print': { paramsTuple?: []; params?: {} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'account.show': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.report': { paramsTuple?: []; params?: {} }
+    'admin.report.nps': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.export': { paramsTuple?: []; params?: {} }
     'admin.students.dictionary': { paramsTuple?: []; params?: {} }
@@ -70,14 +73,15 @@ export type ScannedRoutes = {
     'student.contact': { paramsTuple?: []; params?: {} }
     'student.careers': { paramsTuple?: []; params?: {} }
     'student.career': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath': { paramsTuple?: []; params?: {} }
-    'student.mypath.print': { paramsTuple?: []; params?: {} }
+    'student.print_prep': { paramsTuple?: []; params?: {} }
+    'student.print_prep.print': { paramsTuple?: []; params?: {} }
     'health': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'account.show': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
     'admin.report': { paramsTuple?: []; params?: {} }
+    'admin.report.nps': { paramsTuple?: []; params?: {} }
     'admin.students.index': { paramsTuple?: []; params?: {} }
     'admin.students.export': { paramsTuple?: []; params?: {} }
     'admin.students.dictionary': { paramsTuple?: []; params?: {} }
@@ -89,8 +93,9 @@ export type ScannedRoutes = {
     'student.start': { paramsTuple?: []; params?: {} }
     'student.test.answer': { paramsTuple?: []; params?: {} }
     'student.contact.store': { paramsTuple?: []; params?: {} }
+    'student.nps.store': { paramsTuple?: []; params?: {} }
     'student.career.save': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
-    'student.mypath.download': { paramsTuple?: []; params?: {} }
+    'student.print_prep.download': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }

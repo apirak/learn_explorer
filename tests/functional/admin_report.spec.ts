@@ -60,10 +60,10 @@ test.group('Admin report', (group) => {
     // Two attempts by one campaign student, one no-code student, one attempt with no code.
     const done = await seed({
       code: 'AB5434',
-      furthestStep: 'mypath',
+      furthestStep: 'print_prep',
       resultAt: now,
       careerAt: now,
-      mypathAt: now,
+      printPrepAt: now,
       downloadedAt: now,
     })
     await answer(done, ids.length, 500) // 29 gaps under 1 s
@@ -72,7 +72,7 @@ test.group('Admin report', (group) => {
     const one = await seed({ code: 'NC-ABCDE' })
     await answer(one, 2, 6 * 60_000) // gap over 5 min: left out
     await seed() // pressed Start, answered nothing
-    await StudentContact.record(done.id, { consent: true, phone: '0812345678' }, 'mypath')
+    await StudentContact.record(done.id, { consent: true, phone: '0812345678' }, 'print_prep')
     // Yesterday: outside the default range.
     await seed({ code: 'ZZ9999', createdAt: now.minus({ days: 1 }) })
 
@@ -89,7 +89,7 @@ test.group('Admin report', (group) => {
       report.funnel.map((s: { count: number }) => s.count),
       [4, 1, 1, 1, 1, 1]
     )
-    assert.deepEqual(report.contacts, { contact: 0, mypath: 1 })
+    assert.deepEqual(report.contacts, { contact: 0, print_prep: 1 })
     assert.equal(report.incomplete.total, 3)
     assert.equal(report.incomplete.none, 1)
     assert.equal(report.incomplete.buckets[0], 1) // 2 of 30

@@ -1,6 +1,7 @@
 import type { DateTime } from 'luxon'
 import db from '@adonisjs/lucid/services/db'
 import Attempt, { NO_CODE_PREFIX } from '#models/attempt'
+import NpsResponse, { type NpsGroup } from '#models/nps_response'
 import StudentContact from '#models/student_contact'
 import content from '#services/content_service'
 import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
@@ -9,7 +10,7 @@ type AttemptQuery = ModelQueryBuilderContract<typeof Attempt>
 
 export type ReportData = Awaited<ReturnType<typeof ReportService.build>>
 
-export type FunnelStep = 'start' | 'testComplete' | 'result' | 'career' | 'mypath' | 'download'
+export type FunnelStep = 'start' | 'testComplete' | 'result' | 'career' | 'print_prep' | 'download'
 
 export const REPORT_ZONE = 'Asia/Bangkok'
 
@@ -19,22 +20,31 @@ export const MAX_GAP_MS = 5 * 60 * 1000
 const GAP_EDGES_MS = [1, 10, 20, 30, 40, 50, 60].map((s) => s * 1000)
 const GAP_LABELS = ['<1', '1–10', '10–20', '20–30', '30–40', '40–50', '50–60', '≥60']
 
+/** Rounds halves away from zero, so −12.5 → −13 like +12.5 → 13 (`Math.round` gives −12). */
+const roundHalfAway = (n: number) => Math.sign(n) * Math.round(Math.abs(n))
+
 /**
  * Report figures for a cohort: the attempts started between two Bangkok dates, inclusive.
  * Counts only, never codes or contact data [DP-001].
  */
 export class ReportService {
-  static async build(from: DateTime, to: DateTime) {
+  /** The attempts started between two Bangkok dates, inclusive. */
+  static cohort(from: DateTime, to: DateTime) {
     const start = from.setZone(REPORT_ZONE).startOf('day')
     const end = to.setZone(REPORT_ZONE).plus({ days: 1 }).startOf('day')
-    const cohort = () =>
+    return () =>
       Attempt.query().where('createdAt', '>=', start.toSQL()!).where('createdAt', '<', end.toSQL()!)
+  }
 
-    const [totals, answered, gaps, contacts] = await Promise.all([
+  static async build(from: DateTime, to: DateTime) {
+    const cohort = this.cohort(from, to)
+
+    const [totals, answered, gaps, contacts, nps] = await Promise.all([
       this.totals(cohort),
       this.answeredCounts(cohort().select('id')),
       this.gaps(cohort().select('id')),
       this.contacts(cohort().select('id')),
+      this.npsScores(cohort().select('id')),
     ])
 
     const total = content.forms.mini.ids.length
@@ -57,13 +67,59 @@ export class ReportService {
         { step: 'testComplete', count: testComplete },
         { step: 'result', count: totals.result },
         { step: 'career', count: totals.career },
-        { step: 'mypath', count: totals.mypath },
+        { step: 'print_prep', count: totals.print_prep },
         { step: 'download', count: totals.download },
       ] satisfies { step: FunnelStep; count: number }[],
       contacts,
       incomplete,
       gaps: GAP_LABELS.map((label, i) => ({ label, count: gaps.get(i) ?? 0 })),
+      nps: this.npsSummary(nps, totals.careersViewed),
     }
+  }
+
+  /**
+   * NPS = % Promoters − % Detractors, rounded; null with no responses. The response rate is over
+   * the attempts that opened the careers list, where the form is (ADR 0004).
+   */
+  private static npsSummary(
+    rows: { score: number; total: number; comments: number }[],
+    careersViewed: number
+  ) {
+    const scores = Array<number>(11).fill(0)
+    const groups: Record<NpsGroup, number> = { detractor: 0, passive: 0, promoter: 0 }
+    let responses = 0
+    let comments = 0
+    for (const row of rows) {
+      scores[row.score] = row.total
+      groups[NpsResponse.group(row.score)] += row.total
+      responses += row.total
+      comments += row.comments
+    }
+    return {
+      score: responses
+        ? roundHalfAway(((groups.promoter - groups.detractor) / responses) * 100)
+        : null,
+      responses,
+      careersViewed,
+      comments,
+      groups,
+      scores,
+    }
+  }
+
+  /** NPS responses per score, with how many carry a comment. */
+  private static async npsScores(ids: AttemptQuery) {
+    const rows = await NpsResponse.query()
+      .whereIn('attemptId', ids)
+      .select('score')
+      .count('* as total')
+      .count('comment as comments')
+      .groupBy('score')
+    return rows.map((r) => ({
+      score: r.score,
+      total: Number(r.$extras.total),
+      comments: Number(r.$extras.comments),
+    }))
   }
 
   private static async totals(cohort: () => AttemptQuery) {
@@ -72,8 +128,9 @@ export class ReportService {
       .count('* as attempts')
       .count('result_at as result')
       .count('career_at as career')
-      .count('mypath_at as mypath')
+      .count('print_prep_at as print_prep')
       .count('downloaded_at as download')
+      .count('careers_viewed_at as careers_viewed')
     const [coded] = await cohort().countDistinct('code as total')
     const [uncoded] = await cohort().whereNull('code').count('* as total')
     const [campaign] = await cohort()
@@ -86,8 +143,9 @@ export class ReportService {
       attempts: n(steps, 'attempts'),
       result: n(steps, 'result'),
       career: n(steps, 'career'),
-      mypath: n(steps, 'mypath'),
+      print_prep: n(steps, 'print_prep'),
       download: n(steps, 'download'),
+      careersViewed: n(steps, 'careers_viewed'),
       // An attempt without a code is a student on its own (GLOSSARY: Student).
       students: n(coded, 'total') + n(uncoded, 'total'),
       campaign: n(campaign, 'total'),
@@ -131,7 +189,7 @@ export class ReportService {
       .select('source')
       .groupBy('source')
       .count('* as total')
-    const contacts = { contact: 0, mypath: 0 }
+    const contacts = { contact: 0, print_prep: 0 }
     for (const row of rows) contacts[row.source] = Number(row.$extras.total)
     return contacts
   }

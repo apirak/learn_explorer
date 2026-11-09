@@ -18,7 +18,8 @@ export const controllers = {
   StudentCareers: () => import('#controllers/student_careers_controller'),
   StudentContacts: () => import('#controllers/student_contacts_controller'),
   StudentHome: () => import('#controllers/student_home_controller'),
-  StudentMypath: () => import('#controllers/student_mypath_controller'),
+  StudentNps: () => import('#controllers/student_nps_controller'),
+  StudentPrintPrep: () => import('#controllers/student_print_prep_controller'),
   StudentResult: () => import('#controllers/student_result_controller'),
   StudentTest: () => import('#controllers/student_test_controller'),
 }

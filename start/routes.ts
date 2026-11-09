@@ -27,11 +27,12 @@ router
     router.get('contact', [controllers.StudentContacts, 'show']).as('contact')
     router.post('contact', [controllers.StudentContacts, 'store']).as('contact.store')
     router.get('careers', [controllers.StudentResult, 'careers']).as('careers')
+    router.post('careers/nps', [controllers.StudentNps, 'store']).as('nps.store')
     router.get('careers/:code', [controllers.StudentCareers, 'show']).as('career')
     router.post('careers/:code/save', [controllers.StudentCareers, 'save']).as('career.save')
-    router.get('mypath', [controllers.StudentMypath, 'show']).as('mypath')
-    router.post('mypath/download', [controllers.StudentMypath, 'download']).as('mypath.download')
-    router.get('mypath/print', [controllers.StudentMypath, 'print']).as('mypath.print')
+    router.get('print-prep', [controllers.StudentPrintPrep, 'show']).as('print_prep')
+    router.post('print-prep/download', [controllers.StudentPrintPrep, 'download']).as('print_prep.download')
+    router.get('print-prep/print', [controllers.StudentPrintPrep, 'print']).as('print_prep.print')
   })
   .as('student')
   .use(middleware.studentAttempt({ required: true }))
@@ -61,6 +62,7 @@ router
   .group(() => {
     router.get('/', [controllers.admin.Dashboard, 'show']).as('dashboard')
     router.get('report', [controllers.admin.Reports, 'show']).as('report')
+    router.get('report/nps', [controllers.admin.Reports, 'nps']).as('report.nps')
     router.get('students', [controllers.admin.Students, 'index']).as('students.index')
     router.get('students/export', [controllers.admin.Students, 'export']).as('students.export')
     router

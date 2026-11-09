@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { AttemptSchema } from '#database/schema'
 import Answer from '#models/answer'
 import CareerView from '#models/career_view'
+import NpsResponse from '#models/nps_response'
 import StudentContact from '#models/student_contact'
 import content from '#services/content_service'
 import { interestCode, profileStatus, scoreAnswers } from '#services/scoring_service'
@@ -12,8 +13,8 @@ import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 export type Step = Attempt['furthestStep']
 
 /** Student flow order. Test entry time is `created_at` [M5]; later steps have their own `*_at`. */
-export const STEPS: Step[] = ['test', 'result', 'career', 'mypath']
-const STEP_AT = { result: 'resultAt', career: 'careerAt', mypath: 'mypathAt' } as const
+export const STEPS: Step[] = ['test', 'result', 'career', 'print_prep']
+const STEP_AT = { result: 'resultAt', career: 'careerAt', print_prep: 'printPrepAt' } as const
 
 /** Prefix of a code this system gives a student who arrived without one ("No Code"). */
 export const NO_CODE_PREFIX = 'NC-'
@@ -26,6 +27,9 @@ export default class Attempt extends AttemptSchema {
 
   @hasMany(() => CareerView)
   declare careerViews: HasMany<typeof CareerView>
+
+  @hasOne(() => NpsResponse)
+  declare npsResponse: HasOne<typeof NpsResponse>
 
   /** Exists only when the student consented [DP-001]. */
   @hasOne(() => StudentContact)

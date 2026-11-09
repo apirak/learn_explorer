@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+import NpsResponseTransformer from '#transformers/nps_response_transformer'
 import { transformMatches } from '#transformers/occupation_match_transformer'
 import ResultTransformer from '#transformers/result_transformer'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -16,16 +18,22 @@ export default class StudentResultController {
     })
   }
 
-  /** `GET /careers`: the top 5 matching occupations. An invalid profile has none: back to the result. */
+  /**
+   * `GET /careers`: the top 5 matching occupations and this attempt's NPS response. Records the
+   * first open. An invalid profile has none: back to the result.
+   */
   async careers({ response, inertia, attempt }: HttpContext) {
     const scored = await attempt!.score()
     if (!scored) return response.redirect().toRoute('student.test.show')
     if (scored.status !== 'ok') return response.redirect().toRoute('student.result')
+    attempt!.careersViewedAt ??= DateTime.now() // the NPS response-rate denominator, not a step
     await attempt!.save()
 
+    const nps = await attempt!.related('npsResponse').query().first()
     return inertia.render('student/careers', {
       guess: attempt!.desiredCareer,
       matches: transformMatches(scored.scores, scored.code),
+      nps: nps ? NpsResponseTransformer.transform(nps) : null,
     })
   }
 }

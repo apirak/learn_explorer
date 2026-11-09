@@ -14,6 +14,7 @@ declare module '@adonisjs/inertia/types' {
   export interface InertiaPages {
     'account': ExtractProps<(typeof import('../../inertia/pages/account.tsx'))['default']>
     'admin/dashboard': ExtractProps<(typeof import('../../inertia/pages/admin/dashboard.tsx'))['default']>
+    'admin/nps': ExtractProps<(typeof import('../../inertia/pages/admin/nps.tsx'))['default']>
     'admin/report': ExtractProps<(typeof import('../../inertia/pages/admin/report.tsx'))['default']>
     'admin/retention': ExtractProps<(typeof import('../../inertia/pages/admin/retention.tsx'))['default']>
     'admin/students/index': ExtractProps<(typeof import('../../inertia/pages/admin/students/index.tsx'))['default']>
@@ -28,7 +29,7 @@ declare module '@adonisjs/inertia/types' {
     'student/careers': ExtractProps<(typeof import('../../inertia/pages/student/careers.tsx'))['default']>
     'student/contact': ExtractProps<(typeof import('../../inertia/pages/student/contact.tsx'))['default']>
     'student/home': ExtractProps<(typeof import('../../inertia/pages/student/home.tsx'))['default']>
-    'student/mypath': ExtractProps<(typeof import('../../inertia/pages/student/mypath.tsx'))['default']>
+    'student/print_prep': ExtractProps<(typeof import('../../inertia/pages/student/print_prep.tsx'))['default']>
     'student/print': ExtractProps<(typeof import('../../inertia/pages/student/print.tsx'))['default']>
     'student/result': ExtractProps<(typeof import('../../inertia/pages/student/result.tsx'))['default']>
     'student/test': ExtractProps<(typeof import('../../inertia/pages/student/test.tsx'))['default']>

@@ -23,7 +23,7 @@ const STEP_LABEL: Record<Step, string> = {
   test: 'Test',
   result: 'Result',
   career: 'Career',
-  mypath: 'MyPath',
+  print_prep: 'Print prep',
 }
 
 /** Funnel counts by furthest step, refreshed every 5 s while the tab is visible. Counts only. */
@@ -81,8 +81,8 @@ export default function AdminDashboard({
             <dd>{summary.contacts.contact}</dd>
           </div>
           <div>
-            <dt>Contacts · MyPath</dt>
-            <dd>{summary.contacts.mypath}</dd>
+            <dt>Contacts · Print prep</dt>
+            <dd>{summary.contacts.print_prep}</dd>
           </div>
         </dl>
         <p className="funnel__updated">

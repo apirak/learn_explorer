@@ -61,7 +61,7 @@ test.group('Student contact step', (group) => {
     codedRes.assertHeader('location', '/careers')
 
     const contacted = await scoredAttempt()
-    await StudentContact.record(contacted.id, { email: 'a@example.com', consent: true }, 'mypath')
+    await StudentContact.record(contacted.id, { email: 'a@example.com', consent: true }, 'print_prep')
     const contactedRes = await open(client, contacted)
     contactedRes.assertHeader('location', '/careers')
   })
@@ -137,7 +137,7 @@ test.group('Student contact step', (group) => {
   test('a later save keeps the first source', async ({ assert }) => {
     const attempt = await scoredAttempt()
     await StudentContact.record(attempt.id, { phone: '0812345678', consent: true }, 'contact')
-    await StudentContact.record(attempt.id, { phone: '021234567', consent: true }, 'mypath')
+    await StudentContact.record(attempt.id, { phone: '021234567', consent: true }, 'print_prep')
     const contact = await StudentContact.findByOrFail('attemptId', attempt.id)
     assert.equal(contact.phone, '021234567')
     assert.equal(contact.source, 'contact')

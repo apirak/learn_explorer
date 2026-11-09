@@ -12,7 +12,7 @@ const STEP_LABEL: Record<Step, string> = {
   test: 'Test',
   result: 'Result',
   career: 'Career',
-  mypath: 'MyPath',
+  print_prep: 'Print prep',
 }
 
 type PageProps = InertiaProps<{

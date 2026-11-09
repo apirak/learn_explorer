@@ -40,7 +40,7 @@ const withPhoneOrEmail = vine.createRule((value, _options, field) => {
 })
 
 /**
- * Contact form on `/contact` and MyPath. Name: the student's own name or nickname, only kept
+ * Contact form on `/contact` and Print prep. Name: the student's own name or nickname, only kept
  * with a phone or email. Phone: spaces and dashes removed, `+66` becomes `0`,
  * then 9–10 digits starting with 0. The checkbox sends `on` only when ticked; it is required
  * once anything is typed, so nothing typed is dropped silently. Never logged [DP-001].
@@ -66,4 +66,14 @@ contactValidator.messagesProvider = new SimpleMessagesProvider({
   'email.maxLength': EMAIL_MESSAGE,
   'consent.required': CONSENT_MESSAGE,
   'consent.boolean': CONSENT_MESSAGE,
+})
+
+/**
+ * NPS response from the careers page: a 0–10 score on every tap, and on ส่ง the comment too.
+ * The comment is free text from a minor, never logged [DP-001]; an empty one is stored as null.
+ */
+export const npsValidator = vine.create({
+  score: vine.number().withoutDecimals().range([0, 10]),
+  comment: vine.string().trim().maxLength(500).optional(),
+  send: vine.boolean().optional(),
 })

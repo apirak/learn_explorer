@@ -11,7 +11,7 @@ const bangkok = (dt: DateTime | null) => dt?.setZone(REPORT_ZONE).toISO() ?? nul
 
 /**
  * The student export: one row per attempt, in this column order. Every header must be described
- * in `resources/exports/students.md` (a test checks). Needs `contact` preloaded and the
+ * in `resources/exports/students.md` (a test checks). Needs `contact` and `npsResponse` preloaded and the
  * `answer_count`, `career_view_count` and `career_save_count` counts. Carries full contact details [DP-001].
  */
 export const COLUMNS: [string, (a: Attempt) => Value][] = [
@@ -22,7 +22,7 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['started_at', (a) => bangkok(a.createdAt)],
   ['result_at', (a) => bangkok(a.resultAt)],
   ['career_at', (a) => bangkok(a.careerAt)],
-  ['mypath_at', (a) => bangkok(a.mypathAt)],
+  ['print_prep_at', (a) => bangkok(a.printPrepAt)],
   ['downloaded_at', (a) => bangkok(a.downloadedAt)],
   ['answer_count', (a) => Number(a.$extras.answer_count)],
   ['score_r', (a) => a.scoreR],
@@ -36,6 +36,8 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['desired_career', (a) => a.desiredCareer],
   ['career_view_count', (a) => Number(a.$extras.career_view_count)],
   ['career_save_count', (a) => Number(a.$extras.career_save_count)],
+  ['nps_score', (a) => a.npsResponse?.score],
+  ['nps_comment', (a) => a.npsResponse?.comment],
   ['has_consent', (a) => !!a.contact],
   ['consent_at', (a) => bangkok(a.contact?.consentAt ?? null)],
   ['consent_version', (a) => a.contact?.consentVersion],
@@ -47,7 +49,7 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
 
 /**
  * One CSV field (RFC 4180). Text a spreadsheet would run as a formula (`=`, `+`, `-`, `@`, tab,
- * CR) gets a leading `'`, since `desired_career` and `name` are typed by students.
+ * CR) gets a leading `'`, since `desired_career`, `nps_comment` and `name` are typed by students.
  */
 export function csvField(value: Value) {
   if (value === null || value === undefined) return ''

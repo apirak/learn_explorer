@@ -11,6 +11,7 @@ export default class ReportTransformer extends BaseTransformer<ReportData> {
       'contacts',
       'incomplete',
       'gaps',
+      'nps',
     ])
   }
 }

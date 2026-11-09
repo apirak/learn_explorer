@@ -14,12 +14,15 @@ export interface ApiDefinition {
       store: typeof routes['student.contact.store']
     }
     careers: typeof routes['student.careers']
+    nps: {
+      store: typeof routes['student.nps.store']
+    }
     career: typeof routes['student.career'] & {
       save: typeof routes['student.career.save']
     }
-    mypath: typeof routes['student.mypath'] & {
-      download: typeof routes['student.mypath.download']
-      print: typeof routes['student.mypath.print']
+    printPrep: typeof routes['student.print_prep'] & {
+      download: typeof routes['student.print_prep.download']
+      print: typeof routes['student.print_prep.print']
     }
   }
   health: typeof routes['health']
@@ -40,7 +43,9 @@ export interface ApiDefinition {
   }
   admin: {
     dashboard: typeof routes['admin.dashboard']
-    report: typeof routes['admin.report']
+    report: typeof routes['admin.report'] & {
+      nps: typeof routes['admin.report.nps']
+    }
     students: {
       index: typeof routes['admin.students.index']
       export: typeof routes['admin.students.export']

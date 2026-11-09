@@ -51,7 +51,7 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
         'createdAt',
         'resultAt',
         'careerAt',
-        'mypathAt',
+        'printPrepAt',
         'downloadedAt',
         'interestCode',
         'profileStatus',

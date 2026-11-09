@@ -56,6 +56,12 @@ const routes = {
     tokens: [[0,"careers"]],
     types: placeholder as Registry['student.careers']['types'],
   },
+  'student.nps.store': {
+    methods: ["POST"],
+    pattern: '/careers/nps',
+    tokens: [[0,"careers"],[0,"nps"]],
+    types: placeholder as Registry['student.nps.store']['types'],
+  },
   'student.career': {
     methods: ["GET","HEAD"],
     pattern: '/careers/:code',
@@ -68,23 +74,23 @@ const routes = {
     tokens: [[0,"careers"],[1,"code"],[0,"save"]],
     types: placeholder as Registry['student.career.save']['types'],
   },
-  'student.mypath': {
+  'student.print_prep': {
     methods: ["GET","HEAD"],
-    pattern: '/mypath',
-    tokens: [[0,"mypath"]],
-    types: placeholder as Registry['student.mypath']['types'],
+    pattern: '/print-prep',
+    tokens: [[0,"print-prep"]],
+    types: placeholder as Registry['student.print_prep']['types'],
   },
-  'student.mypath.download': {
+  'student.print_prep.download': {
     methods: ["POST"],
-    pattern: '/mypath/download',
-    tokens: [[0,"mypath"],[0,"download"]],
-    types: placeholder as Registry['student.mypath.download']['types'],
+    pattern: '/print-prep/download',
+    tokens: [[0,"print-prep"],[0,"download"]],
+    types: placeholder as Registry['student.print_prep.download']['types'],
   },
-  'student.mypath.print': {
+  'student.print_prep.print': {
     methods: ["GET","HEAD"],
-    pattern: '/mypath/print',
-    tokens: [[0,"mypath"],[0,"print"]],
-    types: placeholder as Registry['student.mypath.print']['types'],
+    pattern: '/print-prep/print',
+    tokens: [[0,"print-prep"],[0,"print"]],
+    types: placeholder as Registry['student.print_prep.print']['types'],
   },
   'health': {
     methods: ["GET","HEAD"],
@@ -157,6 +163,12 @@ const routes = {
     pattern: '/admin/report',
     tokens: [[0,"admin"],[0,"report"]],
     types: placeholder as Registry['admin.report']['types'],
+  },
+  'admin.report.nps': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/report/nps',
+    tokens: [[0,"admin"],[0,"report"],[0,"nps"]],
+    types: placeholder as Registry['admin.report.nps']['types'],
   },
   'admin.students.index': {
     methods: ["GET","HEAD"],
