@@ -5,6 +5,9 @@ import { BaseTransformer } from '@adonisjs/core/transformers'
 /** `0812341234` → `08x-xxx-1234`. */
 export const maskPhone = (phone: string) => `${phone.slice(0, 2)}x-xxx-${phone.slice(-4)}`
 
+/** `สมชาย` → `ส***`. Counts code points so an emoji is not split. */
+export const maskName = (name: string) => `${Array.from(name)[0]}***`
+
 /** `student@example.com` → `s***@example.com`. */
 export const maskEmail = (email: string) => {
   const at = email.lastIndexOf('@')
@@ -28,6 +31,7 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
         'createdAt',
         'downloadedAt',
       ]),
+      name: contact?.name ? maskName(contact.name) : null,
       phone: contact?.phone ? maskPhone(contact.phone) : null,
       email: contact?.email ? maskEmail(contact.email) : null,
     }
@@ -73,7 +77,7 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
           code,
       })),
       contact: a.contact
-        ? this.pick(a.contact, ['phone', 'email', 'consentAt', 'consentVersion'])
+        ? this.pick(a.contact, ['name', 'phone', 'email', 'consentAt', 'consentVersion'])
         : null,
     }
   }

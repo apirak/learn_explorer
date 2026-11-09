@@ -149,6 +149,7 @@ export class StudentContactSchema extends BaseModel {
     'createdAt',
     'email',
     'id',
+    'name',
     'phone',
     'source',
   ] as const
@@ -165,6 +166,8 @@ export class StudentContactSchema extends BaseModel {
   declare email: string | null
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare name: string | null
   @column()
   declare phone: string | null
   @column()

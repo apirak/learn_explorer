@@ -101,7 +101,7 @@ export default function AdminStudents({ filters, attempts }: PageProps) {
                   <td>{a.code ?? '–'}</td>
                   <td>{STEP_LABEL[a.furthestStep]}</td>
                   <td>{a.interestCode ?? '–'}</td>
-                  <td>{[a.phone, a.email].filter(Boolean).join(' · ') || '–'}</td>
+                  <td>{[a.name, a.phone, a.email].filter(Boolean).join(' · ') || '–'}</td>
                   <td>{a.downloadedAt ? 'Yes' : '–'}</td>
                   <td>
                     {confirmId === a.id ? (

@@ -12,7 +12,7 @@ The flow has these steps, in order:
 2. **Test**: the student answers the 30 items.
 3. **Result**: the student sees their interest code and scores.
 4. **Career**: the student browses matching careers and opens their details.
-5. **MyPath**: the student sees study paths, can leave a phone or email (with consent), and can download their result page.
+5. **MyPath**: the student sees study paths, can leave a phone or email, and optionally a name (with consent), and can download their result page.
 
 ## Key terms
 
@@ -141,7 +141,7 @@ The flow has these steps, in order:
 
 ### has_consent
 
-- **Meaning**: whether the student left a phone number or email and ticked the consent box agreeing that OnDemand may contact them.
+- **Meaning**: whether the student left a phone number or email (and optionally a name) and ticked the consent box agreeing that OnDemand may contact them.
 - **Source**: `true` when a `student_contacts` row exists for the attempt. Learn Explorer only stores contact details together with consent.
 - **Values**: `true` or `false`.
 
@@ -163,6 +163,12 @@ The flow has these steps, in order:
 - **Source**: `student_contacts.source`.
 - **Values**: `contact` (the contact step between the result and the careers, shown to students without a campaign code) or `mypath` (the MyPath page). Empty when `has_consent` is `false`.
 
+### name
+
+- **Meaning**: the name or nickname the student gave for themself, used to greet them when OnDemand calls. Always the student's own, never a parent's. **Personal data of a minor.**
+- **Source**: `student_contacts.name`.
+- **Type**: free text, up to 100 characters, as typed. It may be a nickname, not a legal name. Empty if the student gave none.
+
 ### phone
 
 - **Meaning**: the student's phone number. **Personal data of a minor.**
@@ -180,5 +186,5 @@ The flow has these steps, in order:
 Students are mostly under 20, so this file contains personal data of minors under Thailand's Personal Data Protection Act (PDPA) and OnDemand's Data Protection Policy [DP-001].
 
 - Use the file inside OnDemand only. The consent asks whether OnDemand may contact the student about study plans and courses that fit their results. Do not use the contact details for any other purpose. The final consent wording is still pending Legal approval, so check the text of each `consent_version` before you rely on it.
-- **Never paste `phone`, `email` or `code` into an external AI tool, website or spreadsheet service.** For analysis with AI, first delete the `phone` and `email` columns. Replace `code` too if it could identify a student.
+- **Never paste `name`, `phone`, `email` or `code` into an external AI tool, website or spreadsheet service.** For analysis with AI, first delete the `name`, `phone` and `email` columns. Replace `code` too if it could identify a student.
 - Do not keep copies longer than you need them. Learn Explorer deletes attempts after its retention period, and a student can ask OnDemand to delete their data at any time. Copies you keep must honour that request too.

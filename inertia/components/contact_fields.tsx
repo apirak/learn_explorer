@@ -30,7 +30,7 @@ function Block({ block }: { block: ConsentBlock }) {
 }
 
 /**
- * Optional phone and email, the consent text folded under a link, and an unticked box.
+ * Optional name, phone and email, the consent text folded under a link, and an unticked box.
  * Used inside a `<Form>`.
  */
 export default function ContactFields({
@@ -43,6 +43,21 @@ export default function ContactFields({
   return (
     <fieldset className="consent">
       <legend>ให้เราได้รู้จักกัน (ไม่บังคับ)</legend>
+      <div className="field">
+        <label className="field__label" htmlFor="name">
+          ชื่อน้อง (หรือชื่อเล่น)
+        </label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          autoComplete="given-name"
+          maxLength={100}
+          className="field__input"
+          aria-invalid={errors.name ? 'true' : 'false'}
+        />
+        {errors.name && <span className="field__error">{errors.name}</span>}
+      </div>
       <div className="field">
         <label className="field__label" htmlFor="phone">
           เบอร์โทร

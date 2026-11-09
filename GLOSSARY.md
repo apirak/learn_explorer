@@ -22,6 +22,14 @@ A code issued by another OnDemand system and brought in through the link. It nam
 An `NC-` code this system gives a student who arrived without a campaign code, shared by repeat attempts on the same browser.
 _Avoid_: anonymous code
 
+**Contact**:
+The details a student chooses to leave, with consent, so OnDemand can reach them: a phone or email, and optionally a name. Only kept when it has a phone or email.
+_Avoid_: lead, sign-up
+
+**Contact name**:
+The name or nickname a student gives for themself in their contact, used to greet them when OnDemand reaches out. Always the student's own, never a parent's.
+_Avoid_: full name, parent name
+
 **Interest code**:
 The three RIASEC letters a finished test produces. Not a code in the sense above.
 _Avoid_: result code
