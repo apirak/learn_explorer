@@ -1857,6 +1857,44 @@ button.title-link {
     box-shadow: none;
     border: none;
   }
+  /*
+   * Grid boxes split badly across pages (the next block lands on top of a box that runs on),
+   * so the printed career page uses plain block flow with the gaps as margins, and flat boxes.
+   */
+  .ip.print,
+  .ip.print .result-stack,
+  .ip.print .sheet,
+  .ip.print .tcas-fields,
+  .ip.print .programs {
+    display: block;
+    min-height: 0;
+  }
+  .ip.print .sheet {
+    padding: 0;
+    margin: 0;
+  }
+  .ip.print .sheet > * + * {
+    margin-top: 16px;
+  }
+  .ip.print .tcas-field {
+    box-shadow: none;
+    border-width: 1px;
+    border-radius: 8px;
+  }
+  .ip.print .tcas-field + .tcas-field {
+    margin-top: 10px;
+  }
+  .ip.print .programs li + li {
+    margin-top: 6px;
+  }
+  .ip.print .programs li,
+  .ip.print .tcas-field summary,
+  .ip.print .profile li {
+    break-inside: avoid;
+  }
+  .ip.print h2 {
+    break-after: avoid;
+  }
   body {
     background: #fff;
   }
