@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { type Data } from '@generated/data'
 import { client } from '~/client'
 import { LikertFace } from '~/components/ui/likert_scale'
 
@@ -20,7 +21,7 @@ const COMMENT_MAX = 500
  * costs the stat); ส่ง sends the optional comment and swaps the form for thanks. The comment is
  * free text from a minor: the box asks for no name or phone [DP-001].
  */
-export default function NpsForm({ initial }: { initial: { score: number; sent: boolean } | null }) {
+export default function NpsForm({ initial }: { initial: Data.NpsResponse | null }) {
   const id = useId()
   const [score, setScore] = useState<number | null>(initial?.score ?? null)
   const [comment, setComment] = useState('')

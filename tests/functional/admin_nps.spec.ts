@@ -61,6 +61,32 @@ test.group('Admin NPS', (group) => {
     assert.notInclude(JSON.stringify(page.inertiaProps), 'ชอบมาก')
   })
 
+  test('a negative NPS rounds its half away from zero', async ({ client, assert }) => {
+    // 1 Promoter, 5 Passives, 2 Detractors → (1 − 2) / 8 = −12.5 → −13, not −12.
+    for (const score of [10, 7, 7, 8, 8, 8, 3, 0]) await seed(score)
+    const page = await client
+      .get('/admin/report')
+      .withInertia()
+      .loginAs(await makeUser('admin'))
+    assert.equal(page.inertiaProps.report.nps.score, -13)
+  })
+
+  test('the comments page shows 50 a page and floors a fractional page', async ({
+    client,
+    assert,
+  }) => {
+    for (let i = 0; i < 51; i++) await seed(9, `c${i}`)
+    const admin = await makeUser('admin')
+
+    const first = await client.get('/admin/report/nps?page=1.5').withInertia().loginAs(admin)
+    const { comments } = first.inertiaProps
+    assert.equal(comments.metadata.currentPage, 1)
+    assert.lengthOf(comments.data, 50)
+
+    const second = await client.get('/admin/report/nps?page=2').withInertia().loginAs(admin)
+    assert.lengthOf(second.inertiaProps.comments.data, 1)
+  })
+
   test('no responses gives a null NPS', async ({ client, assert }) => {
     await seed()
     const page = await client

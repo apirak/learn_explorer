@@ -63,7 +63,7 @@ export default class ReportsController {
       .if(group, (q) => q.whereBetween('score', GROUP_SCORES[group!]))
       .orderBy('sentAt', 'desc')
       .orderBy('id', 'desc')
-      .paginate(Math.max(1, Number(qs.page) || 1), COMMENTS_PER_PAGE)
+      .paginate(Math.max(1, Math.floor(Number(qs.page)) || 1), COMMENTS_PER_PAGE)
 
     return inertia.render('admin/nps', {
       from: from.toISODate()!,

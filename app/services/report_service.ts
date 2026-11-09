@@ -20,6 +20,9 @@ export const MAX_GAP_MS = 5 * 60 * 1000
 const GAP_EDGES_MS = [1, 10, 20, 30, 40, 50, 60].map((s) => s * 1000)
 const GAP_LABELS = ['<1', '1–10', '10–20', '20–30', '30–40', '40–50', '50–60', '≥60']
 
+/** Rounds halves away from zero, so −12.5 → −13 like +12.5 → 13 (`Math.round` gives −12). */
+const roundHalfAway = (n: number) => Math.sign(n) * Math.round(Math.abs(n))
+
 /**
  * Report figures for a cohort: the attempts started between two Bangkok dates, inclusive.
  * Counts only, never codes or contact data [DP-001].
@@ -94,7 +97,7 @@ export class ReportService {
     }
     return {
       score: responses
-        ? Math.round(((groups.promoter - groups.detractor) / responses) * 100)
+        ? roundHalfAway(((groups.promoter - groups.detractor) / responses) * 100)
         : null,
       responses,
       careersViewed,

@@ -1,5 +1,5 @@
-import NpsResponse from '#models/nps_response'
 import { DateTime } from 'luxon'
+import NpsResponseTransformer from '#transformers/nps_response_transformer'
 import { transformMatches } from '#transformers/occupation_match_transformer'
 import ResultTransformer from '#transformers/result_transformer'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -29,12 +29,11 @@ export default class StudentResultController {
     attempt!.careersViewedAt ??= DateTime.now() // the NPS response-rate denominator, not a step
     await attempt!.save()
 
-    const nps = await NpsResponse.findBy('attemptId', attempt!.id)
+    const nps = await attempt!.related('npsResponse').query().first()
     return inertia.render('student/careers', {
       guess: attempt!.desiredCareer,
       matches: transformMatches(scored.scores, scored.code),
-      // The comment never comes back: it is stored only on ส่ง, which shows thanks instead.
-      nps: nps ? { score: nps.score, sent: !!nps.sentAt } : null,
+      nps: nps ? NpsResponseTransformer.transform(nps) : null,
     })
   }
 }

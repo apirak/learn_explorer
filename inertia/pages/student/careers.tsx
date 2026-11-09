@@ -16,7 +16,7 @@ export default function StudentCareers({
 }: InertiaProps<{
   guess: string | null
   matches: Data.OccupationMatch[]
-  nps: { score: number; sent: boolean } | null
+  nps: Data.NpsResponse | null
 }>) {
   return (
     <main className="ip result">
