@@ -1652,6 +1652,12 @@ input {
   font: 700 0.95rem var(--hand);
   text-decoration: none;
 }
+button.title-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
 .ip .guess-echo {
   background: #fff;
   color: var(--ink-k);

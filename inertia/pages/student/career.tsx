@@ -49,9 +49,15 @@ export default function StudentCareer({
     <main className="ip result print">
       <Head title={o.title} />
       <div className="result-stack">
-        <Link route="student.careers" className="back no-print">
-          ← กลับ
-        </Link>
+        <div className="title-row no-print">
+          <Link route="student.careers" className="back">
+            ← กลับ
+          </Link>
+          <button type="button" className="title-link" onClick={() => saveCareer(o.code)}>
+            <Save size={16} aria-hidden />
+            เก็บอาชีพนี้ไว้ดูทีหลัง
+          </button>
+        </div>
         <div className="sheet">
           <div>
             <div className="occ-head">
