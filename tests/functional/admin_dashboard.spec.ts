@@ -36,7 +36,7 @@ test.group('Admin dashboard', (group) => {
     await StudentContact.record(old.id, contact, 'contact')
 
     const page = await client
-      .get('/admin')
+      .get('/admin?range=60')
       .withInertia()
       .loginAs(await makeUser('admin'))
 
@@ -63,7 +63,7 @@ test.group('Admin dashboard', (group) => {
     assert.deepEqual(summary.contacts, { contact: 0, mypath: 0 })
   })
 
-  test('the range filter picks 7, 30, 60 days or all; anything else falls back to 60', async ({
+  test('the range filter picks 7, 30, 60 days or all; anything else falls back to today', async ({
     client,
     assert,
   }) => {
@@ -85,8 +85,25 @@ test.group('Admin dashboard', (group) => {
     assert.deepEqual(await countFor('?range=30'), ['30', 2])
     assert.deepEqual(await countFor('?range=60'), ['60', 3])
     assert.deepEqual(await countFor('?range=all'), ['all', 4])
-    assert.deepEqual(await countFor(''), ['60', 3])
-    assert.deepEqual(await countFor('?range=999'), ['60', 3])
+    assert.deepEqual(await countFor(''), ['today', 0])
+    assert.deepEqual(await countFor('?range=999'), ['today', 0])
+  })
+
+  test('today counts attempts started since midnight Bangkok time, and is the default', async ({
+    client,
+    assert,
+  }) => {
+    const midnight = DateTime.now().setZone('Asia/Bangkok').startOf('day')
+    for (const createdAt of [midnight.plus({ minutes: 1 }), midnight.minus({ minutes: 1 })]) {
+      await Attempt.create({ contentVersion: 'v1', furthestStep: 'test', createdAt })
+    }
+    const admin = await makeUser('admin')
+
+    for (const url of ['/admin?range=today', '/admin']) {
+      const page = await client.get(url).withInertia().loginAs(admin)
+      assert.equal(page.inertiaProps.range, 'today')
+      assert.equal(page.inertiaProps.summary.steps.test, 1)
+    }
   })
 
   test('members get 403', async ({ client }) => {

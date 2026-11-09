@@ -7,9 +7,12 @@ import Page from '~/components/page'
 import AppLayout from '~/layouts/app'
 
 type Step = keyof Data.Dashboard['steps']
-type Range = '7' | '30' | '60' | 'all'
+// An array, not Object.keys(RANGE_LABEL): JS lists numeric keys ('7') before 'today'.
+const RANGES = ['today', '7', '30', '60', 'all'] as const
+type Range = (typeof RANGES)[number]
 
 const RANGE_LABEL: Record<Range, string> = {
+  'today': 'วันนี้',
   '7': '7 วัน',
   '30': '30 วัน',
   '60': '60 วัน',
@@ -36,8 +39,8 @@ export default function AdminDashboard({
   return (
     <Page
       title="Dashboard"
-      description={`${range === 'all' ? 'ทั้งหมด' : `${range} วันล่าสุด`} · updates every 5 seconds`}
-      actions={(Object.keys(RANGE_LABEL) as Range[]).map((r) => (
+      description={`${range === 'today' || range === 'all' ? RANGE_LABEL[range] : `${range} วันล่าสุด`} · updates every 5 seconds`}
+      actions={RANGES.map((r) => (
         <Link
           key={r}
           href={urlFor('admin.dashboard', {}, { qs: { range: r } })}

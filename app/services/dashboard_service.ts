@@ -1,19 +1,26 @@
 import { DateTime } from 'luxon'
 import Attempt, { STEPS, type Step } from '#models/attempt'
 import StudentContact from '#models/student_contact'
+import { REPORT_ZONE } from '#services/report_service'
 
 export type DashboardSummary = Awaited<ReturnType<typeof DashboardService.summary>>
 
-/** Dashboard date filters: the last N days, or every attempt still stored. */
-export const RANGES = ['7', '30', '60', 'all'] as const
+/** Dashboard date filters: today (Bangkok), the last N days, or every attempt still stored. */
+export const RANGES = ['today', '7', '30', '60', 'all'] as const
 export type Range = (typeof RANGES)[number]
 
 /** Funnel counts for the admin dashboard. Counts only, never codes or contact data [DP-001]. */
 export class DashboardService {
-  /** Attempts started within `range` days of now, or all of them. */
+  /** Attempts started since midnight Bangkok time, within `range` days of now, or all of them. */
   static async summary(range: Range) {
     const recentAttempts = Attempt.query()
-    if (range !== 'all') {
+    if (range === 'today') {
+      recentAttempts.where(
+        'createdAt',
+        '>=',
+        DateTime.now().setZone(REPORT_ZONE).startOf('day').toSQL()!
+      )
+    } else if (range !== 'all') {
       recentAttempts.where(
         'createdAt',
         '>=',
