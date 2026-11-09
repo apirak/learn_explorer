@@ -14,6 +14,9 @@ export interface ApiDefinition {
       store: typeof routes['student.contact.store']
     }
     careers: typeof routes['student.careers']
+    nps: {
+      store: typeof routes['student.nps.store']
+    }
     career: typeof routes['student.career'] & {
       save: typeof routes['student.career.save']
     }
@@ -40,7 +43,9 @@ export interface ApiDefinition {
   }
   admin: {
     dashboard: typeof routes['admin.dashboard']
-    report: typeof routes['admin.report']
+    report: typeof routes['admin.report'] & {
+      nps: typeof routes['admin.report.nps']
+    }
     students: {
       index: typeof routes['admin.students.index']
       export: typeof routes['admin.students.export']

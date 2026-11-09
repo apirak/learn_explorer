@@ -145,6 +145,18 @@ The flow has these steps, in order:
 - **Source**: count of rows in `career_views` for this attempt that have a save time. Each career counts once, however many times it was saved.
 - **Type**: integer, 0 up to `career_view_count`.
 
+### nps_score
+
+- **Meaning**: the student's answer to "อยากชวนเพื่อนมาลองแบบทดสอบนี้แค่ไหน?" (how likely they are to invite a friend to take the test), asked on the five-careers page. This is a Net Promoter Score (NPS) question. 0–6 is a Detractor, 7–8 a Passive and 9–10 a Promoter. NPS for a group of rows = % Promoters − % Detractors.
+- **Source**: `nps_responses.score`. Saved as soon as the student taps a number; a later tap overwrites it, so this is their last choice.
+- **Type**: integer 0–10. Empty when the student did not answer.
+
+### nps_comment
+
+- **Meaning**: what the student typed under the score, then sent. The question depended on the score: 0–6 "ตรงไหนที่ยังไม่โดนใจ?" (what didn't you like), 7–8 "ปรับอะไรถึงจะได้ 10?" (what would make it a 10), 9–10 "ชอบตรงไหนที่สุด?" (what did you like most).
+- **Source**: `nps_responses.comment`, stored only when the student pressed ส่ง (send).
+- **Type**: free text in Thai, up to 500 characters, typed by a minor. Empty when there is no comment. The box asks for no name or phone, but a student may still have typed one, so treat it as personal data [DP-001].
+
 ### has_consent
 
 - **Meaning**: whether the student left a phone number or email (and optionally a name) and ticked the consent box agreeing that OnDemand may contact them.

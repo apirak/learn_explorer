@@ -2281,3 +2281,222 @@ button.title-link {
     transition: none;
   }
 }
+
+/* --- NPS form on the careers page (0–10 sticker keys, face follows the score) --- */
+.ip .nps {
+  gap: 12px;
+}
+.ip .nps__q {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ip .nps__q h2 {
+  font: 700 1.1rem/1.35 var(--display);
+}
+.ip .nps__face .likert__face {
+  width: 48px;
+  height: 48px;
+  flex: none;
+}
+.ip .nps__face:not(.is-idle) .likert__face .face {
+  fill: var(--lime);
+}
+.ip .nps__face.is-idle {
+  opacity: 0.5;
+}
+.ip .nps__scale {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.ip .nps__n {
+  /* The same sticker push key as .btn and .likert__opt: the face lifts or sinks while the
+     edge shadow shrinks, so the edge's bottom stays put. */
+  --lift: 4px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  border: 2px solid var(--ink-k);
+  border-bottom: 0;
+  border-radius: 12px;
+  background: #fff;
+  font: 700 1.05rem/1 var(--display);
+  cursor: pointer;
+  box-shadow: 0 var(--lift) 0 var(--edge);
+  transform: translateY(calc(2px - var(--lift)));
+  transition:
+    transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5),
+    box-shadow 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5),
+    background 150ms;
+}
+.ip .nps__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .ip .nps__n:hover {
+    --lift: 6px;
+  }
+}
+.ip .nps__n:active,
+.ip .nps__n:has(:checked) {
+  --lift: 2px;
+}
+.ip .nps__n:active {
+  transition-duration: 34ms;
+  transition-timing-function: ease;
+}
+.ip .nps__n:has(:checked) {
+  background: var(--lime);
+}
+.ip .nps__n:has(:focus-visible) {
+  outline: 3px solid var(--mark);
+  outline-offset: 2px;
+}
+.ip .nps__ends {
+  display: flex;
+  justify-content: space-between;
+}
+.ip .nps__follow {
+  display: grid;
+  gap: 8px;
+}
+.ip .nps__text {
+  font: inherit;
+  padding: 10px 14px;
+  border: 2.5px solid var(--ink-k);
+  border-radius: 14px;
+  background: var(--field);
+  resize: vertical;
+}
+.ip .nps__send {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ip .nps__error {
+  color: var(--error);
+}
+.ip .nps__thanks {
+  font: 700 1.2rem/1.4 var(--display);
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ip .nps__n {
+    transition: background 150ms;
+    transform: none;
+  }
+}
+
+/* --- admin NPS: report section and comments page --- */
+.nps-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.nps-comments__text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 16rem;
+}
+.nps-bands {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--line);
+}
+.nps-bands span {
+  display: block;
+}
+.nps-bands .is-detractor {
+  background: var(--error);
+}
+.nps-bands .is-passive {
+  background: var(--subtle);
+}
+.nps-bands .is-promoter {
+  background: var(--done);
+}
+
+/* --- NPS motion. Focal moment: the face is a sticker re-slapped on every new face, and its
+   landing reacts to the band (droops at 0–6, settles at 7–8, jumps at 9–10). The follow-up
+   unrolls once on the first tap; its question slaps in again only when the band changes;
+   thanks lands like the result's reveal sticker. Default state is visible; motion is additive. */
+@media (prefers-reduced-motion: no-preference) {
+  .ip .nps__face[data-band='low'] .likert__face {
+    animation: nps-droop 520ms cubic-bezier(0.3, 0.7, 0.4, 1.4) both;
+  }
+  .ip .nps__face[data-band='mid'] .likert__face {
+    animation: slap 420ms cubic-bezier(0.3, 0.7, 0.4, 1.5) both;
+  }
+  .ip .nps__face[data-band='high'] .likert__face {
+    animation: nps-jump 560ms cubic-bezier(0.3, 0.7, 0.4, 1.5) both;
+  }
+  .ip .nps__follow {
+    animation: nps-unroll 380ms cubic-bezier(0.16, 1, 0.3, 1) backwards; /* no clip left behind */
+  }
+  .ip .nps__ask {
+    transform-origin: left center;
+    animation: slap 360ms cubic-bezier(0.3, 0.7, 0.4, 1.5) both;
+  }
+  .ip .nps__thanks {
+    animation: slap 560ms cubic-bezier(0.3, 0.7, 0.4, 1.5) both;
+  }
+  @keyframes nps-droop {
+    from {
+      opacity: 0;
+      rotate: -14deg;
+      translate: 0 -6px;
+      scale: 1.12;
+    }
+    60% {
+      rotate: 4deg;
+    }
+  }
+  @keyframes nps-jump {
+    from {
+      opacity: 0;
+      scale: 1.25;
+      rotate: 10deg;
+    }
+    45% {
+      translate: 0 -8px;
+      scale: 1.08;
+    }
+  }
+  @keyframes nps-unroll {
+    from {
+      opacity: 0;
+      clip-path: inset(0 -8px 100% -8px);
+      translate: 0 -6px;
+    }
+    to {
+      clip-path: inset(0 -8px -12px -8px);
+    }
+  }
+}
+.ip .nps__thanks {
+  justify-self: center;
+  background: var(--lime);
+  padding: 2px 16px;
+  border-radius: 12px 16px 10px 18px;
+  rotate: -2deg;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* No movement; the face and question still change visibly with a short fade. */
+  .ip .nps__face .likert__face,
+  .ip .nps__ask,
+  .ip .nps__follow,
+  .ip .nps__thanks {
+    animation: nps-fade 180ms ease-out both;
+  }
+  @keyframes nps-fade {
+    from {
+      opacity: 0;
+    }
+  }
+}

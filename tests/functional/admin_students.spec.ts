@@ -4,6 +4,7 @@ import AdminAudit from '#models/admin_audit'
 import Answer from '#models/answer'
 import Attempt from '#models/attempt'
 import CareerView from '#models/career_view'
+import NpsResponse from '#models/nps_response'
 import StudentContact from '#models/student_contact'
 import User from '#models/user'
 import content from '#services/content_service'
@@ -260,6 +261,12 @@ test.group('Admin student export', (group) => {
       savedAt: DateTime.now(),
     })
     await consent(done, '0812341234', 'student@example.com')
+    await NpsResponse.create({
+      attemptId: done.id,
+      score: 9,
+      comment: 'ชอบมาก',
+      sentAt: DateTime.now(),
+    })
     await seed('test', { code: 'NC-7QX4M' })
     await seed('result', { code: 'ZZ0001' })
 
@@ -286,6 +293,8 @@ test.group('Admin student export', (group) => {
       interest_code: 'RCE',
       career_view_count: '2',
       career_save_count: '1',
+      nps_score: '9',
+      nps_comment: 'ชอบมาก',
       has_consent: 'true',
       consent_version: 'v1',
       name: 'สมชาย',

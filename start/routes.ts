@@ -27,6 +27,7 @@ router
     router.get('contact', [controllers.StudentContacts, 'show']).as('contact')
     router.post('contact', [controllers.StudentContacts, 'store']).as('contact.store')
     router.get('careers', [controllers.StudentResult, 'careers']).as('careers')
+    router.post('careers/nps', [controllers.StudentNps, 'store']).as('nps.store')
     router.get('careers/:code', [controllers.StudentCareers, 'show']).as('career')
     router.post('careers/:code/save', [controllers.StudentCareers, 'save']).as('career.save')
     router.get('mypath', [controllers.StudentMypath, 'show']).as('mypath')
@@ -61,6 +62,7 @@ router
   .group(() => {
     router.get('/', [controllers.admin.Dashboard, 'show']).as('dashboard')
     router.get('report', [controllers.admin.Reports, 'show']).as('report')
+    router.get('report/nps', [controllers.admin.Reports, 'nps']).as('report.nps')
     router.get('students', [controllers.admin.Students, 'index']).as('students.index')
     router.get('students/export', [controllers.admin.Students, 'export']).as('students.export')
     router

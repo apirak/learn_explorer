@@ -67,3 +67,13 @@ contactValidator.messagesProvider = new SimpleMessagesProvider({
   'consent.required': CONSENT_MESSAGE,
   'consent.boolean': CONSENT_MESSAGE,
 })
+
+/**
+ * NPS response from the careers page: a 0–10 score on every tap, and on ส่ง the comment too.
+ * The comment is free text from a minor, never logged [DP-001]; an empty one is stored as null.
+ */
+export const npsValidator = vine.create({
+  score: vine.number().withoutDecimals().range([0, 10]),
+  comment: vine.string().trim().maxLength(500).optional(),
+  send: vine.boolean().optional(),
+})

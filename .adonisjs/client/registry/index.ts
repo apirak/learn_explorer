@@ -56,6 +56,12 @@ const routes = {
     tokens: [[0,"careers"]],
     types: placeholder as Registry['student.careers']['types'],
   },
+  'student.nps.store': {
+    methods: ["POST"],
+    pattern: '/careers/nps',
+    tokens: [[0,"careers"],[0,"nps"]],
+    types: placeholder as Registry['student.nps.store']['types'],
+  },
   'student.career': {
     methods: ["GET","HEAD"],
     pattern: '/careers/:code',
@@ -157,6 +163,12 @@ const routes = {
     pattern: '/admin/report',
     tokens: [[0,"admin"],[0,"report"]],
     types: placeholder as Registry['admin.report']['types'],
+  },
+  'admin.report.nps': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/report/nps',
+    tokens: [[0,"admin"],[0,"report"],[0,"nps"]],
+    types: placeholder as Registry['admin.report.nps']['types'],
   },
   'admin.students.index': {
     methods: ["GET","HEAD"],

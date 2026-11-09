@@ -4,14 +4,20 @@ import { Save } from 'lucide-react'
 import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 import Chip from '~/components/ui/chip'
+import NpsForm from '~/components/nps_form'
 
 const FIT_LABELS = { best: 'เหมาะมาก', great: 'เหมาะ', good: 'พอใช้' }
 
-/** The top 5 matching occupations (prototype careersView). */
+/** The top 5 matching occupations (prototype careersView), then the NPS form. */
 export default function StudentCareers({
   guess,
   matches,
-}: InertiaProps<{ guess: string | null; matches: Data.OccupationMatch[] }>) {
+  nps,
+}: InertiaProps<{
+  guess: string | null
+  matches: Data.OccupationMatch[]
+  nps: { score: number; sent: boolean } | null
+}>) {
   return (
     <main className="ip result">
       <Head title="5 อาชีพที่น่าลองดู" />
@@ -69,6 +75,7 @@ export default function StudentCareers({
             </Link>
           ))}
         </div>
+        <NpsForm initial={nps} />
         <Link route="student.mypath" className="btn btn--primary">
           <Save size={18} aria-hidden />
           เก็บผลไว้ดูทีหลัง

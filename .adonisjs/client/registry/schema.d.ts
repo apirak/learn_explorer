@@ -112,6 +112,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_result_controller').default['careers']>>>
     }
   }
+  'student.nps.store': {
+    methods: ["POST"]
+    pattern: '/careers/nps'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/student').npsValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/student').npsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/student_nps_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/student_nps_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/student_nps_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'student.career': {
     methods: ["GET","HEAD"]
     pattern: '/careers/:code'
@@ -331,6 +344,19 @@ export interface Registry {
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['show']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['show']>>>
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['show']>>>
+    }
+  }
+  'admin.report.nps': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/report/nps'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['nps']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['nps']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/reports_controller').default['nps']>>>
     }
   }
   'admin.students.index': {

@@ -9,6 +9,7 @@ import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
 import type AttemptTransformer from '#transformers/attempt_transformer'
 import type ConsentTransformer from '#transformers/consent_transformer'
 import type DashboardTransformer from '#transformers/dashboard_transformer'
+import type NpsCommentTransformer from '#transformers/nps_comment_transformer'
 import type OccupationMatchTransformer from '#transformers/occupation_match_transformer'
 import type OccupationTransformer from '#transformers/occupation_transformer'
 import type ReportTransformer from '#transformers/report_transformer'
@@ -28,6 +29,10 @@ export namespace Data {
   export type Dashboard = InferData<DashboardTransformer>
   export namespace Dashboard {
     export type Variants = InferVariants<DashboardTransformer>
+  }
+  export type NpsComment = InferData<NpsCommentTransformer>
+  export namespace NpsComment {
+    export type Variants = InferVariants<NpsCommentTransformer>
   }
   export type OccupationMatch = InferData<OccupationMatchTransformer>
   export namespace OccupationMatch {

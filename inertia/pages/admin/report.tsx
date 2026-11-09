@@ -107,6 +107,7 @@ export default function AdminReport({
 
       <Funnel report={report} />
       <Incomplete incomplete={report.incomplete} itemTotal={report.itemTotal} />
+      <Nps nps={report.nps} from={from} to={to} />
       <Gaps gaps={report.gaps} />
     </Page>
   )
@@ -193,6 +194,57 @@ function Gaps({ gaps }: { gaps: Report['gaps'] }) {
       ) : (
         <p className="muted">ยังไม่มีข้อมูลเวลาในช่วงนี้</p>
       )}
+    </section>
+  )
+}
+
+const BANDS = [
+  { key: 'detractor', label: 'Detractor 0–6' },
+  { key: 'passive', label: 'Passive 7–8' },
+  { key: 'promoter', label: 'Promoter 9–10' },
+] as const
+
+/** NPS = % Promoter − % Detractor, over the cohort's responses. Comments open on their own page. */
+function Nps({ nps, from, to }: { nps: Report['nps']; from: string; to: string }) {
+  return (
+    <section className="panel report__section">
+      <h2 className="section__title">NPS {nps.score === null ? '—' : nps.score}</h2>
+      <p className="section__description">
+        “อยากชวนเพื่อนมาลองแบบทดสอบนี้แค่ไหน?” (0–10) ในหน้า 5 อาชีพ · ตอบ {nps.responses} จาก{' '}
+        {nps.careersViewed} ที่เปิดหน้านั้น ({pct(nps.responses, nps.careersViewed)})
+      </p>
+      {nps.responses === 0 ? (
+        <p className="muted">ยังไม่มีคนตอบในช่วงนี้</p>
+      ) : (
+        <>
+          <div className="nps-bands" aria-hidden>
+            {BANDS.map((b) => (
+              <span
+                key={b.key}
+                className={`is-${b.key}`}
+                style={{ width: `${(nps.groups[b.key] / nps.responses) * 100}%` }}
+              />
+            ))}
+          </div>
+          <dl className="report__totals">
+            {BANDS.map((b) => (
+              <div key={b.key} className="panel">
+                <dt>{b.label}</dt>
+                <dd>
+                  {nps.groups[b.key]} <small>({pct(nps.groups[b.key], nps.responses)})</small>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <Histogram bars={nps.scores.map((count, n) => ({ label: String(n), count }))} />
+        </>
+      )}
+      <Link
+        href={urlFor('admin.report.nps', {}, { qs: { from, to } })}
+        className="btn btn--secondary btn--sm"
+      >
+        ดูความคิดเห็น ({nps.comments})
+      </Link>
     </section>
   )
 }

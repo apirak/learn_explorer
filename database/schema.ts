@@ -23,7 +23,15 @@ export class AdminAuditSchema extends BaseModel {
 }
 
 export class AnswerSchema extends BaseModel {
-  static $columns = ['attemptId', 'createdAt', 'gapMs', 'id', 'itemId', 'updatedAt', 'value'] as const
+  static $columns = [
+    'attemptId',
+    'createdAt',
+    'gapMs',
+    'id',
+    'itemId',
+    'updatedAt',
+    'value',
+  ] as const
   $columns = AnswerSchema.$columns
   @column()
   declare attemptId: number
@@ -42,10 +50,34 @@ export class AnswerSchema extends BaseModel {
 }
 
 export class AttemptSchema extends BaseModel {
-  static $columns = ['careerAt', 'code', 'contentVersion', 'createdAt', 'desiredCareer', 'downloadedAt', 'furthestStep', 'id', 'interestCode', 'mypathAt', 'profileStatus', 'resultAt', 'scoreA', 'scoreC', 'scoreE', 'scoreI', 'scoreR', 'scoreS', 'updatedAt', 'uuid'] as const
+  static $columns = [
+    'careerAt',
+    'careersViewedAt',
+    'code',
+    'contentVersion',
+    'createdAt',
+    'desiredCareer',
+    'downloadedAt',
+    'furthestStep',
+    'id',
+    'interestCode',
+    'mypathAt',
+    'profileStatus',
+    'resultAt',
+    'scoreA',
+    'scoreC',
+    'scoreE',
+    'scoreI',
+    'scoreR',
+    'scoreS',
+    'updatedAt',
+    'uuid',
+  ] as const
   $columns = AttemptSchema.$columns
   @column.dateTime()
   declare careerAt: DateTime | null
+  @column.dateTime()
+  declare careersViewedAt: DateTime | null
   @column()
   declare code: string | null
   @column()
@@ -101,6 +133,33 @@ export class CareerViewSchema extends BaseModel {
   declare savedAt: DateTime | null
 }
 
+export class NpsResponseSchema extends BaseModel {
+  static $columns = [
+    'attemptId',
+    'comment',
+    'createdAt',
+    'id',
+    'score',
+    'sentAt',
+    'updatedAt',
+  ] as const
+  $columns = NpsResponseSchema.$columns
+  @column()
+  declare attemptId: number
+  @column()
+  declare comment: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare score: number
+  @column.dateTime()
+  declare sentAt: DateTime | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
+
 export class SettingSchema extends BaseModel {
   static $columns = ['createdAt', 'id', 'retentionDays', 'updatedAt'] as const
   $columns = SettingSchema.$columns
@@ -115,7 +174,17 @@ export class SettingSchema extends BaseModel {
 }
 
 export class StudentContactSchema extends BaseModel {
-  static $columns = ['attemptId', 'consentAt', 'consentVersion', 'createdAt', 'email', 'id', 'name', 'phone', 'source'] as const
+  static $columns = [
+    'attemptId',
+    'consentAt',
+    'consentVersion',
+    'createdAt',
+    'email',
+    'id',
+    'name',
+    'phone',
+    'source',
+  ] as const
   $columns = StudentContactSchema.$columns
   @column()
   declare attemptId: number
@@ -138,7 +207,16 @@ export class StudentContactSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = ['affiliation', 'createdAt', 'email', 'fullName', 'id', 'password', 'role', 'updatedAt'] as const
+  static $columns = [
+    'affiliation',
+    'createdAt',
+    'email',
+    'fullName',
+    'id',
+    'password',
+    'role',
+    'updatedAt',
+  ] as const
   $columns = UserSchema.$columns
   @column()
   declare affiliation: string | null

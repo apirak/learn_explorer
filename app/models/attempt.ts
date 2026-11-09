@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { AttemptSchema } from '#database/schema'
 import Answer from '#models/answer'
 import CareerView from '#models/career_view'
+import NpsResponse from '#models/nps_response'
 import StudentContact from '#models/student_contact'
 import content from '#services/content_service'
 import { interestCode, profileStatus, scoreAnswers } from '#services/scoring_service'
@@ -26,6 +27,9 @@ export default class Attempt extends AttemptSchema {
 
   @hasMany(() => CareerView)
   declare careerViews: HasMany<typeof CareerView>
+
+  @hasOne(() => NpsResponse)
+  declare npsResponse: HasOne<typeof NpsResponse>
 
   /** Exists only when the student consented [DP-001]. */
   @hasOne(() => StudentContact)
