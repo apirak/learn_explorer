@@ -31,7 +31,9 @@ export default class StudentMypathController {
   async download({ request, response, logger, attempt }: HttpContext) {
     if (!(await attempt!.score())) return response.redirect().toRoute('student.test.show')
 
-    const input = await contactValidator.validate(request.only(['phone', 'email', 'consent']))
+    const input = await contactValidator.validate(
+      request.only(['name', 'phone', 'email', 'consent'])
+    )
     await StudentContact.record(attempt!.id, input, 'mypath')
     await attempt!.markDownloaded()
     logger.info({ attempt: attempt!.uuid, consented: !!input.consent }, 'download') // UUID only [DP-001]

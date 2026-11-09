@@ -82,6 +82,10 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
         {a.contact ? (
           <dl className="records__pairs">
             <div>
+              <dt>Name</dt>
+              <dd>{a.contact.name ?? '–'}</dd>
+            </div>
+            <div>
               <dt>Phone</dt>
               <dd>{a.contact.phone ?? '–'}</dd>
             </div>

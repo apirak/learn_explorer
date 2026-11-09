@@ -22,7 +22,9 @@ export default class StudentContactsController {
 
   /** `POST /contact`: saves the contact when consented, then opens the careers. */
   async store({ request, response, logger, attempt }: HttpContext) {
-    const input = await contactValidator.validate(request.only(['phone', 'email', 'consent']))
+    const input = await contactValidator.validate(
+      request.only(['name', 'phone', 'email', 'consent'])
+    )
     const saved = await StudentContact.record(attempt!.id, input, 'contact')
     logger.info({ attempt: attempt!.uuid, saved: !!saved }, 'contact') // UUID only [DP-001]
 

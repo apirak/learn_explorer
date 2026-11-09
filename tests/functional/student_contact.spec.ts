@@ -77,9 +77,14 @@ test.group('Student contact step', (group) => {
     assert,
   }) => {
     const attempt = await scoredAttempt()
-    const response = await post(client, attempt, { phone: '081-234-5678', consent: 'on' })
+    const response = await post(client, attempt, {
+      name: '  ต้นกล้า ',
+      phone: '081-234-5678',
+      consent: 'on',
+    })
     response.assertHeader('location', '/careers')
     const contact = await StudentContact.findByOrFail('attemptId', attempt.id)
+    assert.equal(contact.name, 'ต้นกล้า')
     assert.equal(contact.phone, '0812345678')
     assert.equal(contact.source, 'contact')
   })
@@ -96,8 +101,36 @@ test.group('Student contact step', (group) => {
     const response = await post(client, attempt, { phone: '0812345678' })
     response.assertHeader('location', '/contact')
     assert.deepEqual(fieldErrors(response, 'consent'), [
-      'ติ๊กยินยอมก่อน หรือลบเบอร์และอีเมลออกแล้วไปต่อ',
+      'ติ๊กยินยอมก่อน หรือลบชื่อ เบอร์ และอีเมลออกแล้วไปต่อ',
     ])
+    assert.lengthOf(await StudentContact.all(), 0)
+  })
+
+  test('a name alone comes back asking for a phone or email', async ({ client, assert }) => {
+    const attempt = await scoredAttempt()
+    const response = await post(client, attempt, { name: 'ต้นกล้า', consent: 'on' })
+    response.assertHeader('location', '/contact')
+    assert.deepEqual(fieldErrors(response, 'name'), [
+      'ใส่เบอร์หรืออีเมลด้วย หรือลบชื่อออกแล้วไปต่อ',
+    ])
+    assert.lengthOf(await StudentContact.all(), 0)
+  })
+
+  test('a name without consent comes back with a message', async ({ client, assert }) => {
+    const attempt = await scoredAttempt()
+    const response = await post(client, attempt, { name: 'ต้นกล้า', phone: '0812345678' })
+    response.assertHeader('location', '/contact')
+    assert.lengthOf(fieldErrors(response, 'consent'), 1)
+  })
+
+  test('rejects a name over 100 characters', async ({ client, assert }) => {
+    const attempt = await scoredAttempt()
+    const response = await post(client, attempt, {
+      name: 'ก'.repeat(101),
+      phone: '0812345678',
+      consent: 'on',
+    })
+    assert.deepEqual(fieldErrors(response, 'name'), ['ชื่อยาวได้ไม่เกิน 100 ตัวอักษร'])
     assert.lengthOf(await StudentContact.all(), 0)
   })
 

@@ -15,9 +15,15 @@ const makeUser = (role: 'admin' | 'member') =>
 const seed = (furthestStep: Attempt['furthestStep'], extra: Partial<Attempt> = {}) =>
   Attempt.create({ contentVersion: 'v1', furthestStep, ...extra })
 
-const consent = (attempt: Attempt, phone: string | null, email: string | null) =>
+const consent = (
+  attempt: Attempt,
+  phone: string | null,
+  email: string | null,
+  name: string | null = 'สมชาย'
+) =>
   StudentContact.create({
     attemptId: attempt.id,
+    name,
     phone,
     email,
     consentAt: DateTime.now(),
@@ -44,12 +50,14 @@ test.group('Admin students list', (group) => {
       [withContact.id, old.id]
     )
     assert.equal(attempts.metadata.total, 2)
+    assert.equal(attempts.data[0].name, 'ส***')
     assert.equal(attempts.data[0].phone, '08x-xxx-1234')
     assert.equal(attempts.data[0].email, 's***@example.com')
     assert.isNull(attempts.data[1].phone)
     // The full contact never reaches the list page.
     const json = JSON.stringify(page.inertiaProps)
     assert.notInclude(json, '0812341234')
+    assert.notInclude(json, 'สมชาย')
     assert.notInclude(json, 'student@example.com')
   })
 
@@ -122,6 +130,7 @@ test.group('Admin student detail', (group) => {
     assert.deepEqual(a.careersViewed, [
       { code: occupation.code, title: content.thaiTitles[occupation.code] ?? occupation.title },
     ])
+    assert.equal(a.contact.name, 'สมชาย')
     assert.equal(a.contact.phone, '0812341234')
     assert.equal(a.contact.email, 'student@example.com')
   })
@@ -266,6 +275,7 @@ test.group('Admin student export', (group) => {
       career_view_count: '1',
       has_consent: 'true',
       consent_version: 'v1',
+      name: 'สมชาย',
       phone: '0812341234',
       email: 'student@example.com',
       result_at: '',

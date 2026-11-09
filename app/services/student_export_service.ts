@@ -39,13 +39,14 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['consent_at', (a) => bangkok(a.contact?.consentAt ?? null)],
   ['consent_version', (a) => a.contact?.consentVersion],
   ['contact_source', (a) => a.contact?.source],
+  ['name', (a) => a.contact?.name],
   ['phone', (a) => a.contact?.phone],
   ['email', (a) => a.contact?.email],
 ]
 
 /**
  * One CSV field (RFC 4180). Text a spreadsheet would run as a formula (`=`, `+`, `-`, `@`, tab,
- * CR) gets a leading `'`, since `desired_career` is typed by students.
+ * CR) gets a leading `'`, since `desired_career` and `name` are typed by students.
  */
 export function csvField(value: Value) {
   if (value === null || value === undefined) return ''

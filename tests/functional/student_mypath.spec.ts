@@ -111,7 +111,7 @@ test.group('Student MyPath', (group) => {
       const response = await download(client, attempt, form)
       response.assertHeader('location', '/mypath')
       assert.deepEqual(fieldErrors(response, 'consent'), [
-        'ติ๊กยินยอมก่อน หรือลบเบอร์และอีเมลออกแล้วไปต่อ',
+        'ติ๊กยินยอมก่อน หรือลบชื่อ เบอร์ และอีเมลออกแล้วไปต่อ',
       ])
     }
     assert.lengthOf(await StudentContact.all(), 0)
