@@ -19,7 +19,12 @@ export default function StudentCareers({
           ← กลับ
         </Link>
         <header>
-          <h1>5 อาชีพที่น่าลองดู</h1>
+          <div className="title-row">
+            <h1>5 อาชีพที่น่าลองดู</h1>
+            <Link route="student.mypath" className="title-link">
+              เก็บผลไว้ดูทีหลัง
+            </Link>
+          </div>
           <p className="muted">
             อาชีพระดับปริญญาตรีขึ้นไปที่มีรูปแบบความสนใจใกล้กับน้องที่สุด
             ระดับความเหมาะใช้เกณฑ์เดียวกับ O*NET กดการ์ดเพื่อดูสาขาที่เรียนได้

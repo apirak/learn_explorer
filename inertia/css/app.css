@@ -1637,6 +1637,18 @@ input {
   font: 700 0.95rem var(--hand);
   text-decoration: none;
 }
+.ip .title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ip .title-link {
+  flex: none;
+  color: var(--violet);
+  font: 700 0.95rem var(--hand);
+  text-decoration: none;
+}
 .ip .guess-echo {
   background: #fff;
   color: var(--ink-k);
