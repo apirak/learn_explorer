@@ -5,6 +5,7 @@ import Page from '~/components/page'
 import AppLayout from '~/layouts/app'
 import { LIKERT_LABELS } from '~/components/ui/likert_scale'
 import { PROFILE_STATUS_LABEL, formatTestTime } from '~/components/career_match_labels'
+import AttemptTimeline from '~/components/attempt_timeline'
 
 type Attempt = Data.Attempt.Variants['forDetail']
 
@@ -12,14 +13,6 @@ const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString('th-TH')
 
 /** One attempt in full. Opening this page is audited; contact shows only with consent [DP-001]. */
 export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Attempt }>) {
-  const timeline: [string, string | null][] = [
-    ['Test', a.createdAt],
-    ['Result', a.resultAt],
-    ['Career', a.careerAt],
-    ['Print prep', a.printPrepAt],
-    ['Download', a.downloadedAt],
-  ]
-
   return (
     <Page
       title={`Attempt #${a.id}`}
@@ -32,14 +25,7 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
     >
       <section className="panel records">
         <h2>Timeline</h2>
-        <dl className="records__pairs">
-          {timeline.map(([label, at]) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd>{fmt(at)}</dd>
-            </div>
-          ))}
-        </dl>
+        <AttemptTimeline attempt={a} />
       </section>
 
       <section className="panel records">
