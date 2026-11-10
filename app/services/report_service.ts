@@ -29,10 +29,19 @@ const roundHalfAway = (n: number) => Math.sign(n) * Math.round(Math.abs(n))
 export class ReportService {
   /** The attempts started between two Bangkok dates, inclusive. */
   static cohort(from: DateTime, to: DateTime) {
-    const start = from.setZone(REPORT_ZONE).startOf('day')
-    const end = to.setZone(REPORT_ZONE).plus({ days: 1 }).startOf('day')
-    return () =>
-      Attempt.query().where('createdAt', '>=', start.toSQL()!).where('createdAt', '<', end.toSQL()!)
+    return () => this.whereCohort(Attempt.query(), from, to)
+  }
+
+  /**
+   * Narrows an attempts query to a cohort: started on or after the Bangkok day `from` and before
+   * the end of the Bangkok day `to`. Either bound can be left out.
+   */
+  static whereCohort(query: AttemptQuery, from: DateTime | null, to: DateTime | null) {
+    const start = from?.setZone(REPORT_ZONE).startOf('day')
+    const end = to?.setZone(REPORT_ZONE).plus({ days: 1 }).startOf('day')
+    return query
+      .if(start, (q) => q.where('createdAt', '>=', start!.toSQL()!))
+      .if(end, (q) => q.where('createdAt', '<', end!.toSQL()!))
   }
 
   static async build(from: DateTime, to: DateTime) {

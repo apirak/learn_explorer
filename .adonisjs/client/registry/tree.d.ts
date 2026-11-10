@@ -53,6 +53,10 @@ export interface ApiDefinition {
       show: typeof routes['admin.students.show']
       destroy: typeof routes['admin.students.destroy']
     }
+    careerMatches: {
+      index: typeof routes['admin.career_matches.index']
+      backfill: typeof routes['admin.career_matches.backfill']
+    }
     retention: {
       show: typeof routes['admin.retention.show']
       update: typeof routes['admin.retention.update']

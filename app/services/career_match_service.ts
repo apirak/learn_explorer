@@ -12,6 +12,39 @@ import { matchOccupations } from '#services/scoring_service'
  * pages and the export read them instead of recomputing.
  */
 export class CareerMatchService {
+  /** Attempts the backfill fills in per press, so one request never runs long (ADR 0005). */
+  static readonly BACKFILL_BATCH = 500
+
+  /** Attempts with every answer in, the only ones that can be scored. */
+  static finished() {
+    return Attempt.query().has('answers', '>=', content.forms.mini.ids.length)
+  }
+
+  /** Finished attempts never scored since matches were stored: any desired career or status. */
+  static pending() {
+    return this.finished().whereNull('matchedAt')
+  }
+
+  static async pendingCount() {
+    const [row] = await this.pending().count('* as total')
+    return Number(row.$extras.total)
+  }
+
+  /**
+   * Scores and stores up to `BACKFILL_BATCH` pending attempts, oldest first, with the content
+   * deployed now (`CONTENT_VERSION`), not the version each student took. Returns how many it
+   * processed and how many are still pending. Done attempts, invalid profiles included, have
+   * `matched_at` and are never picked again.
+   */
+  static async backfill() {
+    const batch = await this.pending()
+      .orderBy('createdAt', 'asc')
+      .orderBy('id', 'asc')
+      .limit(this.BACKFILL_BATCH)
+    for (const attempt of batch) await this.record(attempt)
+    return { processed: batch.length, remaining: await this.pendingCount() }
+  }
+
   /**
    * Scores the attempt and replaces its stored matches, test time and `matched_at`; also saves
    * the scores. Returns the scores with the matches it stored, or null (nothing stored) until

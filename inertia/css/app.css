@@ -2154,6 +2154,22 @@ button.title-link {
   color: var(--muted);
   font-size: 13px;
 }
+.records__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.records__nowrap {
+  white-space: nowrap;
+}
+/* A value an admin should look at twice, e.g. a test done in under a minute. */
+.records__flag {
+  color: var(--error);
+  font-weight: 700;
+}
 .records__pager {
   display: flex;
   align-items: center;

@@ -7,6 +7,7 @@
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
 import type AttemptTransformer from '#transformers/attempt_transformer'
+import type CareerMatchRowTransformer from '#transformers/career_match_row_transformer'
 import type ConsentTransformer from '#transformers/consent_transformer'
 import type DashboardTransformer from '#transformers/dashboard_transformer'
 import type NpsCommentTransformer from '#transformers/nps_comment_transformer'
@@ -22,6 +23,10 @@ export namespace Data {
   export type Attempt = InferData<AttemptTransformer>
   export namespace Attempt {
     export type Variants = InferVariants<AttemptTransformer>
+  }
+  export type CareerMatchRow = InferData<CareerMatchRowTransformer>
+  export namespace CareerMatchRow {
+    export type Variants = InferVariants<CareerMatchRowTransformer>
   }
   export type Consent = InferData<ConsentTransformer>
   export namespace Consent {

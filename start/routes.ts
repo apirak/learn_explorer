@@ -31,7 +31,9 @@ router
     router.get('careers/:code', [controllers.StudentCareers, 'show']).as('career')
     router.post('careers/:code/save', [controllers.StudentCareers, 'save']).as('career.save')
     router.get('print-prep', [controllers.StudentPrintPrep, 'show']).as('print_prep')
-    router.post('print-prep/download', [controllers.StudentPrintPrep, 'download']).as('print_prep.download')
+    router
+      .post('print-prep/download', [controllers.StudentPrintPrep, 'download'])
+      .as('print_prep.download')
     router.get('print-prep/print', [controllers.StudentPrintPrep, 'print']).as('print_prep.print')
   })
   .as('student')
@@ -76,6 +78,12 @@ router
       .delete('students/:id', [controllers.admin.Students, 'destroy'])
       .where('id', router.matchers.number())
       .as('students.destroy')
+    router
+      .get('career-matches', [controllers.admin.CareerMatches, 'index'])
+      .as('career_matches.index')
+    router
+      .post('career-matches/backfill', [controllers.admin.CareerMatches, 'backfill'])
+      .as('career_matches.backfill')
     router.get('retention', [controllers.admin.Retention, 'show']).as('retention.show')
     router.put('retention', [controllers.admin.Retention, 'update']).as('retention.update')
     router.post('retention/purge', [controllers.admin.Retention, 'purge']).as('retention.purge')

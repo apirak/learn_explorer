@@ -4,6 +4,7 @@ import {
   Archive,
   ChartColumn,
   GraduationCap,
+  ListChecks,
   LayoutGrid,
   LogOut,
   TriangleAlert,
@@ -62,6 +63,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <NavLink route="admin.students.index" className="subnav__item">
               <GraduationCap size={14} />
               Students
+            </NavLink>
+          )}
+          {user?.isAdmin && (
+            <NavLink route="admin.career_matches.index" className="subnav__item">
+              <ListChecks size={14} />
+              Career matches
             </NavLink>
           )}
           {/* Shown disabled to members, like Dashboard, so they know Purge lives here. */}
