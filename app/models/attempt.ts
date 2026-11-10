@@ -2,6 +2,7 @@ import { randomInt, randomUUID } from 'node:crypto'
 import { DateTime } from 'luxon'
 import { AttemptSchema } from '#database/schema'
 import Answer from '#models/answer'
+import CareerMatch from '#models/career_match'
 import CareerView from '#models/career_view'
 import NpsResponse from '#models/nps_response'
 import StudentContact from '#models/student_contact'
@@ -24,6 +25,10 @@ const NO_CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
 export default class Attempt extends AttemptSchema {
   @hasMany(() => Answer)
   declare answers: HasMany<typeof Answer>
+
+  /** Stored from the latest scores; `matchedAt` says when (ADR 0005). */
+  @hasMany(() => CareerMatch)
+  declare careerMatches: HasMany<typeof CareerMatch>
 
   @hasMany(() => CareerView)
   declare careerViews: HasMany<typeof CareerView>

@@ -6,6 +6,9 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 const INT_MAX = 2_147_483_647
 
+/** Answer gaps over this are "left and came back", not thinking (ADR 0001). */
+export const MAX_GAP_MS = 5 * 60 * 1000
+
 export default class Answer extends AnswerSchema {
   @belongsTo(() => Attempt)
   declare attempt: BelongsTo<typeof Attempt>

@@ -22,6 +22,10 @@ A code issued by another OnDemand system and brought in through the link. It nam
 An `NC-` code this system gives a student who arrived without a campaign code, shared by repeat attempts on the same browser.
 _Avoid_: anonymous code
 
+**Desired career**:
+The career a student types on the home page before starting, in their own words. Free text, optional.
+_Avoid_: dream job, guess
+
 **Contact**:
 The details a student chooses to leave, with consent, so OnDemand can reach them: a phone or email, and optionally a name. Only kept when it has a phone or email.
 _Avoid_: lead, sign-up
@@ -64,6 +68,14 @@ _Avoid_: unfinished student
 **Answer gap**:
 The time between an answer being saved and the previous answer of the same attempt being saved. Stands in for how long the student thought about an item.
 _Avoid_: answer time, think time, duration
+
+**Test time**:
+An attempt's answer gaps summed, leaving out the first answer (it has no gap) and any gap over 5 minutes ("left and came back", as in the Report). Stored when the attempt is scored (ADR 0005). Missing when no answer has a gap.
+_Avoid_: duration, time spent
+
+**Career matches**:
+The occupations the system matched to an attempt's latest scores, ranked 1–5, stored each time the attempt is scored so admins can compare them with the desired career (ADR 0005). An invalid profile has none.
+_Avoid_: result careers, recommendations
 
 **Dashboard**:
 The live admin page, refreshed every few seconds.
