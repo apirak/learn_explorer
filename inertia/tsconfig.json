@@ -13,6 +13,7 @@
     "./**/*.tsx",
     "../.adonisjs/client/**/*.ts",
     "../.adonisjs/server/**/*.ts",
-    "../tests/unit/answer_queue.spec.ts"
+    "../tests/unit/answer_queue.spec.ts",
+    "../tests/unit/timeline_layout.spec.ts"
   ]
 }

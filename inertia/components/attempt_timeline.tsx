@@ -9,44 +9,19 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { formatTestTime } from '~/components/career_match_labels'
+import { formatDuration, layoutTimeline } from '~/timeline_layout'
 
 type Attempt = Pick<
   Data.Attempt.Variants['forDetail'],
   'createdAt' | 'resultAt' | 'careerAt' | 'printPrepAt' | 'downloadedAt' | 'testTimeMs'
 >
 
-type Step = { label: string; icon: LucideIcon; at: number | null }
-type Gap = { from: number; to: number; ms: number }
+type Step = { label: string; icon: LucideIcon; at: string | null }
 
-const MIN = 60_000
-const HOUR = 60 * MIN
-const DAY = 24 * HOUR
+const HOUR = 3_600_000
 
-/** Share of the line kept for steps not reached yet. */
-const PENDING_SHARE = 18
-
-/** Elapsed time in Thai, at most two units: "40 วินาที", "14 นาที", "1 วัน 10 ชม.". */
-export const formatDuration = (ms: number) => {
-  if (ms < MIN) return `${Math.round(ms / 1000)} วินาที`
-  if (ms < HOUR) return `${Math.round(ms / MIN)} นาที`
-  if (ms < DAY) {
-    const h = Math.floor(ms / HOUR)
-    const m = Math.round((ms % HOUR) / MIN)
-    return m ? `${h} ชม. ${m} นาที` : `${h} ชม.`
-  }
-  const d = Math.floor(ms / DAY)
-  const h = Math.round((ms % DAY) / HOUR)
-  return h ? `${d} วัน ${h} ชม.` : `${d} วัน`
-}
-
-/**
- * Space a gap on the line by log of its seconds, so a 40-second step and a one-day wait both
- * stay visible. The floor keeps the shortest gaps wide enough for their labels.
- */
-const weight = (ms: number) => Math.max(Math.log10(1 + ms / 1000), 0.6)
-
-const stamp = (ms: number) =>
-  new Date(ms).toLocaleString('th-TH', {
+const stamp = (iso: string) =>
+  new Date(iso).toLocaleString('th-TH', {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
@@ -55,45 +30,26 @@ const stamp = (ms: number) =>
 
 /**
  * Each step as an icon on one straight line, with how long the student took between steps.
- * A skipped step is measured from the last step reached before it.
+ * A skipped step stays in order; its gap is measured from the last step reached before it.
  */
-export default function AttemptTimeline({ attempt: a }: { attempt: Attempt }) {
-  const t = (iso: string | null) => (iso ? new Date(iso).getTime() : null)
+export default function AttemptTimeline({ attempt }: { attempt: Attempt }) {
   const steps: Step[] = [
-    { label: 'Test', icon: PencilLine, at: t(a.createdAt) },
-    { label: 'Result', icon: Hexagon, at: t(a.resultAt) },
-    { label: 'Career', icon: BriefcaseBusiness, at: t(a.careerAt) },
-    { label: 'Print prep', icon: Printer, at: t(a.printPrepAt) },
-    { label: 'Download', icon: Download, at: t(a.downloadedAt) },
+    { label: 'Test', icon: PencilLine, at: attempt.createdAt },
+    { label: 'Result', icon: Hexagon, at: attempt.resultAt },
+    { label: 'Career', icon: BriefcaseBusiness, at: attempt.careerAt },
+    { label: 'Print prep', icon: Printer, at: attempt.printPrepAt },
+    { label: 'Download', icon: Download, at: attempt.downloadedAt },
   ]
-
-  const gaps: Gap[] = []
-  let prev: number | null = null
-  steps.forEach((s, i) => {
-    if (s.at === null) return
-    if (prev !== null) gaps.push({ from: prev, to: i, ms: Math.max(0, s.at - steps[prev].at!) })
-    prev = i
-  })
-
-  const pending = steps.filter((s) => s.at === null).length
-  const reachedEnd = gaps.length === 0 ? 0 : pending ? 100 - PENDING_SHARE : 100
-  const total = gaps.reduce((sum, g) => sum + weight(g.ms), 0)
-
-  const pos: number[] = []
-  let acc = 0
-  let waiting = 0
-  steps.forEach((s, i) => {
-    const gap = gaps.find((g) => g.to === i)
-    if (gap) acc += weight(gap.ms)
-    if (s.at !== null) pos[i] = total ? (acc / total) * reachedEnd : 0
-    else pos[i] = reachedEnd + (++waiting * (100 - reachedEnd)) / pending
-  })
+  const { states, gaps, pos, reachedEnd } = layoutTimeline(
+    steps.map((s) => (s.at ? new Date(s.at).getTime() : null))
+  )
+  const pendingCount = states.filter((s) => s === 'pending').length
 
   return (
     <div className="timeline">
       <div className="timeline__track">
         <div className="timeline__line" style={{ width: `${reachedEnd}%` }} />
-        {pending > 0 && (
+        {pendingCount > 0 && (
           <div
             className="timeline__line timeline__line--pending"
             style={{ left: `${reachedEnd}%` }}
@@ -113,30 +69,33 @@ export default function AttemptTimeline({ attempt: a }: { attempt: Attempt }) {
         <ol className="timeline__steps">
           {steps.map((s, i) => {
             const Icon = s.icon
+            const state = states[i]
             const gap = gaps.find((g) => g.to === i)
             return (
               <li
                 key={s.label}
-                className={`timeline__step ${s.at === null ? 'timeline__step--pending' : ''} ${i % 2 ? 'timeline__step--low' : ''}`}
+                className={`timeline__step ${state === 'reached' ? '' : `timeline__step--${state}`} ${i % 2 ? 'timeline__step--low' : ''}`}
                 style={{ left: `${pos[i]}%` }}
               >
                 <span className="timeline__dot">
                   <Icon size={18} strokeWidth={2.2} aria-hidden="true" />
                 </span>
                 <strong>{s.label}</strong>
-                <small>{s.at === null ? 'ยังไม่ถึง' : stamp(s.at)}</small>
+                <small>{s.at ? stamp(s.at) : state === 'skipped' ? 'ข้าม' : 'ยังไม่ถึง'}</small>
                 {gap && (
-                  <span className="visually-hidden">หลังขั้นก่อนหน้า {formatDuration(gap.ms)}</span>
+                  <span className="visually-hidden">
+                    หลัง {steps[gap.from].label} {formatDuration(gap.ms)}
+                  </span>
                 )}
               </li>
             )
           })}
         </ol>
       </div>
-      {a.testTimeMs !== null && (
+      {attempt.testTimeMs !== null && (
         <p className="timeline__note muted">
-          <Clock size={14} aria-hidden="true" /> เวลาทำแบบทดสอบจริง {formatTestTime(a.testTimeMs)}{' '}
-          (ไม่นับช่วงที่ห่างเกิน 5 นาที)
+          <Clock size={14} aria-hidden="true" /> เวลาทำแบบทดสอบจริง{' '}
+          {formatTestTime(attempt.testTimeMs)} (ไม่นับช่วงที่ห่างเกิน 5 นาที)
         </p>
       )}
     </div>
