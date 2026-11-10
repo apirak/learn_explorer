@@ -1,4 +1,5 @@
 import type Attempt from '#models/attempt'
+import content from '#services/content_service'
 import { REPORT_ZONE } from '#services/report_service'
 import type { DateTime } from 'luxon'
 
@@ -11,8 +12,9 @@ const bangkok = (dt: DateTime | null) => dt?.setZone(REPORT_ZONE).toISO() ?? nul
 
 /**
  * The student export: one row per attempt, in this column order. Every header must be described
- * in `resources/exports/students.md` (a test checks). Needs `contact` and `npsResponse` preloaded and the
- * `answer_count`, `career_view_count` and `career_save_count` counts. Carries full contact details [DP-001].
+ * in `resources/exports/students.md` (a test checks). Needs `contact`, `npsResponse` and
+ * `careerMatches` (by rank) preloaded and the `answer_count`, `career_view_count` and
+ * `career_save_count` counts. Carries full contact details [DP-001].
  */
 export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['attempt_uuid', (a) => a.uuid],
@@ -25,6 +27,7 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['print_prep_at', (a) => bangkok(a.printPrepAt)],
   ['downloaded_at', (a) => bangkok(a.downloadedAt)],
   ['answer_count', (a) => Number(a.$extras.answer_count)],
+  ['test_time_sec', (a) => (a.testTimeMs === null ? null : Math.round(a.testTimeMs / 1000))],
   ['score_r', (a) => a.scoreR],
   ['score_i', (a) => a.scoreI],
   ['score_a', (a) => a.scoreA],
@@ -34,6 +37,10 @@ export const COLUMNS: [string, (a: Attempt) => Value][] = [
   ['interest_code', (a) => a.interestCode],
   ['profile_status', (a) => a.profileStatus],
   ['desired_career', (a) => a.desiredCareer],
+  [
+    'career_matches',
+    (a) => a.careerMatches.map((m) => content.occupationTitle(m.occupationCode)).join(' | '),
+  ],
   ['career_view_count', (a) => Number(a.$extras.career_view_count)],
   ['career_save_count', (a) => Number(a.$extras.career_save_count)],
   ['nps_score', (a) => a.npsResponse?.score],
