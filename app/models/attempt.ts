@@ -14,6 +14,9 @@ import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 
 export type Step = Attempt['furthestStep']
 
+/** Career matches not computed yet, or the profile status they were stored with (ADR 0005). */
+export type CareerMatchStatus = 'not_computed' | NonNullable<Attempt['profileStatus']>
+
 /** Student flow order. Test entry time is `created_at` [M5]; later steps have their own `*_at`. */
 export const STEPS: Step[] = ['test', 'result', 'career', 'print_prep']
 const STEP_AT = { result: 'resultAt', career: 'careerAt', print_prep: 'printPrepAt' } as const
@@ -93,6 +96,16 @@ export default class Attempt extends AttemptSchema {
       profileStatus: status,
     })
     return { scores, code, status }
+  }
+
+  /**
+   * Whether the stored career matches can be read: not computed yet, `ok`, or the invalid
+   * profile status stored with them. Reads `$original` because `score()` merges a fresh status
+   * from the current answers, which may differ from the one the matches were stored with.
+   */
+  get careerMatchStatus(): CareerMatchStatus {
+    const stored = this.$original.profileStatus as Attempt['profileStatus']
+    return this.matchedAt && stored ? stored : 'not_computed'
   }
 
   async answerCount() {

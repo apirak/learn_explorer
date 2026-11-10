@@ -16,7 +16,8 @@ export const maskEmail = (email: string) => {
 
 /**
  * Admin views of one attempt. The list (default) masks contact details; `forDetail` shows them
- * in full and needs `answers`, `careerViews` and `contact` preloaded, and `score()` run first.
+ * in full and needs `answers`, `careerMatches` (by rank), `careerViews` (in view order) and `contact`
+ * preloaded, and `score()` run first.
  * Contact rows exist only with consent [DP-001].
  */
 export default class AttemptTransformer extends BaseTransformer<Attempt> {
@@ -55,7 +56,11 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
         'downloadedAt',
         'interestCode',
         'profileStatus',
+        'desiredCareer',
+        'testTimeMs',
+        'matchedAt',
       ]),
+      careerMatchStatus: a.careerMatchStatus,
       scores:
         a.scoreR === null
           ? null
@@ -69,14 +74,37 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
           text: items.get(id)!.text_th,
           value: values.get(id)!,
         })),
-      careersViewed: a.careerViews.map(({ occupationCode: code, savedAt }) => ({
-        code,
-        title: content.occupationTitle(code),
-        savedAt,
-      })),
+      careers: this.careerRows(),
       contact: a.contact
         ? this.pick(a.contact, ['name', 'phone', 'email', 'consentAt', 'consentVersion'])
         : null,
     }
+  }
+
+  /**
+   * Stored career matches in rank order, then viewed careers that are not among them (`rank`
+   * null), each with when it was viewed and saved (a Career save). Stored data only (ADR 0005).
+   * `outsideLatest` marks an appended row once matches were computed; before that nothing is
+   * "latest".
+   */
+  private careerRows() {
+    const a = this.resource
+    const computed = a.careerMatchStatus !== 'not_computed'
+    const views = new Map(a.careerViews.map((view) => [view.occupationCode, view]))
+    const matched = new Set(a.careerMatches.map((m) => m.occupationCode))
+    const row = (code: string, rank: number | null) => ({
+      code,
+      rank,
+      title: content.occupationTitle(code),
+      viewedAt: views.get(code)?.createdAt ?? null,
+      savedAt: views.get(code)?.savedAt ?? null,
+      outsideLatest: rank === null && computed,
+    })
+    return [
+      ...a.careerMatches.map((m) => row(m.occupationCode, m.rank)),
+      ...a.careerViews
+        .filter((v) => !matched.has(v.occupationCode))
+        .map((v) => row(v.occupationCode, null)),
+    ]
   }
 }

@@ -4,6 +4,7 @@ import { type Data } from '@generated/data'
 import { type InertiaProps } from '~/types'
 import Page from '~/components/page'
 import AppLayout from '~/layouts/app'
+import { PROFILE_STATUS_LABEL, formatTestTime } from '~/components/career_match_labels'
 
 type Row = Data.CareerMatchRow
 type Filters = {
@@ -28,22 +29,10 @@ type PageProps = InertiaProps<{
   }
 }>
 
-/** Shown instead of matches for a profile the system cannot match. */
-const STATUS_LABEL: Record<Exclude<Row['profileStatus'], 'ok' | null>, string> = {
-  'all-dislike': 'ตอบไม่อยากทำทุกข้อ',
-  'flat': 'คะแนนเท่ากันทุกด้าน',
-}
-
-/** Test time as m:ss. */
-const formatTime = (ms: number) => {
-  const seconds = Math.floor(ms / 1000)
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
-}
-
 function Matches({ row }: { row: Row }) {
   if (!row.matchedAt) return <span className="muted">ยังไม่ได้คำนวณ</span>
   if (row.profileStatus && row.profileStatus !== 'ok')
-    return <span className="muted">{STATUS_LABEL[row.profileStatus]}</span>
+    return <span className="muted">{PROFILE_STATUS_LABEL[row.profileStatus]}</span>
   return <>{row.careerMatches.join(' · ') || '–'}</>
 }
 
@@ -172,7 +161,7 @@ export default function AdminCareerMatches({
                         className={row.testTimeMs < oneMinuteMs ? 'records__flag' : undefined}
                         title={row.testTimeMs < oneMinuteMs ? 'Under 1 minute' : undefined}
                       >
-                        {formatTime(row.testTimeMs)}
+                        {formatTestTime(row.testTimeMs)}
                       </span>
                     )}
                   </td>

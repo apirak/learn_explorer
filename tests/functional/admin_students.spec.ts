@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import AdminAudit from '#models/admin_audit'
 import Answer from '#models/answer'
 import Attempt from '#models/attempt'
+import CareerMatch from '#models/career_match'
 import CareerView from '#models/career_view'
 import NpsResponse from '#models/nps_response'
 import StudentContact from '#models/student_contact'
@@ -89,10 +90,15 @@ test.group('Admin students list', (group) => {
   })
 })
 
+/** Each career row as `[code, rank, outsideLatest]`, in page order. */
+const careerRows = (a: {
+  careers: { code: string; rank: number | null; outsideLatest: boolean }[]
+}) => a.careers.map((c) => [c.code, c.rank, c.outsideLatest])
+
 test.group('Admin student detail', (group) => {
   group.each.setup(() => testUtils.db().truncate())
 
-  test('shows timeline, answers, scores, careers, download and consented contact', async ({
+  test('shows timeline, answers, scores, viewed careers, download and consented contact', async ({
     client,
     assert,
   }) => {
@@ -130,14 +136,21 @@ test.group('Admin student detail', (group) => {
     assert.deepInclude(a.answers[0], { itemId: ids[0], text: first.text_th, value: 0 })
     assert.sameMembers(Object.keys(a.scores), ['R', 'I', 'A', 'S', 'E', 'C'])
     assert.lengthOf(a.interestCode, 3)
-    const byCode = new Map(a.careersViewed.map((c: { code: string }) => [c.code, c]))
-    assert.deepEqual(byCode.get(occupation.code), {
-      code: occupation.code,
-      title: content.thaiTitles[occupation.code] ?? occupation.title,
-      savedAt: null,
-    })
-    const savedView = byCode.get(saved.code) as { savedAt: string }
-    assert.equal(DateTime.fromISO(savedView.savedAt).toMillis(), savedAt.toMillis())
+    // Career matches are not stored yet, and opening the page does not compute them.
+    assert.equal(a.careerMatchStatus, 'not_computed')
+    assert.isNull(a.testTimeMs)
+    assert.lengthOf(await CareerMatch.all(), 0)
+    await attempt.refresh()
+    assert.isNull(attempt.matchedAt)
+    // Viewed careers still show, in view order, with their save time.
+    assert.deepEqual(careerRows(a), [
+      [occupation.code, null, false],
+      [saved.code, null, false],
+    ])
+    assert.equal(a.careers[0].title, content.thaiTitles[occupation.code] ?? occupation.title)
+    assert.isNotNull(a.careers[0].viewedAt)
+    assert.isNull(a.careers[0].savedAt)
+    assert.equal(DateTime.fromISO(a.careers[1].savedAt).toMillis(), savedAt.toMillis())
     assert.equal(a.contact.name, 'สมชาย')
     assert.equal(a.contact.phone, '0812341234')
     assert.equal(a.contact.email, 'student@example.com')
@@ -159,6 +172,76 @@ test.group('Admin student detail', (group) => {
     assert.isNull(a.contact)
     assert.deepEqual(a.answers, [])
   })
+
+  test('lists stored career matches by rank, then viewed careers not among them', async ({
+    client,
+    assert,
+  }) => {
+    const [m1, m2, m3, other] = content.occupations
+    const attempt = await seed('career', {
+      desiredCareer: 'หมอ',
+      profileStatus: 'ok',
+      testTimeMs: 125_400,
+      matchedAt: DateTime.now(),
+    })
+    // Stored out of order; the page sorts by rank.
+    await CareerMatch.createMany([
+      { attemptId: attempt.id, rank: 2, occupationCode: m2.code, r: 0.8 },
+      { attemptId: attempt.id, rank: 1, occupationCode: m1.code, r: 0.9 },
+      { attemptId: attempt.id, rank: 3, occupationCode: m3.code, r: 0.7 },
+    ])
+    await CareerView.create({ attemptId: attempt.id, occupationCode: other.code })
+    await CareerView.create({
+      attemptId: attempt.id,
+      occupationCode: m2.code,
+      savedAt: DateTime.now(),
+    })
+
+    const page = await client
+      .get(`/admin/students/${attempt.id}`)
+      .withInertia()
+      .loginAs(await makeUser('admin'))
+
+    const { attempt: a } = page.inertiaProps
+    assert.equal(a.desiredCareer, 'หมอ')
+    assert.equal(a.testTimeMs, 125_400)
+    assert.equal(a.careerMatchStatus, 'ok')
+    assert.deepEqual(careerRows(a), [
+      [m1.code, 1, false],
+      [m2.code, 2, false],
+      [m3.code, 3, false],
+      [other.code, null, true],
+    ])
+    const [first, second, , appended] = a.careers
+    assert.isNull(first.viewedAt)
+    assert.isNull(first.savedAt)
+    assert.isNotNull(second.viewedAt)
+    assert.isNotNull(second.savedAt)
+    assert.isNotNull(appended.viewedAt)
+    assert.isNull(appended.savedAt)
+  })
+
+  test('an invalid profile shows its stored status and no career matches')
+    .with(['flat', 'all-dislike'] as const)
+    .run(async ({ client, assert }, status) => {
+      const attempt = await seed('result', { profileStatus: status, matchedAt: DateTime.now() })
+      const ids = content.forms.mini.ids
+      // Answers changed since matching (valid now); the section follows what was stored.
+      await Answer.createMany(
+        ids.map((itemId, i) => ({ attemptId: attempt.id, itemId, value: i === 0 ? 0 : 4 }))
+      )
+      const viewed = content.occupations[0]
+      await CareerView.create({ attemptId: attempt.id, occupationCode: viewed.code })
+
+      const page = await client
+        .get(`/admin/students/${attempt.id}`)
+        .withInertia()
+        .loginAs(await makeUser('admin'))
+
+      const { attempt: a } = page.inertiaProps
+      assert.equal(a.careerMatchStatus, status)
+      assert.deepEqual(careerRows(a), [[viewed.code, null, true]])
+    })
 
   test('opening a detail page writes one audit row', async ({ client, assert }) => {
     const admin = await makeUser('admin')
@@ -250,7 +333,14 @@ test.group('Admin student export', (group) => {
       interestCode: 'RCE',
       profileStatus: 'ok',
       desiredCareer: '=HYPERLINK("x")',
+      testTimeMs: 125_600,
+      matchedAt: DateTime.now(),
     })
+    const [first, second] = content.occupations
+    await CareerMatch.createMany([
+      { attemptId: done.id, rank: 2, occupationCode: second.code, r: 0.8 },
+      { attemptId: done.id, rank: 1, occupationCode: first.code, r: 0.9 },
+    ])
     await Answer.createMany(
       content.forms.mini.ids.map((itemId) => ({ attemptId: done.id, itemId, value: 2 }))
     )
@@ -293,6 +383,7 @@ test.group('Admin student export', (group) => {
       interest_code: 'RCE',
       career_view_count: '2',
       career_save_count: '1',
+      test_time_sec: '126',
       nps_score: '9',
       nps_comment: 'ชอบมาก',
       has_consent: 'true',
@@ -303,6 +394,8 @@ test.group('Admin student export', (group) => {
       result_at: '',
     })
     assert.match(rows[0].started_at, /\+07:00$/)
+    const title = (o: { code: string; title: string }) => content.thaiTitles[o.code] ?? o.title
+    assert.include(res.text(), `,${title(first)} | ${title(second)},`)
     assert.include(res.text(), `"'=HYPERLINK(""x"")"`)
   })
 
@@ -316,10 +409,17 @@ test.group('Admin student export', (group) => {
     const res = await client.get('/admin/students/export').loginAs(await makeUser('admin'))
     const rows = parseCsv(res.text())
     assert.sameDeepMembers(
-      rows.map((r) => [r.code_type, r.has_consent, r.answer_count, r.desired_career]),
+      rows.map((r) => [
+        r.code_type,
+        r.has_consent,
+        r.answer_count,
+        r.desired_career,
+        r.career_matches,
+        r.test_time_sec,
+      ]),
       [
-        ['no_code', 'false', '0', "'@SUM(1)"],
-        ['', 'false', '0', ''],
+        ['no_code', 'false', '0', "'@SUM(1)", '', ''],
+        ['', 'false', '0', '', '', ''],
       ]
     )
   })

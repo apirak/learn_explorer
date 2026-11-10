@@ -55,6 +55,7 @@ export default class StudentsController {
       .withCount('careerViews', (q) => q.as('career_view_count'))
       .withCount('careerViews', (q) => q.whereNotNull('savedAt').as('career_save_count'))
       .preload('npsResponse')
+      .preload('careerMatches', (q) => q.orderBy('rank'))
     // Ids and counts only, never student data [DP-001].
     logger.info({ userId: auth.user!.id, rows: attempts.length }, 'students_exported')
 
@@ -73,7 +74,8 @@ export default class StudentsController {
     const attempt = await Attempt.query()
       .where('id', params.id)
       .preload('answers')
-      .preload('careerViews', (q) => q.orderBy('createdAt'))
+      .preload('careerMatches', (q) => q.orderBy('rank'))
+      .preload('careerViews', (q) => q.orderBy('createdAt').orderBy('id'))
       .preload('contact')
       .firstOrFail()
     await attempt.score()

@@ -107,6 +107,12 @@ The flow has these steps, in order:
 - **Source**: count of rows in `answers` for this attempt.
 - **Type**: integer, 0 to 30. Use 30 to mean "test complete".
 
+### test_time_sec
+
+- **Meaning**: roughly how long the student spent answering the test, in seconds. Use it to set aside attempts done too fast to trust, such as under 60 seconds for 30 items.
+- **Source**: `attempts.test_time_ms` divided by 1000 and rounded. Learn Explorer records when each answer is saved. The time between one answer and the previous one is an answer gap. Test time is the sum of the attempt's answer gaps, leaving out the first answer (it has no gap) and any gap over 5 minutes, which counts as the student leaving and coming back. It is stored together with `career_matches` each time the attempt is scored.
+- **Type**: integer, 0 or more. Empty when no answer has a gap, or when the attempt has not been through career matching yet (see `career_matches`).
+
 ### score_r, score_i, score_a, score_s, score_e, score_c
 
 - **Meaning**: the student's score for each RIASEC type: Realistic, Investigative, Artistic, Social, Enterprising, Conventional. Higher means more interest.
@@ -132,6 +138,12 @@ The flow has these steps, in order:
 - **Meaning**: the career the student typed on the Start page, before taking the test, as their current idea. It is free text, mostly in Thai. Compare it with `interest_code` to see whether the test agrees with their prior idea.
 - **Source**: `attempts.desired_career`.
 - **Type**: text, up to 100 characters. Empty if the student left it blank. It is not validated, so expect typos, jokes and blank-looking values.
+
+### career_matches
+
+- **Meaning**: the careers Learn Explorer matched to the student's latest scores, best match first. Compare them with `desired_career` to see whether the test agrees with what the student had in mind.
+- **Source**: `career_matches` rows for this attempt, ranked 1 to 5, shown by their Thai title. They are replaced each time the attempt is scored, so they follow the student's latest answers. Attempts scored before career matches were stored get them when an admin presses backfill on the Career matches page; a backfill uses the content version deployed at that time.
+- **Type**: Thai career titles joined by ` | `, such as `แพทย์ | พยาบาล`. Empty when there are none: the test is not finished, the attempt has not been through career matching yet, or `profile_status` is not `ok`.
 
 ### career_view_count
 
