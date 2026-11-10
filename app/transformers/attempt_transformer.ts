@@ -60,7 +60,7 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
         'testTimeMs',
         'matchedAt',
       ]),
-      careerMatchStatus: this.careerMatchStatus(),
+      careerMatchStatus: a.careerMatchStatus,
       scores:
         a.scoreR === null
           ? null
@@ -82,22 +82,14 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
   }
 
   /**
-   * Whether the stored career matches can be read: not computed yet, `ok`, or the invalid
-   * profile status stored with them. Reads `$original` because `score()` merges a fresh status
-   * from the current answers, which may differ from the one the matches were stored with.
-   */
-  private careerMatchStatus(): 'not_computed' | NonNullable<Attempt['profileStatus']> {
-    const a = this.resource
-    const stored = a.$original.profileStatus as Attempt['profileStatus']
-    return a.matchedAt && stored ? stored : 'not_computed'
-  }
-
-  /**
    * Stored career matches in rank order, then viewed careers that are not among them (`rank`
    * null), each with when it was viewed and saved (a Career save). Stored data only (ADR 0005).
+   * `outsideLatest` marks an appended row once matches were computed; before that nothing is
+   * "latest".
    */
   private careerRows() {
     const a = this.resource
+    const computed = a.careerMatchStatus !== 'not_computed'
     const views = new Map(a.careerViews.map((view) => [view.occupationCode, view]))
     const matched = new Set(a.careerMatches.map((m) => m.occupationCode))
     const row = (code: string, rank: number | null) => ({
@@ -106,6 +98,7 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
       title: content.occupationTitle(code),
       viewedAt: views.get(code)?.createdAt ?? null,
       savedAt: views.get(code)?.savedAt ?? null,
+      outsideLatest: rank === null && computed,
     })
     return [
       ...a.careerMatches.map((m) => row(m.occupationCode, m.rank)),

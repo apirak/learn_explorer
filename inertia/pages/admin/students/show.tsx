@@ -101,10 +101,7 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
                   <td>
                     {c.rank && <span className="muted">{c.rank}. </span>}
                     {c.title} <span className="muted">{c.code}</span>
-                    {/* Only once matches exist; before that nothing is "latest". */}
-                    {!c.rank && a.careerMatchStatus !== 'not_computed' && (
-                      <span className="muted"> · ไม่อยู่ในผลล่าสุด</span>
-                    )}
+                    {c.outsideLatest && <span className="muted"> · ไม่อยู่ในผลล่าสุด</span>}
                   </td>
                   <td>{fmt(c.viewedAt)}</td>
                   <td>{fmt(c.savedAt)}</td>

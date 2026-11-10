@@ -90,6 +90,11 @@ test.group('Admin students list', (group) => {
   })
 })
 
+/** Each career row as `[code, rank, outsideLatest]`, in page order. */
+const careerRows = (a: {
+  careers: { code: string; rank: number | null; outsideLatest: boolean }[]
+}) => a.careers.map((c) => [c.code, c.rank, c.outsideLatest])
+
 test.group('Admin student detail', (group) => {
   group.each.setup(() => testUtils.db().truncate())
 
@@ -138,13 +143,10 @@ test.group('Admin student detail', (group) => {
     await attempt.refresh()
     assert.isNull(attempt.matchedAt)
     // Viewed careers still show, in view order, with their save time.
-    assert.deepEqual(
-      a.careers.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
-      [
-        [occupation.code, null],
-        [saved.code, null],
-      ]
-    )
+    assert.deepEqual(careerRows(a), [
+      [occupation.code, null, false],
+      [saved.code, null, false],
+    ])
     assert.equal(a.careers[0].title, content.thaiTitles[occupation.code] ?? occupation.title)
     assert.isNotNull(a.careers[0].viewedAt)
     assert.isNull(a.careers[0].savedAt)
@@ -204,15 +206,12 @@ test.group('Admin student detail', (group) => {
     assert.equal(a.desiredCareer, 'หมอ')
     assert.equal(a.testTimeMs, 125_400)
     assert.equal(a.careerMatchStatus, 'ok')
-    assert.deepEqual(
-      a.careers.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
-      [
-        [m1.code, 1],
-        [m2.code, 2],
-        [m3.code, 3],
-        [other.code, null],
-      ]
-    )
+    assert.deepEqual(careerRows(a), [
+      [m1.code, 1, false],
+      [m2.code, 2, false],
+      [m3.code, 3, false],
+      [other.code, null, true],
+    ])
     const [first, second, , appended] = a.careers
     assert.isNull(first.viewedAt)
     assert.isNull(first.savedAt)
@@ -222,31 +221,27 @@ test.group('Admin student detail', (group) => {
     assert.isNull(appended.savedAt)
   })
 
-  test('an invalid profile shows its stored status and no career matches', async ({
-    client,
-    assert,
-  }) => {
-    const attempt = await seed('result', { profileStatus: 'flat', matchedAt: DateTime.now() })
-    const ids = content.forms.mini.ids
-    // Answers changed since matching (not flat now); the section follows what was stored.
-    await Answer.createMany(
-      ids.map((itemId, i) => ({ attemptId: attempt.id, itemId, value: i === 0 ? 0 : 4 }))
-    )
-    const viewed = content.occupations[0]
-    await CareerView.create({ attemptId: attempt.id, occupationCode: viewed.code })
+  test('an invalid profile shows its stored status and no career matches')
+    .with(['flat', 'all-dislike'] as const)
+    .run(async ({ client, assert }, status) => {
+      const attempt = await seed('result', { profileStatus: status, matchedAt: DateTime.now() })
+      const ids = content.forms.mini.ids
+      // Answers changed since matching (valid now); the section follows what was stored.
+      await Answer.createMany(
+        ids.map((itemId, i) => ({ attemptId: attempt.id, itemId, value: i === 0 ? 0 : 4 }))
+      )
+      const viewed = content.occupations[0]
+      await CareerView.create({ attemptId: attempt.id, occupationCode: viewed.code })
 
-    const page = await client
-      .get(`/admin/students/${attempt.id}`)
-      .withInertia()
-      .loginAs(await makeUser('admin'))
+      const page = await client
+        .get(`/admin/students/${attempt.id}`)
+        .withInertia()
+        .loginAs(await makeUser('admin'))
 
-    const { attempt: a } = page.inertiaProps
-    assert.equal(a.careerMatchStatus, 'flat')
-    assert.deepEqual(
-      a.careers.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
-      [[viewed.code, null]]
-    )
-  })
+      const { attempt: a } = page.inertiaProps
+      assert.equal(a.careerMatchStatus, status)
+      assert.deepEqual(careerRows(a), [[viewed.code, null, true]])
+    })
 
   test('opening a detail page writes one audit row', async ({ client, assert }) => {
     const admin = await makeUser('admin')
