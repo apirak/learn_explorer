@@ -200,6 +200,18 @@ const routes = {
     tokens: [[0,"admin"],[0,"students"],[1,"id"]],
     types: placeholder as Registry['admin.students.destroy']['types'],
   },
+  'admin.career_matches.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/admin/career-matches',
+    tokens: [[0,"admin"],[0,"career-matches"]],
+    types: placeholder as Registry['admin.career_matches.index']['types'],
+  },
+  'admin.career_matches.backfill': {
+    methods: ["POST"],
+    pattern: '/admin/career-matches/backfill',
+    tokens: [[0,"admin"],[0,"career-matches"],[0,"backfill"]],
+    types: placeholder as Registry['admin.career_matches.backfill']['types'],
+  },
   'admin.retention.show': {
     methods: ["GET","HEAD"],
     pattern: '/admin/retention',

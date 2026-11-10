@@ -8,7 +8,8 @@ import NpsResponse from '#models/nps_response'
 import StudentContact from '#models/student_contact'
 import content from '#services/content_service'
 import { interestCode, profileStatus, scoreAnswers } from '#services/scoring_service'
-import { beforeCreate, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import { beforeCreate, hasMany, hasOne, scope } from '@adonisjs/lucid/orm'
+import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 
 export type Step = Attempt['furthestStep']
@@ -39,6 +40,11 @@ export default class Attempt extends AttemptSchema {
   /** Exists only when the student consented [DP-001]. */
   @hasOne(() => StudentContact)
   declare contact: HasOne<typeof StudentContact>
+
+  /** Complete attempts (every answer in), the only ones that can be scored. */
+  static complete = scope((query: ModelQueryBuilderContract<typeof Attempt>) => {
+    query.has('answers', '>=', content.forms.mini.ids.length)
+  })
 
   @beforeCreate()
   static assignUuid(attempt: Attempt) {

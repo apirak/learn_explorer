@@ -12,20 +12,52 @@ import { matchOccupations } from '#services/scoring_service'
  * pages and the export read them instead of recomputing.
  */
 export class CareerMatchService {
+  /** Attempts the backfill fills in per press, so one request never runs long (ADR 0005). */
+  static readonly BACKFILL_BATCH = 500
+
+  /** Complete attempts never scored since matches were stored: any desired career or status. */
+  static pending() {
+    return Attempt.query()
+      .withScopes((scopes) => scopes.complete())
+      .whereNull('matchedAt')
+  }
+
+  static async pendingCount() {
+    const [row] = await this.pending().count('* as total')
+    return Number(row.$extras.total)
+  }
+
+  /**
+   * Scores and stores up to `BACKFILL_BATCH` pending attempts, oldest first, with the content
+   * deployed now (`CONTENT_VERSION`), not the version each student took. Returns how many it
+   * processed and how many are still pending. Done attempts, invalid profiles included, have
+   * `matched_at` and are never picked again.
+   */
+  static async backfill() {
+    const batch = await this.pending()
+      .orderBy('createdAt', 'asc')
+      .orderBy('id', 'asc')
+      .limit(this.BACKFILL_BATCH)
+    for (const attempt of batch) await this.record(attempt)
+    return { processed: batch.length, remaining: await this.pendingCount() }
+  }
+
   /**
    * Scores the attempt and replaces its stored matches, test time and `matched_at`; also saves
-   * the scores. Returns the scores, or null (nothing stored) until every answer is in. An
-   * invalid profile stores no matches but is still marked computed.
+   * the scores. Returns the scores with the matches it stored, or null (nothing stored) until
+   * every answer is in. An invalid profile stores no matches but is still marked computed.
    */
   static async record(attempt: Attempt) {
-    const scored = await attempt.score()
-    if (!scored) return null
-    const matches =
-      scored.status === 'ok' ? matchOccupations(scored.scores, content.occupations) : []
-
-    await db.transaction(async (trx) => {
-      // Locks the attempt so two opens at once cannot both insert rank 1.
+    return db.transaction(async (trx) => {
+      // Locks the attempt first, then reads its answers, so two opens at once cannot both
+      // insert rank 1 or store matches from answers older than the last commit.
       await Attempt.query({ client: trx }).where('id', attempt.id).forUpdate().firstOrFail()
+      attempt.useTransaction(trx)
+      const scored = await attempt.score()
+      if (!scored) return null
+      const matches =
+        scored.status === 'ok' ? matchOccupations(scored.scores, content.occupations) : []
+
       await CareerMatch.query({ client: trx }).where('attemptId', attempt.id).delete()
       await CareerMatch.createMany(
         matches.map((m, i) => ({
@@ -38,10 +70,9 @@ export class CareerMatchService {
       )
       attempt.testTimeMs = await this.testTime(attempt.id, trx)
       attempt.matchedAt = DateTime.now()
-      attempt.useTransaction(trx)
       await attempt.save()
+      return { ...scored, matches }
     })
-    return scored
   }
 
   /**

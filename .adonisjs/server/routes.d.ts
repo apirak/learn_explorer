@@ -36,6 +36,8 @@ export type ScannedRoutes = {
     'admin.students.dictionary': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'admin.students.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.career_matches.index': { paramsTuple?: []; params?: {} }
+    'admin.career_matches.backfill': { paramsTuple?: []; params?: {} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.retention.update': { paramsTuple?: []; params?: {} }
     'admin.retention.purge': { paramsTuple?: []; params?: {} }
@@ -63,6 +65,7 @@ export type ScannedRoutes = {
     'admin.students.export': { paramsTuple?: []; params?: {} }
     'admin.students.dictionary': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.career_matches.index': { paramsTuple?: []; params?: {} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
   }
@@ -86,6 +89,7 @@ export type ScannedRoutes = {
     'admin.students.export': { paramsTuple?: []; params?: {} }
     'admin.students.dictionary': { paramsTuple?: []; params?: {} }
     'admin.students.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.career_matches.index': { paramsTuple?: []; params?: {} }
     'admin.retention.show': { paramsTuple?: []; params?: {} }
     'admin.users.index': { paramsTuple?: []; params?: {} }
   }
@@ -99,6 +103,7 @@ export type ScannedRoutes = {
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'admin.career_matches.backfill': { paramsTuple?: []; params?: {} }
     'admin.retention.purge': { paramsTuple?: []; params?: {} }
     'admin.users.transfer': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }

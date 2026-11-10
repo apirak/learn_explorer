@@ -424,6 +424,32 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/students_controller').default['destroy']>>>
     }
   }
+  'admin.career_matches.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/admin/career-matches'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/career_matches_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/career_matches_controller').default['index']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/career_matches_controller').default['index']>>>
+    }
+  }
+  'admin.career_matches.backfill': {
+    methods: ["POST"]
+    pattern: '/admin/career-matches/backfill'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/admin/career_matches_controller').default['backfill']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/admin/career_matches_controller').default['backfill']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/admin/career_matches_controller').default['backfill']>>>
+    }
+  }
   'admin.retention.show': {
     methods: ["GET","HEAD"]
     pattern: '/admin/retention'
