@@ -105,6 +105,11 @@ export class ContentService {
   readonly tcasPrograms = { groups, fields: byField }
   /** University code → Thai name. */
   readonly universities = universities
+
+  /** An occupation's Thai title, else its O*NET title, else the code itself. */
+  occupationTitle(code: string) {
+    return this.thaiTitles[code] ?? this.occupations.find((o) => o.code === code)?.title ?? code
+  }
 }
 
 export default new ContentService()

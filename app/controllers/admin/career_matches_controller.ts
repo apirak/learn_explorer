@@ -34,11 +34,11 @@ function readFilters(qs: Record<string, unknown>) {
 
 type CareerMatchFilters = ReturnType<typeof readFilters>
 
-/** Finished attempts with a desired career, narrowed by the filters (all ANDed). */
-function rows(filters: CareerMatchFilters) {
+/** Complete attempts with a desired career, narrowed by the filters (all ANDed). */
+function filteredAttempts(filters: CareerMatchFilters) {
   const day = (iso: string | null) => (iso ? DateTime.fromISO(iso, { zone: REPORT_ZONE }) : null)
   return (
-    ReportService.whereCohort(CareerMatchService.finished(), day(filters.from), day(filters.to))
+    ReportService.whereCohort(CareerMatchService.complete(), day(filters.from), day(filters.to))
       .whereNotNull('desiredCareer')
       .whereNot('desiredCareer', '')
       .if(filters.code, (q) => q.where('code', filters.code!))
@@ -61,12 +61,13 @@ export default class CareerMatchesController {
   async index({ inertia, request }: HttpContext) {
     const filters = readFilters(request.qs())
     const page = Math.max(1, Math.floor(Number(request.qs().page)) || 1)
-    const attempts = await rows(filters).paginate(page, PER_PAGE)
+    const attempts = await filteredAttempts(filters).paginate(page, PER_PAGE)
 
     return inertia.render('admin/career_matches', {
       filters,
       pending: await CareerMatchService.pendingCount(),
       contentVersion: CONTENT_VERSION,
+      batchSize: CareerMatchService.BACKFILL_BATCH,
       attempts: CareerMatchRowTransformer.paginate(attempts.all(), attempts.getMeta()),
     })
   }

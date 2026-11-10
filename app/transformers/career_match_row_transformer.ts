@@ -19,12 +19,7 @@ export default class CareerMatchRowTransformer extends BaseTransformer<Attempt> 
         'matchedAt',
         'desiredCareer',
       ]),
-      careerMatches: a.careerMatches.map(
-        ({ occupationCode: code }) =>
-          content.thaiTitles[code] ??
-          content.occupations.find((o) => o.code === code)?.title ??
-          code
-      ),
+      careerMatches: a.careerMatches.map((m) => content.occupationTitle(m.occupationCode)),
       consented: !!a.contact,
     }
   }

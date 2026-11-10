@@ -15,14 +15,14 @@ export class CareerMatchService {
   /** Attempts the backfill fills in per press, so one request never runs long (ADR 0005). */
   static readonly BACKFILL_BATCH = 500
 
-  /** Attempts with every answer in, the only ones that can be scored. */
-  static finished() {
+  /** Complete attempts (every answer in), the only ones that can be scored. */
+  static complete() {
     return Attempt.query().has('answers', '>=', content.forms.mini.ids.length)
   }
 
-  /** Finished attempts never scored since matches were stored: any desired career or status. */
+  /** Complete attempts never scored since matches were stored: any desired career or status. */
   static pending() {
-    return this.finished().whereNull('matchedAt')
+    return this.complete().whereNull('matchedAt')
   }
 
   static async pendingCount() {

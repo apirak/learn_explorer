@@ -71,10 +71,7 @@ export default class AttemptTransformer extends BaseTransformer<Attempt> {
         })),
       careersViewed: a.careerViews.map(({ occupationCode: code, savedAt }) => ({
         code,
-        title:
-          content.thaiTitles[code] ??
-          content.occupations.find((o) => o.code === code)?.title ??
-          code,
+        title: content.occupationTitle(code),
         savedAt,
       })),
       contact: a.contact

@@ -19,14 +19,18 @@ type PageProps = InertiaProps<{
   filters: Filters
   pending: number
   contentVersion: string
+  batchSize: number
   attempts: {
     data: Row[]
     metadata: { total: number; currentPage: number; lastPage: number }
   }
 }>
 
+/** Same threshold as the "time over 1 minute" filter. */
+const ONE_MINUTE_MS = 60_000
+
 /** Shown instead of matches for a profile the system cannot match. */
-const STATUS_LABEL: Record<string, string> = {
+const STATUS_LABEL: Record<Exclude<Row['profileStatus'], 'ok' | null>, string> = {
   'all-dislike': 'ตอบไม่อยากทำทุกข้อ',
   'flat': 'คะแนนเท่ากันทุกด้าน',
 }
@@ -40,7 +44,7 @@ const formatTime = (ms: number) => {
 function Matches({ row }: { row: Row }) {
   if (!row.matchedAt) return <span className="muted">ยังไม่ได้คำนวณ</span>
   if (row.profileStatus && row.profileStatus !== 'ok')
-    return <span className="muted">{STATUS_LABEL[row.profileStatus] ?? row.profileStatus}</span>
+    return <span className="muted">{STATUS_LABEL[row.profileStatus]}</span>
   return <>{row.careerMatches.join(' · ') || '–'}</>
 }
 
@@ -52,6 +56,7 @@ export default function AdminCareerMatches({
   filters,
   pending,
   contentVersion,
+  batchSize,
   attempts,
 }: PageProps) {
   const { data, metadata } = attempts
@@ -127,8 +132,8 @@ export default function AdminCareerMatches({
                 คำนวณ {pending} รายการที่ยังไม่มีผล
               </button>
               <span className="muted">
-                ครั้งละไม่เกิน 500 รายการ เก่าสุดก่อน ใช้เนื้อหาเวอร์ชันปัจจุบัน ({contentVersion})
-                ไม่ใช่เวอร์ชันที่นักเรียนทำ
+                ครั้งละไม่เกิน {batchSize} รายการ เก่าสุดก่อน ใช้เนื้อหาเวอร์ชันปัจจุบัน (
+                {contentVersion}) ไม่ใช่เวอร์ชันที่นักเรียนทำ
               </span>
             </>
           )}
@@ -163,8 +168,8 @@ export default function AdminCareerMatches({
                       '–'
                     ) : (
                       <span
-                        className={row.testTimeMs < 60_000 ? 'records__flag' : undefined}
-                        title={row.testTimeMs < 60_000 ? 'Under 1 minute' : undefined}
+                        className={row.testTimeMs < ONE_MINUTE_MS ? 'records__flag' : undefined}
+                        title={row.testTimeMs < ONE_MINUTE_MS ? 'Under 1 minute' : undefined}
                       >
                         {formatTime(row.testTimeMs)}
                       </span>

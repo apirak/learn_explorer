@@ -8,6 +8,7 @@ import User from '#models/user'
 import content from '#services/content_service'
 import { CareerMatchService } from '#services/career_match_service'
 import testUtils from '@adonisjs/core/services/test_utils'
+import type { ApiClient } from '@japa/api-client'
 
 const MINI: string[] = content.forms.mini.ids
 
@@ -242,7 +243,7 @@ test.group('Admin career matches page', (group) => {
 test.group('Admin career matches backfill', (group) => {
   group.each.setup(() => testUtils.db().truncate())
 
-  const press = (client: any, admin: User) =>
+  const press = (client: ApiClient, admin: User) =>
     client
       .post('/admin/career-matches/backfill')
       .header('referer', '/admin/career-matches?code=AB5434')
@@ -310,7 +311,7 @@ test.group('Admin career matches backfill', (group) => {
     assert.equal(ok.matchedAt!.toMillis(), firstMatchedAt)
   })
 
-  test('processes at most one batch, oldest first', async ({ assert }) => {
+  test('one press processes at most one batch, oldest first', async ({ client, assert }) => {
     const total = CareerMatchService.BACKFILL_BATCH + 2
     const start = DateTime.now().minus({ days: 1 })
     // Bulk insert keeps this fast; answers make each attempt finished.
@@ -327,9 +328,12 @@ test.group('Admin career matches backfill', (group) => {
       )
     )
 
-    const result = await CareerMatchService.backfill()
+    const response = await press(client, await makeUser('admin'))
 
-    assert.deepEqual(result, { processed: CareerMatchService.BACKFILL_BATCH, remaining: 2 })
+    response.assertFlashMessage(
+      'success',
+      `คำนวณแล้ว ${CareerMatchService.BACKFILL_BATCH} · เหลือ 2`
+    )
     const left = await CareerMatchService.pending().orderBy('createdAt')
     assert.deepEqual(
       left.map((a) => a.id),
