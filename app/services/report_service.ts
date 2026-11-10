@@ -1,5 +1,6 @@
 import type { DateTime } from 'luxon'
 import db from '@adonisjs/lucid/services/db'
+import { MAX_GAP_MS } from '#models/answer'
 import Attempt, { NO_CODE_PREFIX } from '#models/attempt'
 import NpsResponse, { type NpsGroup } from '#models/nps_response'
 import StudentContact from '#models/student_contact'
@@ -14,8 +15,6 @@ export type FunnelStep = 'start' | 'testComplete' | 'result' | 'career' | 'print
 
 export const REPORT_ZONE = 'Asia/Bangkok'
 
-/** Answer gaps over this are "left and came back", not thinking (ADR 0001). */
-export const MAX_GAP_MS = 5 * 60 * 1000
 /** Lower edges (ms) of the answer-gap buckets after the first: <1s, 1–10s, …, 50–60s, ≥60s. */
 const GAP_EDGES_MS = [1, 10, 20, 30, 40, 50, 60].map((s) => s * 1000)
 const GAP_LABELS = ['<1', '1–10', '10–20', '20–30', '30–40', '40–50', '50–60', '≥60']

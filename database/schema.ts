@@ -61,6 +61,7 @@ export class AttemptSchema extends BaseModel {
     'furthestStep',
     'id',
     'interestCode',
+    'matchedAt',
     'printPrepAt',
     'profileStatus',
     'resultAt',
@@ -70,6 +71,7 @@ export class AttemptSchema extends BaseModel {
     'scoreI',
     'scoreR',
     'scoreS',
+    'testTimeMs',
     'updatedAt',
     'uuid',
   ] as const
@@ -95,6 +97,8 @@ export class AttemptSchema extends BaseModel {
   @column()
   declare interestCode: string | null
   @column.dateTime()
+  declare matchedAt: DateTime | null
+  @column.dateTime()
   declare printPrepAt: DateTime | null
   @column()
   declare profileStatus: 'ok' | 'all-dislike' | 'flat' | null
@@ -112,10 +116,27 @@ export class AttemptSchema extends BaseModel {
   declare scoreR: number | null
   @column()
   declare scoreS: number | null
+  @column()
+  declare testTimeMs: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()
   declare uuid: string
+}
+
+export class CareerMatchSchema extends BaseModel {
+  static $columns = ['attemptId', 'id', 'occupationCode', 'r', 'rank'] as const
+  $columns = CareerMatchSchema.$columns
+  @column()
+  declare attemptId: number
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare occupationCode: string
+  @column()
+  declare r: number
+  @column()
+  declare rank: number
 }
 
 export class CareerViewSchema extends BaseModel {
