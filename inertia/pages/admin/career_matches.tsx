@@ -20,14 +20,13 @@ type PageProps = InertiaProps<{
   pending: number
   contentVersion: string
   batchSize: number
+  /** Test times below this are flagged; the "Time over 1 minute" filter keeps those above. */
+  oneMinuteMs: number
   attempts: {
     data: Row[]
     metadata: { total: number; currentPage: number; lastPage: number }
   }
 }>
-
-/** Same threshold as the "time over 1 minute" filter. */
-const ONE_MINUTE_MS = 60_000
 
 /** Shown instead of matches for a profile the system cannot match. */
 const STATUS_LABEL: Record<Exclude<Row['profileStatus'], 'ok' | null>, string> = {
@@ -57,6 +56,7 @@ export default function AdminCareerMatches({
   pending,
   contentVersion,
   batchSize,
+  oneMinuteMs,
   attempts,
 }: PageProps) {
   const { data, metadata } = attempts
@@ -123,6 +123,7 @@ export default function AdminCareerMatches({
       {pending > 0 && (
         <Form
           route="admin.career_matches.backfill"
+          qs={filterQs}
           options={{ preserveScroll: true }}
           className="panel records__filters"
         >
@@ -168,8 +169,8 @@ export default function AdminCareerMatches({
                       '–'
                     ) : (
                       <span
-                        className={row.testTimeMs < ONE_MINUTE_MS ? 'records__flag' : undefined}
-                        title={row.testTimeMs < ONE_MINUTE_MS ? 'Under 1 minute' : undefined}
+                        className={row.testTimeMs < oneMinuteMs ? 'records__flag' : undefined}
+                        title={row.testTimeMs < oneMinuteMs ? 'Under 1 minute' : undefined}
                       >
                         {formatTime(row.testTimeMs)}
                       </span>

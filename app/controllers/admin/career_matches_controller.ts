@@ -1,3 +1,4 @@
+import Attempt from '#models/attempt'
 import { CONTENT_VERSION } from '#services/content_service'
 import { CareerMatchService } from '#services/career_match_service'
 import { REPORT_ZONE, ReportService } from '#services/report_service'
@@ -6,7 +7,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 
 const PER_PAGE = 25
-/** "Time over 1 minute": test time above this, in ms. */
+/** "Time over 1 minute" keeps test times above this; the page flags times below it. In ms. */
 const ONE_MINUTE_MS = 60 * 1000
 
 /** `%`, `_` and `\` match themselves in an ILIKE pattern (Postgres's default escape is `\`). */
@@ -38,7 +39,11 @@ type CareerMatchFilters = ReturnType<typeof readFilters>
 function filteredAttempts(filters: CareerMatchFilters) {
   const day = (iso: string | null) => (iso ? DateTime.fromISO(iso, { zone: REPORT_ZONE }) : null)
   return (
-    ReportService.whereCohort(CareerMatchService.complete(), day(filters.from), day(filters.to))
+    ReportService.whereCohort(
+      Attempt.query().withScopes((scopes) => scopes.complete()),
+      day(filters.from),
+      day(filters.to)
+    )
       .whereNotNull('desiredCareer')
       .whereNot('desiredCareer', '')
       .if(filters.code, (q) => q.where('code', filters.code!))
@@ -68,6 +73,7 @@ export default class CareerMatchesController {
       pending: await CareerMatchService.pendingCount(),
       contentVersion: CONTENT_VERSION,
       batchSize: CareerMatchService.BACKFILL_BATCH,
+      oneMinuteMs: ONE_MINUTE_MS,
       attempts: CareerMatchRowTransformer.paginate(attempts.all(), attempts.getMeta()),
     })
   }
@@ -78,7 +84,7 @@ export default class CareerMatchesController {
     // The admin's id and counts only, never student data [DP-001].
     logger.info({ userId: auth.user!.id, processed, remaining }, 'career_matches_backfilled')
     session.flash('success', `คำนวณแล้ว ${processed} · เหลือ ${remaining}`)
-    // `withQs()` carries the page's query string over, so its filters stay.
-    return response.redirect().withQs().back()
+    // The form posts with the page's filters in its query string; `withQs()` carries them back.
+    return response.redirect().withQs().toRoute('admin.career_matches.index')
   }
 }

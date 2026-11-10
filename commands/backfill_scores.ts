@@ -1,5 +1,4 @@
 import Attempt from '#models/attempt'
-import content from '#services/content_service'
 import { BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
@@ -16,8 +15,8 @@ export default class BackfillScores extends BaseCommand {
 
   async run() {
     const attempts = await Attempt.query()
+      .withScopes((scopes) => scopes.complete())
       .whereNull('scoreR')
-      .has('answers', '>=', content.forms.mini.ids.length)
 
     for (const attempt of attempts) {
       if (await attempt.score()) await attempt.save()

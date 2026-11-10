@@ -246,7 +246,7 @@ test.group('Admin career matches backfill', (group) => {
   const press = (client: ApiClient, admin: User) =>
     client
       .post('/admin/career-matches/backfill')
-      .header('referer', '/admin/career-matches?code=AB5434')
+      .qs({ code: 'AB5434' })
       .withCsrfToken()
       .loginAs(admin)
       .redirects(0)
