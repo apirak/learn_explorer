@@ -79,15 +79,14 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
           เวลารวมระหว่างการบันทึกคำตอบแต่ละข้อ ไม่นับข้อแรก และไม่นับช่วงที่ห่างเกิน 5 นาที
           (ถือว่าออกไปแล้วกลับมา)
         </p>
-        {!a.matchedAt ? (
+        {a.careerMatchStatus === 'not_computed' ? (
           <p className="muted">ยังไม่ได้คำนวณ — กด backfill ที่หน้า Career matches</p>
         ) : (
-          a.profileStatus &&
-          a.profileStatus !== 'ok' && (
-            <p className="muted">{PROFILE_STATUS_LABEL[a.profileStatus]}</p>
+          a.careerMatchStatus !== 'ok' && (
+            <p className="muted">{PROFILE_STATUS_LABEL[a.careerMatchStatus]}</p>
           )
         )}
-        {a.careerMatches.length > 0 && (
+        {a.careers.length > 0 && (
           <table className="records__table">
             <thead>
               <tr>
@@ -97,13 +96,15 @@ export default function AdminStudent({ attempt: a }: InertiaProps<{ attempt: Att
               </tr>
             </thead>
             <tbody>
-              {a.careerMatches.map((c) => (
+              {a.careers.map((c) => (
                 <tr key={c.code}>
                   <td>
                     {c.rank && <span className="muted">{c.rank}. </span>}
                     {c.title} <span className="muted">{c.code}</span>
                     {/* Only once matches exist; before that nothing is "latest". */}
-                    {!c.rank && a.matchedAt && <span className="muted"> · ไม่อยู่ในผลล่าสุด</span>}
+                    {!c.rank && a.careerMatchStatus !== 'not_computed' && (
+                      <span className="muted"> · ไม่อยู่ในผลล่าสุด</span>
+                    )}
                   </td>
                   <td>{fmt(c.viewedAt)}</td>
                   <td>{fmt(c.savedAt)}</td>

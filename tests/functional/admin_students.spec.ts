@@ -132,23 +132,23 @@ test.group('Admin student detail', (group) => {
     assert.sameMembers(Object.keys(a.scores), ['R', 'I', 'A', 'S', 'E', 'C'])
     assert.lengthOf(a.interestCode, 3)
     // Career matches are not stored yet, and opening the page does not compute them.
-    assert.isNull(a.matchedAt)
+    assert.equal(a.careerMatchStatus, 'not_computed')
     assert.isNull(a.testTimeMs)
     assert.lengthOf(await CareerMatch.all(), 0)
     await attempt.refresh()
     assert.isNull(attempt.matchedAt)
     // Viewed careers still show, in view order, with their save time.
     assert.deepEqual(
-      a.careerMatches.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
+      a.careers.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
       [
         [occupation.code, null],
         [saved.code, null],
       ]
     )
-    assert.equal(a.careerMatches[0].title, content.thaiTitles[occupation.code] ?? occupation.title)
-    assert.isNotNull(a.careerMatches[0].viewedAt)
-    assert.isNull(a.careerMatches[0].savedAt)
-    assert.equal(DateTime.fromISO(a.careerMatches[1].savedAt).toMillis(), savedAt.toMillis())
+    assert.equal(a.careers[0].title, content.thaiTitles[occupation.code] ?? occupation.title)
+    assert.isNotNull(a.careers[0].viewedAt)
+    assert.isNull(a.careers[0].savedAt)
+    assert.equal(DateTime.fromISO(a.careers[1].savedAt).toMillis(), savedAt.toMillis())
     assert.equal(a.contact.name, 'สมชาย')
     assert.equal(a.contact.phone, '0812341234')
     assert.equal(a.contact.email, 'student@example.com')
@@ -203,9 +203,9 @@ test.group('Admin student detail', (group) => {
     const { attempt: a } = page.inertiaProps
     assert.equal(a.desiredCareer, 'หมอ')
     assert.equal(a.testTimeMs, 125_400)
-    assert.isNotNull(a.matchedAt)
+    assert.equal(a.careerMatchStatus, 'ok')
     assert.deepEqual(
-      a.careerMatches.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
+      a.careers.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
       [
         [m1.code, 1],
         [m2.code, 2],
@@ -213,7 +213,7 @@ test.group('Admin student detail', (group) => {
         [other.code, null],
       ]
     )
-    const [first, second, , appended] = a.careerMatches
+    const [first, second, , appended] = a.careers
     assert.isNull(first.viewedAt)
     assert.isNull(first.savedAt)
     assert.isNotNull(second.viewedAt)
@@ -222,11 +222,18 @@ test.group('Admin student detail', (group) => {
     assert.isNull(appended.savedAt)
   })
 
-  test('an invalid profile has a status and no career matches', async ({ client, assert }) => {
+  test('an invalid profile shows its stored status and no career matches', async ({
+    client,
+    assert,
+  }) => {
     const attempt = await seed('result', { profileStatus: 'flat', matchedAt: DateTime.now() })
     const ids = content.forms.mini.ids
-    // Every answer the same, so scores are flat on the page too.
-    await Answer.createMany(ids.map((itemId) => ({ attemptId: attempt.id, itemId, value: 2 })))
+    // Answers changed since matching (not flat now); the section follows what was stored.
+    await Answer.createMany(
+      ids.map((itemId, i) => ({ attemptId: attempt.id, itemId, value: i === 0 ? 0 : 4 }))
+    )
+    const viewed = content.occupations[0]
+    await CareerView.create({ attemptId: attempt.id, occupationCode: viewed.code })
 
     const page = await client
       .get(`/admin/students/${attempt.id}`)
@@ -234,9 +241,11 @@ test.group('Admin student detail', (group) => {
       .loginAs(await makeUser('admin'))
 
     const { attempt: a } = page.inertiaProps
-    assert.equal(a.profileStatus, 'flat')
-    assert.isNotNull(a.matchedAt)
-    assert.deepEqual(a.careerMatches, [])
+    assert.equal(a.careerMatchStatus, 'flat')
+    assert.deepEqual(
+      a.careers.map((c: { code: string; rank: number | null }) => [c.code, c.rank]),
+      [[viewed.code, null]]
+    )
   })
 
   test('opening a detail page writes one audit row', async ({ client, assert }) => {
