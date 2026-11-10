@@ -12,7 +12,7 @@ export default class StudentResultController {
     if (!(await CareerMatchService.record(attempt!)))
       return response.redirect().toRoute('student.test.show')
     const firstView = !attempt!.resultAt // the reveal plays once; a reload or a return shows the result at rest
-    await attempt!.reachStep('result') // saves the scores too
+    await attempt!.reachStep('result')
     logger.info({ attempt: attempt!.uuid }, 'attempt_scored') // UUID only [DP-001]
 
     return inertia.render('student/result', {
@@ -35,7 +35,7 @@ export default class StudentResultController {
     const nps = await attempt!.related('npsResponse').query().first()
     return inertia.render('student/careers', {
       guess: attempt!.desiredCareer,
-      matches: transformMatches(scored.scores, scored.code),
+      matches: transformMatches(scored.scores, scored.code, scored.matches),
       nps: nps ? NpsResponseTransformer.transform(nps) : null,
     })
   }

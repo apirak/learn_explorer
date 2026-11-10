@@ -31,11 +31,19 @@ export default class OccupationMatchTransformer extends BaseTransformer<
   }
 }
 
-/** The top matching occupations for a valid profile, as the careers and print pages show them. */
-export function transformMatches(scores: Scores, code: RiasecType[]) {
+/**
+ * The top matching occupations for a valid profile, as the careers and print pages show them.
+ * Pass `matches` when they are already computed (the careers page gets them from
+ * `CareerMatchService.record`), so the page shows the same list that was stored.
+ */
+export function transformMatches(
+  scores: Scores,
+  code: RiasecType[],
+  matches: OccupationMatch[] = matchOccupations(scores, content.occupations)
+) {
   const name = (t: RiasecType) => content.riasecTypes[t].name
   return OccupationMatchTransformer.transform(
-    matchOccupations(scores, content.occupations).map((m) => ({
+    matches.map((m) => ({
       ...m,
       shared: sharedHighTypes(m.occupation, code).map(name),
     }))

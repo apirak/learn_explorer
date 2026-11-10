@@ -14,18 +14,20 @@ import { matchOccupations } from '#services/scoring_service'
 export class CareerMatchService {
   /**
    * Scores the attempt and replaces its stored matches, test time and `matched_at`; also saves
-   * the scores. Returns the scores, or null (nothing stored) until every answer is in. An
-   * invalid profile stores no matches but is still marked computed.
+   * the scores. Returns the scores with the matches it stored, or null (nothing stored) until
+   * every answer is in. An invalid profile stores no matches but is still marked computed.
    */
   static async record(attempt: Attempt) {
-    const scored = await attempt.score()
-    if (!scored) return null
-    const matches =
-      scored.status === 'ok' ? matchOccupations(scored.scores, content.occupations) : []
-
-    await db.transaction(async (trx) => {
-      // Locks the attempt so two opens at once cannot both insert rank 1.
+    return db.transaction(async (trx) => {
+      // Locks the attempt first, then reads its answers, so two opens at once cannot both
+      // insert rank 1 or store matches from answers older than the last commit.
       await Attempt.query({ client: trx }).where('id', attempt.id).forUpdate().firstOrFail()
+      attempt.useTransaction(trx)
+      const scored = await attempt.score()
+      if (!scored) return null
+      const matches =
+        scored.status === 'ok' ? matchOccupations(scored.scores, content.occupations) : []
+
       await CareerMatch.query({ client: trx }).where('attemptId', attempt.id).delete()
       await CareerMatch.createMany(
         matches.map((m, i) => ({
@@ -38,10 +40,9 @@ export class CareerMatchService {
       )
       attempt.testTimeMs = await this.testTime(attempt.id, trx)
       attempt.matchedAt = DateTime.now()
-      attempt.useTransaction(trx)
       await attempt.save()
+      return { ...scored, matches }
     })
-    return scored
   }
 
   /**
